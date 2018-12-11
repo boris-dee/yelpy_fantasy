@@ -12,24 +12,11 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    QGroupBox *groupBox = new QGroupBox(tr("Test"));
-    QLabel *label = new QLabel(tr("Test"));
-    QComboBox *comboBox = new QComboBox;
-    comboBox->addItem("Test");
-
-    lineEdit = new QLineEdit;
-    lineEdit->setPlaceholderText("Test");
-    lineEdit->setFocus();
-
-    QGridLayout *layout = new QGridLayout;
-    layout->addWidget(label, 0, 0);
-    layout->addWidget(comboBox, 0, 1);
-    layout->addWidget(lineEdit, 1, 0, 1, 2);
-    groupBox->setLayout(layout);
-
-    QGridLayout *mainLayout = new QGridLayout;
-    mainLayout->addWidget(groupBox, 0, 0);
-    setLayout(mainLayout);
+    QVBoxLayout *mainLayout = new QVBoxLayout;
+    for (int ichar = 1; ichar < 5; ++ichar)
+    {
+        mainLayout->addWidget(createCharStatBox(ichar));
+    }
 
     QWidget *screenLayout = new QWidget;
     screenLayout->setLayout(mainLayout);
@@ -39,4 +26,21 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+QGroupBox *MainWindow::createCharStatBox(const int ichar)
+{
+    // Box Title
+    QString boxTitle = "Character ";
+    boxTitle.append(QString::number(ichar));
+
+    QGroupBox *charStatBox = new QGroupBox(boxTitle);
+    QLineEdit *lineEdit = new QLineEdit;
+    lineEdit->setPlaceholderText("Test");
+
+    QVBoxLayout *vbox = new QVBoxLayout;
+    vbox->addWidget(lineEdit);
+    charStatBox->setLayout(vbox);
+
+    return charStatBox;
 }

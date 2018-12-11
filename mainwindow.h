@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QLineEdit>
+#include <QGroupBox>
 
 namespace Ui {
 class MainWindow;
@@ -19,8 +20,8 @@ public:
 private:
     Ui::MainWindow *ui;
 
-    // Character's stats group box
-    QLineEdit *lineEdit;
+    // Method that creates an entire character's stats group box
+    QGroupBox *createCharStatBox(const int ichar);
 };
 
 #endif // MAINWINDOW_H
