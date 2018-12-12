@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/">
+        <file>cid_portrait.png</file>
+        <file>tifa_portrait.png</file>
+        <file>vincent_portrait.png</file>
+        <file>yuffie_portrait.png</file>
+    </qresource>
+</RCC>
