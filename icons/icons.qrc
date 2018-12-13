@@ -1,6 +1,11 @@
 <RCC>
     <qresource prefix="/">
         <file>add_character.png</file>
-        <file>remove_character.png</file>
+        <file>add_weapon.png</file>
+        <file>add_armor.png</file>
+        <file>add_enemy.png</file>
+        <file>exit.png</file>
+        <file>load.png</file>
+        <file>save.png</file>
     </qresource>
 </RCC>
