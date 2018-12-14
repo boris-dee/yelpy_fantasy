@@ -26,14 +26,17 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-        Character.cpp
+        Character.cpp \
+    addcharacter.cpp
 
 HEADERS += \
         mainwindow.h \
-        Character.h
+        Character.h \
+    addcharacter.h
 
 FORMS += \
-        mainwindow.ui
+        mainwindow.ui \
+    addcharacter.ui
 
 RESOURCES += \
     pictures/pictures.qrc \

@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "addcharacter.h"
 #include "ui_mainwindow.h"
 
 #include <QPushButton>
@@ -263,4 +264,16 @@ QGroupBox *MainWindow::createEnemyStatBox()
 void MainWindow::on_exitButton_clicked()
 {
     MainWindow::close();
+}
+
+void MainWindow::on_addCharButton_clicked()
+{
+    AddCharacter *addCharWindow = new AddCharacter("Character", this);
+    addCharWindow->exec();
+}
+
+void MainWindow::on_addEnemyButton_clicked()
+{
+    AddCharacter *addCharWindow = new AddCharacter("Enemy", this);
+    addCharWindow->exec();
 }

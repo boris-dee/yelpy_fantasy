@@ -17,15 +17,17 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+    // Method that creates characters and enemies stats group box
+    QGroupBox *createCharStatBox(const int ichar);
+    QGroupBox *createEnemyStatBox();
+
 private slots:
     void on_exitButton_clicked();
+    void on_addCharButton_clicked();
+    void on_addEnemyButton_clicked();
 
 private:
     Ui::MainWindow *ui;
-
-    // Method that creates an entire character's stats group box
-    QGroupBox *createCharStatBox(const int ichar);
-    QGroupBox *createEnemyStatBox();
 };
 
 #endif // MAINWINDOW_H
