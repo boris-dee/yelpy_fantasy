@@ -4,7 +4,7 @@
 #include "AddCharDialog.h"
 #include "Character.h"
 #include "CharStatBox.h"
-#include "EnemyStatBox.h"
+
 #include <QMainWindow>
 #include <QVector>
 
@@ -27,12 +27,17 @@ private slots:
     void on_newButton_clicked();
 
 private:
+    int m_nPlayers = 4;
     QString m_tableName;
     QString m_windowTitle;
+    QVector<Character*> *m_charBundle;
+    QVector<Character*> *m_enemyBundle;
+    QVector<QString> *m_statBundle;
 
-    CharStatBox *m_charStatBox;
-    EnemyStatBox *m_enemyStatBox;
     AddCharDialog *m_addCharDialog;
+    CharStatBox *m_charStatBox;
+    Character *m_character;
+    Character *m_enemy;
 
     Ui::MainWindow *ui;
 };

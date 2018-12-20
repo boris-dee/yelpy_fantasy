@@ -2,7 +2,6 @@
 #include "MainWindow.h"
 
 #include <QHBoxLayout>
-#include <QObject>
 #include <QPushButton>
 #include <QVBoxLayout>
 
@@ -10,15 +9,11 @@ AddCharDialog::AddCharDialog(QString charType, QWidget *parent) : QDialog(parent
 {
     m_dialogBox = new QDialog;
 
-    // Set Window Title
-    QString windowTitle("Add " + charType);
-    m_dialogBox->setWindowTitle(windowTitle);
-
     // Layouts and objects
     QVBoxLayout *gridLayout = new QVBoxLayout;
     QHBoxLayout *buttonLayout = new QHBoxLayout;
 
-    m_charStatBox = new CharStatBox(true);
+    m_charStatBox = new CharStatBox(charType, true);
 
     QPushButton *saveCharButton = new QPushButton;
     saveCharButton->setMaximumWidth(80);

@@ -27,14 +27,12 @@ SOURCES += \
         main.cpp \
         MainWindow.cpp \
     CharStatBox.cpp \
-    EnemyStatBox.cpp \
     Character.cpp \
     AddCharDialog.cpp
 
 HEADERS += \
         MainWindow.h \
     CharStatBox.h \
-    EnemyStatBox.h \
     Character.h \
     AddCharDialog.h
 

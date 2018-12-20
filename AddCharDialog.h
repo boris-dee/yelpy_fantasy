@@ -2,7 +2,6 @@
 #define ADDCHARDIALOG_H
 
 #include "CharStatBox.h"
-#include "Character.h"
 
 #include <QDialog>
 #include <QString>
@@ -18,6 +17,8 @@ public:
 private:
     QDialog *m_dialogBox;
     CharStatBox *m_charStatBox;
+
+friend class MainWindow;
 };
 
 #endif // ADDCHARDIALOG_H

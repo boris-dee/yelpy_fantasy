@@ -2,17 +2,19 @@
 #define CHARACTER_H
 
 #include <QString>
+#include <QVector>
 
 class Character
 {
 public:
-    Character(QString name, int level, int hp, int mp);
+    Character(QString name, QString level, QString hp, QString mp);
+
+    QVector<QString> getStats() const;
 
 private:
-    QString m_name;
-    int m_level, m_hp, m_mp;
+    QString m_name, m_level, m_hp, m_mp;
 
-friend class AddCharDialog;
+    QVector<QString> *m_statBundle;
 };
 
 #endif // CHARACTER_H

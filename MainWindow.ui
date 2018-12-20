@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1700</width>
+    <width>1600</width>
     <height>950</height>
    </rect>
   </property>
@@ -17,6 +17,9 @@
    <layout class="QGridLayout" name="gridLayout_2">
     <item row="1" column="1">
      <layout class="QGridLayout" name="enemyLayout"/>
+    </item>
+    <item row="2" column="1">
+     <layout class="QGridLayout" name="gridLayout"/>
     </item>
     <item row="0" column="0" colspan="2">
      <layout class="QHBoxLayout" name="menuLayout">
@@ -201,7 +204,7 @@
       <item>
        <widget class="QPushButton" name="addEnemyButton">
         <property name="enabled">
-         <bool>false</bool>
+         <bool>true</bool>
         </property>
         <property name="toolTip">
          <string>Add an Enemy</string>
@@ -223,39 +226,8 @@
       </item>
      </layout>
     </item>
-    <item row="2" column="1">
-     <layout class="QGridLayout" name="gridLayout">
-      <item row="0" column="0">
-       <spacer name="verticalSpacer">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>40</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-     </layout>
-    </item>
     <item row="1" column="0" rowspan="2">
-     <layout class="QGridLayout" name="characterLayout">
-      <item row="0" column="0">
-       <spacer name="horizontalSpacer">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-     </layout>
+     <layout class="QGridLayout" name="characterLayout"/>
     </item>
    </layout>
   </widget>

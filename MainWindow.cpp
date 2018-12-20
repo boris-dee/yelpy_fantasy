@@ -10,6 +10,14 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    for (int iplayer(0); iplayer < m_nPlayers; iplayer++)
+    {
+        m_charStatBox = new CharStatBox("Character", false);
+        m_charStatBox->setMaximumWidth(800);
+        m_charStatBox->setMaximumHeight(250);
+        ui->characterLayout->addWidget(m_charStatBox);
+    }
 }
 
 MainWindow::~MainWindow()
@@ -20,10 +28,21 @@ MainWindow::~MainWindow()
 void MainWindow::on_addCharButton_clicked()
 {
     m_addCharDialog = new AddCharDialog("Character", this);
+    m_addCharDialog->setWindowTitle(tr("Add a Character"));
     int dialogReturn = m_addCharDialog->exec();
+//    if (dialogReturn == QDialog::Accepted && !m_addCharDialog->m_charStatBox->getStats().at(0)->displayText().isEmpty())
     if (dialogReturn == QDialog::Accepted)
     {
-        MainWindow::close();
+        // Get all stats and store them
+        QString name = m_addCharDialog->m_charStatBox->getStats().at(0)->displayText();
+        QString level = m_addCharDialog->m_charStatBox->getStats().at(1)->displayText();
+        QString hp = m_addCharDialog->m_charStatBox->getStats().at(2)->displayText();
+        QString mp = m_addCharDialog->m_charStatBox->getStats().at(3)->displayText();
+
+        // Create the character and add it to the characters bundle
+        m_charBundle = new QVector<Character*>;
+        m_character = new Character(name, level, hp, mp);
+        m_charBundle->push_back(m_character);
     }
 }
 
@@ -34,8 +53,29 @@ void MainWindow::on_exitButton_clicked()
 
 void MainWindow::on_addEnemyButton_clicked()
 {
-    m_addCharDialog = new AddCharDialog("Enemy");
+    m_addCharDialog = new AddCharDialog("Enemy", this);
+    m_addCharDialog->setWindowTitle(tr("Add an Enemy"));
     int dialogReturn = m_addCharDialog->exec();
+//    if (dialogReturn == QDialog::Accepted && !m_addCharDialog->m_charStatBox->getStats().at(0)->displayText().isEmpty())
+    if (dialogReturn == QDialog::Accepted)
+    {
+        // Get all stats and store them
+        QString name = m_addCharDialog->m_charStatBox->getStats().at(0)->displayText();
+        QString level = m_addCharDialog->m_charStatBox->getStats().at(1)->displayText();
+        QString hp = m_addCharDialog->m_charStatBox->getStats().at(2)->displayText();
+        QString mp = m_addCharDialog->m_charStatBox->getStats().at(3)->displayText();
+
+        // Create the enemy and add it to the enemy bundle
+        m_enemyBundle = new QVector<Character*>;
+        m_enemy = new Character(name, level, hp, mp);
+        m_enemyBundle->push_back(m_enemy);
+
+        // Display enemy
+        m_charStatBox = new CharStatBox("Enemy", false);
+        m_charStatBox->setMaximumWidth(800);
+        m_charStatBox->setMaximumHeight(250);
+        ui->enemyLayout->addWidget(m_charStatBox);
+    }
 }
 
 void MainWindow::on_newButton_clicked()
