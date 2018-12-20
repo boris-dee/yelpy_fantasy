@@ -26,11 +26,20 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         MainWindow.cpp \
-    CharStatBox.cpp
+    CharStatBox.cpp \
+    EnemyStatBox.cpp \
+    Character.cpp \
+    AddCharDialog.cpp
 
 HEADERS += \
         MainWindow.h \
-    CharStatBox.h
+    CharStatBox.h \
+    EnemyStatBox.h \
+    Character.h \
+    AddCharDialog.h
 
 FORMS += \
         MainWindow.ui
+
+RESOURCES += \
+    icons.qrc
