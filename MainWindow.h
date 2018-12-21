@@ -2,10 +2,10 @@
 #define MAINWINDOW_H
 
 #include "AddCharDialog.h"
-#include "Character.h"
 #include "CharStatBox.h"
 
 #include <QMainWindow>
+#include <QStandardItemModel>
 #include <QVector>
 
 namespace Ui {
@@ -26,18 +26,21 @@ private slots:
     void on_addEnemyButton_clicked();
     void on_newButton_clicked();
 
+    void createNewChar(QString charType);
+
 private:
     int m_nPlayers = 4;
     QString m_tableName;
     QString m_windowTitle;
-    QVector<Character*> *m_charBundle;
-    QVector<Character*> *m_enemyBundle;
-    QVector<QString> *m_statBundle;
 
     AddCharDialog *m_addCharDialog;
     CharStatBox *m_charStatBox;
-    Character *m_character;
-    Character *m_enemy;
+
+    QVector<CharStatBox*> *m_charVector;
+    QVector<CharStatBox*> *m_enemyVector;
+    QVector<QVector<CharStatBox*>*> *m_allCharVector;
+
+    QStandardItemModel *m_comboBoxModel;
 
     Ui::MainWindow *ui;
 };

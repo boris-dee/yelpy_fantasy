@@ -27,13 +27,11 @@ SOURCES += \
         main.cpp \
         MainWindow.cpp \
     CharStatBox.cpp \
-    Character.cpp \
     AddCharDialog.cpp
 
 HEADERS += \
         MainWindow.h \
     CharStatBox.h \
-    Character.h \
     AddCharDialog.h
 
 FORMS += \
