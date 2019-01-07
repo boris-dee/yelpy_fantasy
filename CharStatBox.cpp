@@ -256,3 +256,17 @@ CharStatBox::CharStatBox(QString charType, bool dialog, QWidget *parent) : QWidg
 }
 
 QMap<QString, QLineEdit*>* CharStatBox::getStats() const {return m_statBundle;}
+
+QComboBox* CharStatBox::getComboBox() const {return m_nameComboBox;}
+
+void CharStatBox::displayCharStats(QString charName)
+{
+    // Find the character's name in the storage Vector
+
+}
+
+void CharStatBox::displayEnemyStats(QString enemyName)
+{
+    // Find the character's name in the storage Vector
+
+}

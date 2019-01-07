@@ -1,9 +1,13 @@
 #include "MainWindow.h"
 #include "AddCharDialog.h"
+#include "Character.h"
 #include "ui_MainWindow.h"
 
 #include <QInputDialog>
 #include <QString>
+
+// === Debug ===
+#include <iostream>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -11,36 +15,51 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    // Create model for all name combo boxes
-    m_comboBoxModel = new QStandardItemModel;
+    // Create models for char/enemy name combo boxes
+    m_charComboBoxModel = new QStandardItemModel;
+    m_enemyComboBoxModel = new QStandardItemModel;
 
-    // Create char/enemy storage vectors and build the All Vector
-    m_charVector = new QVector<CharStatBox*>;
-    m_enemyVector = new QVector<CharStatBox*>;
-    m_allCharVector = new QVector<QVector<CharStatBox*>*>;
-    m_allCharVector->push_back(m_charVector);
-    m_allCharVector->push_back(m_enemyVector);
+    // Create storage vector for char/enemy
+    m_charVector = new QVector<Character*>;
+    m_enemyVector = new QVector<Character*>;
 
+    // Create storage vector for char/enemy combo boxes
+    m_charComboBoxVector = new QVector<QComboBox*>;
+    m_enemyComboBoxVector = new QVector<QComboBox*>;
+
+    // Display character's stat boxes
     for (int iplayer(0); iplayer < m_nPlayers; iplayer++)
     {
         m_charStatBox = new CharStatBox("Character", false);
         m_charStatBox->setMaximumWidth(800);
         m_charStatBox->setMaximumHeight(250);
         ui->characterLayout->addWidget(m_charStatBox);
+
+        // Save the combo box
+        m_charComboBoxVector->push_back(m_charStatBox->getComboBox());
+
+        // Connect the combo box to the corresponding stat box
+        QObject::connect(m_charStatBox->getComboBox(), SIGNAL(currentTextChanged(QString)), m_charStatBox, SLOT(displayCharStats(QString)));
     }
 
-    // Display enemies
+    // Display enemy's stat boxes
     for (int ienemies(0); ienemies < 2; ienemies++)
     {
         m_charStatBox = new CharStatBox("Enemy", false);
         m_charStatBox->setMaximumWidth(800);
         m_charStatBox->setMaximumHeight(250);
         ui->enemyLayout->addWidget(m_charStatBox);
+
+        // Save the combo box
+        m_enemyComboBoxVector->push_back(m_charStatBox->getComboBox());
+
+        // Connect the combo box signal to the corresponding stat box slot
+        QObject::connect(m_charStatBox->getComboBox(), SIGNAL(currentIndexChanged(QString)), m_charStatBox, SLOT(displayEnemyStats(QString)));
     }
 
     // Set all QLineEdits to readonly and make them smaller
     QList<QLineEdit*> allQLineEdit = findChildren<QLineEdit*>();
-    for (int i(0); i < allQLineEdit.size(); ++i)
+    for (int i(0); i < allQLineEdit.size(); i++)
     {
         allQLineEdit.at(i)->setReadOnly(true);
         allQLineEdit.at(i)->setMaximumHeight(20);
@@ -48,10 +67,13 @@ MainWindow::MainWindow(QWidget *parent) :
     }
 
     // Set model for all name combo boxes
-    QList<QComboBox*> allQComboBox = findChildren<QComboBox*>();
-    for (int i(0); i < allQComboBox.size(); ++i)
+    for (int i(0); i < m_charComboBoxVector->size(); i++)
     {
-        allQComboBox.at(i)->setModel(m_comboBoxModel);
+        m_charComboBoxVector->at(i)->setModel(m_charComboBoxModel);
+    }
+    for (int j(0); j < m_enemyComboBoxVector->size(); j++)
+    {
+        m_enemyComboBoxVector->at(j)->setModel(m_enemyComboBoxModel);
     }
 }
 
@@ -97,12 +119,34 @@ void MainWindow::createNewChar(QString charType)
     QString name = m_addCharDialog->m_charStatBox->getStats()->value("Name")->displayText();
     if (dialogReturn == QDialog::Accepted && !name.isEmpty())
     {
-        // Add the created statBox to the respecting vector depending on char/enemy and add it to the general Vector
-        if (charType == "Character"){m_charVector->push_back(m_charStatBox);}
-        else                        {m_enemyVector->push_back(m_charStatBox);}
+        if (charType == "Character")
+        {
+            // Create the character
+            m_newChar = new Character("Character", "Yuffie");
 
-        // Populate the model for combo boxes
-        QStandardItem *item = new QStandardItem(name);
-        m_comboBoxModel->appendRow(item);
+            // Fill character's stats
+            //m_newChar->m_name = name;
+
+            // Store the character
+            m_charVector->push_back(m_newChar);
+
+            // Populate the model for char combo boxes
+            QStandardItem *item = new QStandardItem(name);
+            m_charComboBoxModel->appendRow(item);
+        }
+        else
+        {
+            // Create the enemy
+            m_newChar = new Character("Enemy", "Sephiroth");
+
+            // Store the enemy
+            m_enemyVector->push_back(m_newChar);
+
+            // Populate the model for enemy combo boxes
+            QStandardItem *item = new QStandardItem(name);
+            m_enemyComboBoxModel->appendRow(item);
+        }
     }
 }
+
+//
