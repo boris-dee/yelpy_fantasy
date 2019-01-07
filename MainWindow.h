@@ -37,6 +37,8 @@ private slots:
     void displayEnemyStats1(QString enemyName);
     void displayEnemyStats2(QString enemyName);
 
+    void on_addWeaponButton_clicked();
+
 private:
     int m_nPlayers = 4;
     QString m_tableName;

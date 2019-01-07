@@ -14,11 +14,11 @@ class AddCharDialog : public QDialog
 public:
     explicit AddCharDialog(QString charType, QWidget *parent = nullptr);
 
+    CharStatBox* getCharStatBox() const;
+
 private:
     QDialog *m_dialogBox;
     CharStatBox *m_charStatBox;
-
-friend class MainWindow;
 };
 
 #endif // ADDCHARDIALOG_H

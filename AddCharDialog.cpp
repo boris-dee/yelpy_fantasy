@@ -40,3 +40,8 @@ AddCharDialog::AddCharDialog(QString charType, QWidget *parent) : QDialog(parent
     QObject::connect(cancelButton, SIGNAL(clicked()), this, SLOT(reject()));
     QObject::connect(saveCharButton, SIGNAL(clicked()), this, SLOT(accept()));
 }
+
+CharStatBox* AddCharDialog::getCharStatBox() const
+{
+    return m_charStatBox;
+}

@@ -108,12 +108,14 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_addCharButton_clicked(){createNewChar("Character");}
 
+void MainWindow::on_addWeaponButton_clicked(){createNewChar("Weapon");}
+
+void MainWindow::on_addEnemyButton_clicked(){createNewChar("Enemy");}
+
 void MainWindow::on_exitButton_clicked()
 {
     MainWindow::close();
 }
-
-void MainWindow::on_addEnemyButton_clicked(){createNewChar("Enemy");}
 
 void MainWindow::on_newButton_clicked()
 {
@@ -141,17 +143,17 @@ void MainWindow::createNewChar(QString charType)
     int dialogReturn = m_addCharDialog->exec();
 
     // Gather all character's stats
-    QString name      = m_addCharDialog->m_charStatBox->getStats()->value("Name")->displayText();
-    QString level     = m_addCharDialog->m_charStatBox->getStats()->value("Level")->displayText();
-    QString hp        = m_addCharDialog->m_charStatBox->getStats()->value("HP")->displayText();
-    QString mp        = m_addCharDialog->m_charStatBox->getStats()->value("MP")->displayText();
-    QString strength  = m_addCharDialog->m_charStatBox->getStats()->value("Strength")->displayText();
-    QString vitality  = m_addCharDialog->m_charStatBox->getStats()->value("Vitality")->displayText();
-    QString magic     = m_addCharDialog->m_charStatBox->getStats()->value("Magic")->displayText();
-    QString spirit    = m_addCharDialog->m_charStatBox->getStats()->value("Spirit")->displayText();
-    QString dexterity = m_addCharDialog->m_charStatBox->getStats()->value("Dexterity")->displayText();
-    QString chance    = m_addCharDialog->m_charStatBox->getStats()->value("Chance")->displayText();
-    QString attack    = m_addCharDialog->m_charStatBox->getStats()->value("Attack")->displayText();
+    QString name      = m_addCharDialog->getCharStatBox()->getStats()->value("Name")->displayText();
+    QString level     = m_addCharDialog->getCharStatBox()->getStats()->value("Level")->displayText();
+    QString hp        = m_addCharDialog->getCharStatBox()->getStats()->value("HP")->displayText();
+    QString mp        = m_addCharDialog->getCharStatBox()->getStats()->value("MP")->displayText();
+    QString strength  = m_addCharDialog->getCharStatBox()->getStats()->value("Strength")->displayText();
+    QString vitality  = m_addCharDialog->getCharStatBox()->getStats()->value("Vitality")->displayText();
+    QString magic     = m_addCharDialog->getCharStatBox()->getStats()->value("Magic")->displayText();
+    QString spirit    = m_addCharDialog->getCharStatBox()->getStats()->value("Spirit")->displayText();
+    QString dexterity = m_addCharDialog->getCharStatBox()->getStats()->value("Dexterity")->displayText();
+    QString chance    = m_addCharDialog->getCharStatBox()->getStats()->value("Chance")->displayText();
+    QString attack    = m_addCharDialog->getCharStatBox()->getStats()->value("Attack")->displayText();
 
     if (dialogReturn == QDialog::Accepted && !name.isEmpty())
     {

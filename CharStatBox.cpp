@@ -215,10 +215,6 @@ CharStatBox::CharStatBox(QString charType, bool dialog, QWidget *parent) : QWidg
             lowerGrid->addWidget(m_hpEdit, 2, 1);
             lowerGrid->addWidget(mpLabel, 3, 0);
             lowerGrid->addWidget(m_mpEdit, 3, 1);
-            lowerGrid->addWidget(weaponLabel, 4, 0);
-            lowerGrid->addWidget(weaponComboBox, 4, 1, 1, 3);
-            lowerGrid->addWidget(armorLabel, 5, 0);
-            lowerGrid->addWidget(armorComboBox, 5, 1, 1, 3);
             lowerGrid->addWidget(strengthLabel, 1, 3);
             lowerGrid->addWidget(m_strengthEdit, 1, 4);
             lowerGrid->addWidget(vitalityLabel, 2, 3);
@@ -231,6 +227,13 @@ CharStatBox::CharStatBox(QString charType, bool dialog, QWidget *parent) : QWidg
             lowerGrid->addWidget(m_dextEdit, 2, 6);
             lowerGrid->addWidget(chanceLabel, 3, 5);
             lowerGrid->addWidget(m_chanceEdit, 3, 6);
+        }
+        else if (charType == "Weapon")
+        {
+            lowerGrid->addWidget(nameLabel, 0, 0);
+            lowerGrid->addWidget(m_nameEdit, 0, 1);
+            lowerGrid->addWidget(magicLabel, 3, 3);
+            lowerGrid->addWidget(m_magicEdit, 3, 4);
         }
         else
         {

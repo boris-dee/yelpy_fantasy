@@ -25,20 +25,7 @@
     </item>
     <item row="2" column="1">
      <layout class="QGridLayout" name="gridLayout">
-      <item row="1" column="1">
-       <spacer name="verticalSpacer">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>40</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="1" column="0">
+      <item row="0" column="0">
        <widget class="QGroupBox" name="groupBox">
         <property name="title">
          <string>Battle Scene</string>
@@ -52,7 +39,7 @@
       <item>
        <widget class="QPushButton" name="addCharButton">
         <property name="enabled">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
         <property name="toolTip">
          <string>Add a Character</string>
@@ -75,7 +62,7 @@
       <item>
        <widget class="QPushButton" name="addWeaponButton">
         <property name="enabled">
-         <bool>false</bool>
+         <bool>true</bool>
         </property>
         <property name="toolTip">
          <string>Add a Weapon</string>
@@ -230,7 +217,7 @@
       <item>
        <widget class="QPushButton" name="addEnemyButton">
         <property name="enabled">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
         <property name="toolTip">
          <string>Add an Enemy</string>
