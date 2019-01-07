@@ -52,7 +52,7 @@
       <item>
        <widget class="QPushButton" name="addCharButton">
         <property name="enabled">
-         <bool>false</bool>
+         <bool>true</bool>
         </property>
         <property name="toolTip">
          <string>Add a Character</string>
@@ -154,7 +154,7 @@
       <item>
        <widget class="QPushButton" name="saveButton">
         <property name="enabled">
-         <bool>false</bool>
+         <bool>true</bool>
         </property>
         <property name="toolTip">
          <string>Save Table</string>
@@ -230,7 +230,7 @@
       <item>
        <widget class="QPushButton" name="addEnemyButton">
         <property name="enabled">
-         <bool>false</bool>
+         <bool>true</bool>
         </property>
         <property name="toolTip">
          <string>Add an Enemy</string>

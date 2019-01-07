@@ -6,9 +6,6 @@
 #include <QInputDialog>
 #include <QString>
 
-// === Debug ===
-#include <iostream>
-
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -19,13 +16,30 @@ MainWindow::MainWindow(QWidget *parent) :
     m_charComboBoxModel = new QStandardItemModel;
     m_enemyComboBoxModel = new QStandardItemModel;
 
-    // Create storage vector for char/enemy
+    // Create storage vector for char/enemy and build the AllChar vector,
+    // which stores all characters
     m_charVector = new QVector<Character*>;
     m_enemyVector = new QVector<Character*>;
+    m_allCharVector = new QVector<QVector<Character*>*>;
+    m_allCharVector->push_back(m_charVector);
+    m_allCharVector->push_back(m_enemyVector);
+
+    // Create blank enemy for combo box purpose
+    m_newChar = new Character("Enemy");
+    m_enemyVector->push_back(m_newChar);
+    m_enemyComboBoxModel->appendRow(new QStandardItem(""));
 
     // Create storage vector for char/enemy combo boxes
     m_charComboBoxVector = new QVector<QComboBox*>;
     m_enemyComboBoxVector = new QVector<QComboBox*>;
+
+    // Create storage vector for char/enemy stat boxes and build the AllStatBox vector,
+    // which contains all stat boxes
+    m_charStatBoxVector = new QVector<CharStatBox*>;
+    m_enemyStatBoxVector = new QVector<CharStatBox*>;
+    m_allStatBoxVector = new QVector<QVector<CharStatBox*>*>;
+    m_allStatBoxVector->push_back(m_charStatBoxVector);
+    m_allStatBoxVector->push_back(m_enemyStatBoxVector);
 
     // Display character's stat boxes
     for (int iplayer(0); iplayer < m_nPlayers; iplayer++)
@@ -38,8 +52,8 @@ MainWindow::MainWindow(QWidget *parent) :
         // Save the combo box
         m_charComboBoxVector->push_back(m_charStatBox->getComboBox());
 
-        // Connect the combo box to the corresponding stat box
-        QObject::connect(m_charStatBox->getComboBox(), SIGNAL(currentTextChanged(QString)), m_charStatBox, SLOT(displayCharStats(QString)));
+        // Save the char stat box
+        m_charStatBoxVector->push_back(m_charStatBox);
     }
 
     // Display enemy's stat boxes
@@ -53,8 +67,8 @@ MainWindow::MainWindow(QWidget *parent) :
         // Save the combo box
         m_enemyComboBoxVector->push_back(m_charStatBox->getComboBox());
 
-        // Connect the combo box signal to the corresponding stat box slot
-        QObject::connect(m_charStatBox->getComboBox(), SIGNAL(currentIndexChanged(QString)), m_charStatBox, SLOT(displayEnemyStats(QString)));
+        // Save the enemy stat box
+        m_enemyStatBoxVector->push_back(m_charStatBox);
     }
 
     // Set all QLineEdits to readonly and make them smaller
@@ -75,6 +89,16 @@ MainWindow::MainWindow(QWidget *parent) :
     {
         m_enemyComboBoxVector->at(j)->setModel(m_enemyComboBoxModel);
     }
+
+    /* Connect all combo box signal to the corresponding stat box slot.
+       Note: Since I cannot pass the combo box index in the signal,
+       I could not find a more elegant way to NOT create different slots. */
+    QObject::connect(m_charStatBoxVector->at(0)->getComboBox(), SIGNAL(currentIndexChanged(QString)), this, SLOT(displayCharStats1(QString)));
+    QObject::connect(m_charStatBoxVector->at(1)->getComboBox(), SIGNAL(currentIndexChanged(QString)), this, SLOT(displayCharStats2(QString)));
+    QObject::connect(m_charStatBoxVector->at(2)->getComboBox(), SIGNAL(currentIndexChanged(QString)), this, SLOT(displayCharStats3(QString)));
+    QObject::connect(m_charStatBoxVector->at(3)->getComboBox(), SIGNAL(currentIndexChanged(QString)), this, SLOT(displayCharStats4(QString)));
+    QObject::connect(m_enemyStatBoxVector->at(0)->getComboBox(), SIGNAL(currentIndexChanged(QString)), this, SLOT(displayEnemyStats1(QString)));
+    QObject::connect(m_enemyStatBoxVector->at(1)->getComboBox(), SIGNAL(currentIndexChanged(QString)), this, SLOT(displayEnemyStats2(QString)));
 }
 
 MainWindow::~MainWindow()
@@ -116,17 +140,28 @@ void MainWindow::createNewChar(QString charType)
     m_addCharDialog->setWindowTitle(windowTitle);
     int dialogReturn = m_addCharDialog->exec();
 
-    QString name = m_addCharDialog->m_charStatBox->getStats()->value("Name")->displayText();
+    // Gather all character's stats
+    QString name      = m_addCharDialog->m_charStatBox->getStats()->value("Name")->displayText();
+    QString level     = m_addCharDialog->m_charStatBox->getStats()->value("Level")->displayText();
+    QString hp        = m_addCharDialog->m_charStatBox->getStats()->value("HP")->displayText();
+    QString mp        = m_addCharDialog->m_charStatBox->getStats()->value("MP")->displayText();
+    QString strength  = m_addCharDialog->m_charStatBox->getStats()->value("Strength")->displayText();
+    QString vitality  = m_addCharDialog->m_charStatBox->getStats()->value("Vitality")->displayText();
+    QString magic     = m_addCharDialog->m_charStatBox->getStats()->value("Magic")->displayText();
+    QString spirit    = m_addCharDialog->m_charStatBox->getStats()->value("Spirit")->displayText();
+    QString dexterity = m_addCharDialog->m_charStatBox->getStats()->value("Dexterity")->displayText();
+    QString chance    = m_addCharDialog->m_charStatBox->getStats()->value("Chance")->displayText();
+    QString attack    = m_addCharDialog->m_charStatBox->getStats()->value("Attack")->displayText();
+
     if (dialogReturn == QDialog::Accepted && !name.isEmpty())
     {
+        // Create the character/enemy
+        m_newChar = new Character(charType, name, level, hp, mp, strength,
+                                  vitality, magic, spirit, dexterity, chance,
+                                  attack);
+
         if (charType == "Character")
         {
-            // Create the character
-            m_newChar = new Character("Character", "Yuffie");
-
-            // Fill character's stats
-            //m_newChar->m_name = name;
-
             // Store the character
             m_charVector->push_back(m_newChar);
 
@@ -136,9 +171,6 @@ void MainWindow::createNewChar(QString charType)
         }
         else
         {
-            // Create the enemy
-            m_newChar = new Character("Enemy", "Sephiroth");
-
             // Store the enemy
             m_enemyVector->push_back(m_newChar);
 
@@ -149,4 +181,50 @@ void MainWindow::createNewChar(QString charType)
     }
 }
 
-//
+void MainWindow::displayCharStats1(QString charName){fillStatBox(0, "Character", charName);}
+void MainWindow::displayCharStats2(QString charName){fillStatBox(1, "Character", charName);}
+void MainWindow::displayCharStats3(QString charName){fillStatBox(2, "Character", charName);}
+void MainWindow::displayCharStats4(QString charName){fillStatBox(3, "Character", charName);}
+void MainWindow::displayEnemyStats1(QString enemyName){fillStatBox(0, "Enemy", enemyName);}
+void MainWindow::displayEnemyStats2(QString enemyName){fillStatBox(1, "Enemy", enemyName);}
+
+void MainWindow::fillStatBox(int i, QString charType, QString charName)
+{
+    int itype(0);
+    if (charType == "Enemy"){itype = 1;}
+
+    // Find the character in the storage vector
+    for (int it(0); it < m_allCharVector->at(itype)->size(); it++)
+    {
+        if(m_allCharVector->at(itype)->at(it)->getStats()->value("Name") == charName)
+        {
+            // Get all stats
+            QString level     = m_allCharVector->at(itype)->at(it)->getStats()->value("Level");
+            QString hp        = m_allCharVector->at(itype)->at(it)->getStats()->value("HP");
+            QString hpMax     = m_allCharVector->at(itype)->at(it)->getStats()->value("HPMax");
+            QString mp        = m_allCharVector->at(itype)->at(it)->getStats()->value("MP");
+            QString mpMax     = m_allCharVector->at(itype)->at(it)->getStats()->value("MPMax");
+            QString strength  = m_allCharVector->at(itype)->at(it)->getStats()->value("Strength");
+            QString vitality  = m_allCharVector->at(itype)->at(it)->getStats()->value("Vitality");
+            QString magic     = m_allCharVector->at(itype)->at(it)->getStats()->value("Magic");
+            QString spirit    = m_allCharVector->at(itype)->at(it)->getStats()->value("Spirit");
+            QString dexterity = m_allCharVector->at(itype)->at(it)->getStats()->value("Dexterity");
+            QString chance    = m_allCharVector->at(itype)->at(it)->getStats()->value("Chance");
+            QString attack    = m_allCharVector->at(itype)->at(it)->getStats()->value("Attack");
+
+            // Fill stat box
+            m_allStatBoxVector->at(itype)->at(i)->getStats()->value("Level")->setText(level);
+            m_allStatBoxVector->at(itype)->at(i)->getStats()->value("HP")->setText(hp);
+            m_allStatBoxVector->at(itype)->at(i)->getStats()->value("HPMax")->setText(hpMax);
+            m_allStatBoxVector->at(itype)->at(i)->getStats()->value("MP")->setText(mp);
+            m_allStatBoxVector->at(itype)->at(i)->getStats()->value("MPMax")->setText(mpMax);
+            m_allStatBoxVector->at(itype)->at(i)->getStats()->value("Strength")->setText(strength);
+            m_allStatBoxVector->at(itype)->at(i)->getStats()->value("Vitality")->setText(vitality);
+            m_allStatBoxVector->at(itype)->at(i)->getStats()->value("Magic")->setText(magic);
+            m_allStatBoxVector->at(itype)->at(i)->getStats()->value("Spirit")->setText(spirit);
+            m_allStatBoxVector->at(itype)->at(i)->getStats()->value("Dexterity")->setText(dexterity);
+            m_allStatBoxVector->at(itype)->at(i)->getStats()->value("Chance")->setText(chance);
+            m_allStatBoxVector->at(itype)->at(i)->getStats()->value("Attack")->setText(attack);
+        }
+    }
+}
