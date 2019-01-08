@@ -51,6 +51,10 @@ private slots:
     void updateStats3();
     void updateStats4();
 
+    void on_saveButton_clicked();
+
+    void on_loadButton_clicked();
+
 private:
     int m_nPlayers = 4, m_nEnemies = 2;
     QString m_tableName;

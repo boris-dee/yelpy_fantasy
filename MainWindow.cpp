@@ -1,8 +1,10 @@
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
 
+#include <QFileDialog>
 #include <QInputDialog>
 #include <QString>
+#include <QTextStream>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -198,14 +200,7 @@ void MainWindow::connectSignals()
 void MainWindow::on_addCharButton_clicked(){createNew("Character");}
 void MainWindow::on_addWeaponButton_clicked(){createNew("Weapon");}
 void MainWindow::on_addArmorButton_clicked(){createNew("Armor");}
-void MainWindow::on_addEnemyButton_clicked(){createNew("Enemy");}
 void MainWindow::on_addAccessoryButton_clicked(){createNew("Accessory");}
-
-void MainWindow::on_exitButton_clicked()
-{
-    MainWindow::close();
-}
-
 void MainWindow::on_newButton_clicked()
 {
     bool ok;
@@ -218,11 +213,32 @@ void MainWindow::on_newButton_clicked()
         ui->addArmorButton->setEnabled(true);
         ui->saveButton->setEnabled(true);
         ui->addEnemyButton->setEnabled(true);
+        ui->addAccessoryButton->setEnabled(true);
 
         m_windowTitle = "Yelpy Fantasy: " + m_tableName;
         setWindowTitle(m_windowTitle);
     }
 }
+void MainWindow::on_saveButton_clicked(){}
+void MainWindow::on_loadButton_clicked()
+{
+    // Open the file browser which returns the file path
+    QString filePath = QFileDialog::getOpenFileName(this, "Open File", QString(), "SAV Files (*.sav)");
+
+    // If user has selected a file, do the following:
+    if (!filePath.isEmpty())
+    {
+        // Enable all buttons
+        ui->addCharButton->setEnabled(true);
+        ui->addWeaponButton->setEnabled(true);
+        ui->addArmorButton->setEnabled(true);
+        ui->saveButton->setEnabled(true);
+        ui->addEnemyButton->setEnabled(true);
+        ui->addAccessoryButton->setEnabled(true);
+    }
+}
+void MainWindow::on_exitButton_clicked(){MainWindow::close();}
+void MainWindow::on_addEnemyButton_clicked(){createNew("Enemy");}
 
 void MainWindow::createNew(QString newType)
 {

@@ -39,7 +39,7 @@
       <item>
        <widget class="QPushButton" name="addCharButton">
         <property name="enabled">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
         <property name="toolTip">
          <string>Add a Character</string>
@@ -62,7 +62,7 @@
       <item>
        <widget class="QPushButton" name="addWeaponButton">
         <property name="enabled">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
         <property name="toolTip">
          <string>Add a Weapon</string>
@@ -85,7 +85,7 @@
       <item>
        <widget class="QPushButton" name="addArmorButton">
         <property name="enabled">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
         <property name="toolTip">
          <string>Add an Armor</string>
@@ -108,7 +108,7 @@
       <item>
        <widget class="QPushButton" name="addAccessoryButton">
         <property name="enabled">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
         <property name="toolTip">
          <string>Add an Accessory</string>
@@ -164,7 +164,7 @@
       <item>
        <widget class="QPushButton" name="saveButton">
         <property name="enabled">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
         <property name="toolTip">
          <string>Save Table</string>
@@ -240,7 +240,7 @@
       <item>
        <widget class="QPushButton" name="addEnemyButton">
         <property name="enabled">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
         <property name="toolTip">
          <string>Add an Enemy</string>
