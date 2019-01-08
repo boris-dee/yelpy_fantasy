@@ -14,7 +14,10 @@ public:
     explicit CharStatBox(QString charType, bool dialog, QWidget *parent = nullptr);
 
     QMap<QString, QLineEdit*>* getStats() const;
-    QComboBox* getComboBox() const;
+    QComboBox* getNameComboBox() const;
+    QComboBox* getArmorComboBox() const;
+    QComboBox* getWeaponComboBox() const;
+    QComboBox* getAccessoryComboBox() const;
 
 private:
     QMap<QString, QLineEdit*> *m_statBundle;
@@ -23,7 +26,7 @@ private:
     QLineEdit *m_attackEdit, *m_attackPercentEdit, *m_defenseEdit, *m_defensePercentEdit;
     QLineEdit *m_magAttackEdit, *m_magAttPercentEdit, *m_magDefenseEdit, *m_magDefPercentEdit;
     QLineEdit *m_precisionEdit, *m_critHitPercentEdit;
-    QComboBox *m_nameComboBox;
+    QComboBox *m_nameComboBox, *m_weaponComboBox, *m_armorComboBox, *m_accessoryComboBox;
 };
 
 #endif // CHARSTATBOX_H
