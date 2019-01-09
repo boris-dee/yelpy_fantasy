@@ -10,12 +10,14 @@ Character::Character(QString type, QString name, QString level, QString hp, QStr
                      QString strength, QString vitality, QString magic, QString spirit,
                      QString dexterity, QString chance, QString attack, QString attackPercent,
                      QString magAttack, QString magAttackPercent, QString critHitPercent,
-                     QString defense, QString defensePercent, QString magDefense, QString magDefPercent) :
+                     QString defense, QString defensePercent, QString magDefense, QString magDefPercent,
+                     QString weapon, QString armor, QString accessory) :
     m_type(type), m_name(name), m_level(level), m_hp(hp), m_mp(mp),
     m_strength(strength), m_vitality(vitality), m_magic(magic), m_spirit(spirit),
     m_dexterity(dexterity), m_chance(chance), m_attack(attack), m_attackPercent(attackPercent),
     m_magAttack(magAttack), m_magAttackPercent(magAttackPercent), m_critHitPercent(critHitPercent),
-    m_defense(defense), m_defensePercent(defensePercent), m_magDefense(magDefense), m_magDefPercent(magDefPercent)
+    m_defense(defense), m_defensePercent(defensePercent), m_magDefense(magDefense), m_magDefPercent(magDefPercent),
+    m_currentWeapon(weapon), m_currentArmor(armor), m_currentAccessory(accessory)
 {
     m_statBundle = new QMap<QString,QString>;
 
@@ -53,6 +55,9 @@ Character::Character(QString type, QString name, QString level, QString hp, QStr
     m_statBundle->insert("DefensePercent", m_defensePercent);
     m_statBundle->insert("MagAttack", m_magAttack);
     m_statBundle->insert("MagDefense", m_magDefense);
+    m_statBundle->insert("Weapon", m_currentWeapon);
+    m_statBundle->insert("Armor", m_currentArmor);
+    m_statBundle->insert("Accessory", m_currentAccessory);
 }
 
 QMap<QString, QString>* Character::getStats() const {return m_statBundle;}

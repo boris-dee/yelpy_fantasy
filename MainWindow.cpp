@@ -6,6 +6,8 @@
 #include <QString>
 #include <QTextStream>
 
+#include <iostream>
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -34,7 +36,7 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::initialization()
-{
+{    
     // Create models for char/enemy/weapon/armor name combo boxes
     m_charComboBoxModel = new QStandardItemModel;
     m_enemyComboBoxModel = new QStandardItemModel;
@@ -91,7 +93,7 @@ void MainWindow::initialization()
 void MainWindow::displayStatBoxes()
 {
     // Display character's stat boxes
-    for (int iplayer(0); iplayer < m_nPlayers; iplayer++)
+    for (int iplayer(0); iplayer < m_nPlayerStatBox; iplayer++)
     {
         m_charStatBox = new CharStatBox("Character", false);
         m_charStatBox->setMaximumWidth(800);
@@ -109,7 +111,7 @@ void MainWindow::displayStatBoxes()
     }
 
     // Display enemy's stat boxes
-    for (int ienemies(0); ienemies < m_nEnemies; ienemies++)
+    for (int ienemies(0); ienemies < m_nEnemyStatBox; ienemies++)
     {
         m_charStatBox = new CharStatBox("Enemy", false);
         m_charStatBox->setMaximumWidth(800);
@@ -197,14 +199,16 @@ void MainWindow::connectSignals()
     QObject::connect(m_accessoryComboBoxVector->at(3), SIGNAL(currentIndexChanged(QString)), this, SLOT(updateStats4()));
 }
 
-void MainWindow::on_addCharButton_clicked(){createNew("Character");}
-void MainWindow::on_addWeaponButton_clicked(){createNew("Weapon");}
-void MainWindow::on_addArmorButton_clicked(){createNew("Armor");}
-void MainWindow::on_addAccessoryButton_clicked(){createNew("Accessory");}
+void MainWindow::on_addCharButton_clicked(){newDialog("Character");}
+void MainWindow::on_addWeaponButton_clicked(){newDialog("Weapon");}
+void MainWindow::on_addArmorButton_clicked(){newDialog("Armor");}
+void MainWindow::on_addAccessoryButton_clicked(){newDialog("Accessory");}
+void MainWindow::on_addEnemyButton_clicked(){newDialog("Enemy");}
+
 void MainWindow::on_newButton_clicked()
 {
     bool ok;
-    QString m_tableName = QInputDialog::getText(this, tr(""), tr("Table Name:"), QLineEdit::Normal, QString(), &ok);
+    m_tableName = QInputDialog::getText(this, tr(""), tr("Table Name:"), QLineEdit::Normal, QString(), &ok);
 
     if (!m_tableName.isEmpty() && ok)
     {
@@ -219,15 +223,55 @@ void MainWindow::on_newButton_clicked()
         setWindowTitle(m_windowTitle);
     }
 }
-void MainWindow::on_saveButton_clicked(){}
+void MainWindow::on_saveButton_clicked()
+{
+    // First time the user is saving
+    if (!m_alreadySaved)
+    {
+        //Open the save dialog that returns the complete filepath
+        m_saveFilePath = QFileDialog::getSaveFileName(this, tr("Save file"), m_tableName + ".sav", tr("SAV files (*.sav)"));
+
+        // If user has selected a file, do the following:
+        if (!m_saveFilePath.isEmpty())
+        {
+            // Create the save file
+            m_saveFile = new QFile(m_saveFilePath);
+            if (!m_saveFile->open(QIODevice::WriteOnly | QIODevice::Text)){return;}
+
+            // Write everything needed
+            writeToFile();
+
+            // Close file
+            m_saveFile->close();
+
+            // Indicate that the first time save is done
+            m_alreadySaved = true;
+        }
+
+    }
+    else
+    {
+        if (!m_saveFile->open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate)){return;}
+        writeToFile();
+        m_saveFile->close();
+    }
+}
 void MainWindow::on_loadButton_clicked()
 {
     // Open the file browser which returns the file path
-    QString filePath = QFileDialog::getOpenFileName(this, "Open File", QString(), "SAV Files (*.sav)");
+    m_loadFilePath = QFileDialog::getOpenFileName(this, tr("Open File"), QString(), tr("SAV Files (*.sav)"));
 
     // If user has selected a file, do the following:
-    if (!filePath.isEmpty())
+    if (!m_loadFilePath.isEmpty())
     {
+        // Create the load file
+        m_loadFile = new QFile(m_loadFilePath);
+        if (!m_loadFile->open(QIODevice::ReadOnly | QIODevice::Text))
+                return;
+
+        // Read everything needed
+        readFromFile();
+
         // Enable all buttons
         ui->addCharButton->setEnabled(true);
         ui->addWeaponButton->setEnabled(true);
@@ -238,9 +282,8 @@ void MainWindow::on_loadButton_clicked()
     }
 }
 void MainWindow::on_exitButton_clicked(){MainWindow::close();}
-void MainWindow::on_addEnemyButton_clicked(){createNew("Enemy");}
 
-void MainWindow::createNew(QString newType)
+void MainWindow::newDialog(QString newType)
 {
     m_addCharDialog = new AddCharDialog(newType, this);
     QString windowTitle = "Add " + newType;
@@ -267,68 +310,80 @@ void MainWindow::createNew(QString newType)
     QString magDefense        = m_addCharDialog->getCharStatBox()->getStats()->value("MagDefense")->displayText();
     QString defensePercent    = m_addCharDialog->getCharStatBox()->getStats()->value("DefensePercent")->displayText();
     QString magDefPercent     = m_addCharDialog->getCharStatBox()->getStats()->value("MagDefPercent")->displayText();
+    QString weapon            = "None";
+    QString armor             = "None";
+    QString accessory         = "None";
 
     if (dialogReturn == QDialog::Accepted && !name.isEmpty())
     {
-        // Create the character/enemy/weapon/armor/accessory
-        if (newType == "Character" || newType == "Enemy")
+        createNew(newType, name, level, hp, mp, strength, vitality, magic, spirit, dexterity, chance,
+                  attack, attackPercent, magAttack, magAttackPercent, critHitPercent,
+                  defense, defensePercent, magDefense, magDefPercent, weapon, armor, accessory);
+    }
+}
+
+void MainWindow::createNew(QString newType, QString name, QString level, QString hp, QString mp, QString strength, QString vitality, QString magic,
+                           QString spirit, QString dexterity, QString chance, QString attack, QString attackPercent, QString magAttack,
+                           QString magAttackPercent, QString critHitPercent, QString defense, QString defensePercent, QString magDefense, QString magDefPercent,
+                           QString weapon, QString armor, QString accessory)
+{
+    if (newType == "Character" || newType == "Enemy")
+    {
+        m_newChar = new Character(newType, name, level, hp, mp, strength, vitality, magic, spirit, dexterity, chance,
+                                  attack, attackPercent, magAttack, magAttackPercent, critHitPercent,
+                                  defense, defensePercent, magDefense, magDefPercent, weapon, armor, accessory);
+
+        if (newType == "Character")
         {
-            m_newChar = new Character(newType, name, level, hp, mp, strength, vitality, magic, spirit, dexterity, chance,
-                                      attack, attackPercent, magAttack, magAttackPercent, critHitPercent,
-                                      defense, defensePercent, magDefense, magDefPercent);
+            // Store the character
+            m_charVector->push_back(m_newChar);
 
-            if (newType == "Character")
-            {
-                // Store the character
-                m_charVector->push_back(m_newChar);
-
-                // Populate the model for char combo boxes
-                QStandardItem *item = new QStandardItem(name);
-                m_charComboBoxModel->appendRow(item);
-            }
-            else
-            {
-                // Store the enemy
-                m_enemyVector->push_back(m_newChar);
-
-                // Populate the model for enemy combo boxes
-                QStandardItem *item = new QStandardItem(name);
-                m_enemyComboBoxModel->appendRow(item);
-            }
-        }
-        else if (newType == "Weapon")
-        {
-            m_newWeapon = new Item(name, attack, attackPercent, magic, critHitPercent);
-
-            // Store the weapon
-            m_weaponVector->push_back(m_newWeapon);
-
-            // Populate the model for weapon combo boxes
+            // Populate the model for char combo boxes
             QStandardItem *item = new QStandardItem(name);
-            m_weaponComboBoxModel->appendRow(item);
-        }
-        else if (newType == "Armor")
-        {
-            m_newArmor = new Item(name, magic, defense, magDefense, defensePercent, magDefPercent, strength);
-
-            // Store the armor
-            m_armorVector->push_back(m_newArmor);
-
-            // Populate the model for armor combo boxes
-            QStandardItem *item = new QStandardItem(name);
-            m_armorComboBoxModel->appendRow(item);
+            m_charComboBoxModel->appendRow(item);
         }
         else
         {
-            m_newAccessory = new Item(name, magic, strength, hp, mp, vitality, dexterity, chance, spirit);
+            // Store the enemy
+            m_enemyVector->push_back(m_newChar);
 
-            // Store the armor
-            m_accessoryVector->push_back(m_newAccessory);
-
-            // Populate the model for armor combo boxes
+            // Populate the model for enemy combo boxes
             QStandardItem *item = new QStandardItem(name);
-            m_accessoryComboBoxModel->appendRow(item);
+            m_enemyComboBoxModel->appendRow(item);
         }
+    }
+    else if (newType == "Weapon")
+    {
+        m_newWeapon = new Item(name, attack, attackPercent, magic, critHitPercent);
+
+        // Store the weapon
+        m_weaponVector->push_back(m_newWeapon);
+
+        // Populate the model for weapon combo boxes
+        QStandardItem *item = new QStandardItem(name);
+        m_weaponComboBoxModel->appendRow(item);
+    }
+    else if (newType == "Armor")
+    {
+        m_newArmor = new Item(name, magic, defense, magDefense, defensePercent, magDefPercent, strength);
+
+        // Store the armor
+        m_armorVector->push_back(m_newArmor);
+
+        // Populate the model for armor combo boxes
+        QStandardItem *item = new QStandardItem(name);
+        m_armorComboBoxModel->appendRow(item);
+    }
+    else
+    {
+        m_newAccessory = new Item(name, magic, strength, hp, mp, vitality, dexterity, chance, spirit);
+
+        // Store the armor
+        m_accessoryVector->push_back(m_newAccessory);
+
+        // Populate the model for armor combo boxes
+        QStandardItem *item = new QStandardItem(name);
+        m_accessoryComboBoxModel->appendRow(item);
     }
 }
 
@@ -525,4 +580,127 @@ void MainWindow::updateStats(int i)
     m_charStatBoxVector->at(i)->getStats()->value("DefensePercent")->setText(charDefensePercent);
     m_charStatBoxVector->at(i)->getStats()->value("MagDefense")->setText(charMagDefense);
     m_charStatBoxVector->at(i)->getStats()->value("MagDefPercent")->setText(charMagDefPercent);
+}
+
+void MainWindow::writeToFile()
+{
+    // Create output text stream
+    QTextStream write(m_saveFile);
+
+    // Write Table name
+    write << "Table Name: " << m_tableName << "\n";
+
+    // Write number of characters, enemies, weapons, armors and accessories.
+    // Note the -1 because there's always a dummy class for combo box purposes.
+    m_nChar = QString::number(m_allCharVector->at(0)->size()-1);
+    m_nEnemies = QString::number(m_allCharVector->at(1)->size()-1);
+    m_nWeapons = QString::number(m_weaponVector->size()-1);
+    m_nArmors = QString::number(m_armorVector->size()-1);
+    m_nAccessories = QString::number(m_accessoryVector->size()-1);
+
+    write << "Characters: " << m_nChar << " | Enemies: " << m_nEnemies <<
+             " | Weapons: " << m_nWeapons << " | Armors: " << m_nArmors <<
+             " | Accessories: " << m_nAccessories << "\n";
+
+    // Write Characters
+    write << "========= CHARACTERS =========\n";
+    for (int charType(0); charType < m_allCharVector->size(); charType++)
+    {
+        for (int iChar(0); iChar < m_allCharVector->at(charType)->size(); iChar++)
+        {
+            // Get character's name
+            QString charName = m_allCharVector->at(charType)->at(iChar)->getStats()->value("Name");
+            if (!charName.isEmpty())
+            {
+                write << "Character " << iChar << ":\n";
+
+                // Navigate through the character's stat QMap
+                QMap<QString, QString> *charStat = m_allCharVector->at(charType)->at(iChar)->getStats();
+                QMap<QString, QString>::const_iterator it = charStat->constBegin();
+                while (it != charStat->constEnd())
+                {
+                    write << it.key() << ": " << it.value() << " | ";
+                    it++;
+                }
+
+                // Write the current weapon, armor, and accessory
+                for (int iComboBox(0); iComboBox < m_charComboBoxVector->size(); iComboBox++)
+                {
+                    // Find which combo box has this character.
+                    if (m_charComboBoxVector->at(iComboBox)->currentText() == charName)
+                    {
+                        // Get weapon, armor and accessory
+                        write << "Weapon: " << m_weaponComboBoxVector->at(iComboBox)->currentText();
+                        write << " | Armor: " << m_armorComboBoxVector->at(iComboBox)->currentText();
+                        write << " | Accessory: " << m_accessoryComboBoxVector->at(iComboBox)->currentText();
+                    }
+                }
+            }
+
+        }
+    }
+}
+
+void MainWindow::readFromFile()
+{
+    // Create input text stream
+    QTextStream read(m_loadFile);
+
+    // Get table Name
+    m_tableName = read.readLine().split(": ")[1];
+
+    // Get number of characters, enemies, weapons and accessories
+    QStringList lineList = read.readLine().split(" | ");
+    m_nChar = lineList[0].split(": ")[1];
+    m_nEnemies = lineList[1].split(": ")[1];
+    m_nWeapons = lineList[2].split(": ")[1];
+    m_nArmors = lineList[3].split(": ")[1];
+    m_nAccessories = lineList[4].split(": ")[1];
+
+    // Get all Characters
+    for (int iChar(0); iChar < m_nChar.toInt(); iChar++)
+    {
+        read.readLine();
+        read.readLine();
+        QStringList lineList = read.readLine().split(" | ");
+
+        // Create the stat bundle
+        QMap<QString, QString> *statBundle = new QMap<QString, QString>;
+
+        // Navigate through the stat list and populate the bundle
+        for (int iElement(0); iElement < lineList.size(); iElement++)
+        {
+            QStringList statPair = lineList.at(iElement).split(": ");
+            statBundle->insert(statPair[0],statPair[1]);
+        }
+
+        // Gather all character's stats
+        QString name              = statBundle->value("Name");
+        QString level             = statBundle->value("Level");
+        QString hp                = statBundle->value("HP");
+        QString mp                = statBundle->value("MP");
+        QString strength          = statBundle->value("Strength");
+        QString vitality          = statBundle->value("Vitality");
+        QString magic             = statBundle->value("Magic");
+        QString spirit            = statBundle->value("Spirit");
+        QString dexterity         = statBundle->value("Dexterity");
+        QString chance            = statBundle->value("Chance");
+        QString attack            = statBundle->value("Attack");
+        QString attackPercent     = statBundle->value("AttackPercent");
+        QString magAttack         = statBundle->value("MagAttack");
+        QString magAttackPercent  = statBundle->value("MagAttackPercent");
+        QString critHitPercent    = statBundle->value("CritHitPercent");
+        QString defense           = statBundle->value("Defense");
+        QString magDefense        = statBundle->value("MagDefense");
+        QString defensePercent    = statBundle->value("DefensePercent");
+        QString magDefPercent     = statBundle->value("MagDefPercent");
+        QString weapon            = statBundle->value("Weapon");
+        QString armor             = statBundle->value("Armor");
+        QString accessory         = statBundle->value("Accessory");
+
+        // Create Character
+        createNew("Character", name, level, hp, mp, strength, vitality, magic, spirit, dexterity, chance,
+                  attack, attackPercent, magAttack, magAttackPercent, critHitPercent,
+                  defense, defensePercent, magDefense, magDefPercent, weapon, armor, accessory);
+    }
 }

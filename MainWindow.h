@@ -6,6 +6,7 @@
 #include "Character.h"
 #include "Item.h"
 
+#include <QFile>
 #include <QMainWindow>
 #include <QStandardItemModel>
 #include <QVector>
@@ -27,9 +28,15 @@ public:
     void formatLineEdits();
     void setComboBoxModels();
     void connectSignals();
-    void createNew(QString newType);
+    void newDialog(QString newType);
+    void createNew(QString newType, QString name, QString level, QString hp, QString mp, QString strength, QString vitality, QString magic,
+                   QString spirit, QString dexterity, QString chance, QString attack, QString attackPercent, QString magAttack,
+                   QString magAttackPercent, QString critHitPercent, QString defense, QString defensePercent,
+                   QString magDefense, QString magDefPercent, QString weapon, QString armor, QString accessory);
     void fillStatBox(int i, QString charType, QString charName);
     void updateStats(int i);
+    void writeToFile();
+    void readFromFile();
 
 private slots:
     void on_addCharButton_clicked();
@@ -56,9 +63,11 @@ private slots:
     void on_loadButton_clicked();
 
 private:
-    int m_nPlayers = 4, m_nEnemies = 2;
-    QString m_tableName;
+    bool m_alreadySaved = false;
+    int m_nPlayerStatBox = 4, m_nEnemyStatBox = 2;
+    QString m_tableName, m_saveFilePath, m_loadFilePath;
     QString m_windowTitle;
+    QString m_nChar, m_nEnemies, m_nWeapons, m_nArmors, m_nAccessories;
 
     AddCharDialog *m_addCharDialog;
     CharStatBox *m_charStatBox;
@@ -81,6 +90,7 @@ private:
 
     Character *m_newChar;
     Item *m_newWeapon, *m_newArmor, *m_newAccessory;
+    QFile *m_saveFile, *m_loadFile;
 
     Ui::MainWindow *ui;
 };
