@@ -29,14 +29,17 @@ public:
     void setComboBoxModels();
     void connectSignals();
     void newDialog(QString newType);
-    void createNew(QString newType, QString name, QString level, QString hp, QString mp, QString strength, QString vitality, QString magic,
-                   QString spirit, QString dexterity, QString chance, QString attack, QString attackPercent, QString magAttack,
+    void createNew(QString newType, QString name, QString level, QString hp, QString mp, QString hpMax, QString mpMax, QString strength, QString vitality, QString magic,
+                   QString spirit, QString dexterity, QString luck, QString attack, QString attackPercent, QString magAttack,
                    QString magAttackPercent, QString critHitPercent, QString defense, QString defensePercent,
                    QString magDefense, QString magDefPercent, QString weapon, QString armor, QString accessory);
     void fillStatBox(int i, QString charType, QString charName);
     void updateStats(int i);
+    void checkHPMP(int i);
+    void setCurrentHPMP(int i);
     void writeToFile();
     void readFromFile();
+    void enableButtons();
 
 private slots:
     void on_addCharButton_clicked();
@@ -45,7 +48,7 @@ private slots:
     void on_addEnemyButton_clicked();
     void on_addAccessoryButton_clicked();
     void on_exitButton_clicked();
-    void on_newButton_clicked();
+    void on_newTableButton_clicked();
 
     void fillCharStatBox1(QString charName);
     void fillCharStatBox2(QString charName);
@@ -57,10 +60,20 @@ private slots:
     void updateStats2();
     void updateStats3();
     void updateStats4();
+    void checkHPMP1();
+    void checkHPMP2();
+    void checkHPMP3();
+    void checkHPMP4();
+    void setCurrentHPMP1();
+    void setCurrentHPMP2();
+    void setCurrentHPMP3();
+    void setCurrentHPMP4();
 
     void on_saveButton_clicked();
 
     void on_loadButton_clicked();
+
+    void on_fullRegenButton_clicked();
 
 private:
     bool m_alreadySaved = false;

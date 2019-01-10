@@ -42,4 +42,5 @@ FORMS += \
         MainWindow.ui
 
 RESOURCES += \
-    icons.qrc
+    icons.qrc \
+    data.qrc

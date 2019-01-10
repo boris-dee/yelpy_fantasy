@@ -10,5 +10,6 @@
         <file>icons/new.png</file>
         <file>icons/remove.png</file>
         <file>icons/add_accessory.png</file>
+        <file>icons/full_regen.png</file>
     </qresource>
 </RCC>

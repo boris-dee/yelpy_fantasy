@@ -22,7 +22,7 @@ public:
 private:
     QMap<QString, QLineEdit*> *m_statBundle;
     QLineEdit *m_nameEdit, *m_levelEdit, *m_hpEdit, *m_hpMaxEdit, *m_mpEdit, *m_mpMaxEdit;
-    QLineEdit *m_strengthEdit, *m_vitalityEdit, *m_magicEdit, *m_spiritEdit, *m_dextEdit, *m_chanceEdit;
+    QLineEdit *m_strengthEdit, *m_vitalityEdit, *m_magicEdit, *m_spiritEdit, *m_dextEdit, *m_luckEdit;
     QLineEdit *m_attackEdit, *m_attackPercentEdit, *m_defenseEdit, *m_defensePercentEdit;
     QLineEdit *m_magAttackEdit, *m_magAttPercentEdit, *m_magDefenseEdit, *m_magDefPercentEdit;
     QLineEdit *m_precisionEdit, *m_critHitPercentEdit;

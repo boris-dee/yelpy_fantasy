@@ -33,19 +33,19 @@ Item::Item(QString name, QString magic, QString defense, QString magDefense, QSt
 }
 
 // Accessory overload
-Item::Item(QString name, QString magic, QString strength, QString hp, QString mp, QString vitality, QString dexterity, QString chance, QString spirit) :
-    m_name(name), m_magic(magic), m_strength(strength), m_hp(hp), m_mp(mp), m_vitality(vitality),
-    m_dexterity(dexterity), m_chance(chance), m_spirit(spirit)
+Item::Item(QString name, QString magic, QString strength, QString hpMax, QString mpMax, QString vitality, QString dexterity, QString luck, QString spirit) :
+    m_name(name), m_magic(magic), m_strength(strength), m_hpMax(hpMax), m_mpMax(mpMax), m_vitality(vitality),
+    m_dexterity(dexterity), m_luck(luck), m_spirit(spirit)
 {
     m_statBundle = new QMap<QString,QString>;
     m_statBundle->insert("Name", m_name);
     m_statBundle->insert("Magic", m_magic);
     m_statBundle->insert("Strength", m_strength);
-    m_statBundle->insert("HP", m_hp);
-    m_statBundle->insert("MP", m_mp);
+    m_statBundle->insert("HPMax", m_hpMax);
+    m_statBundle->insert("MPMax", m_mpMax);
     m_statBundle->insert("Vitality", m_vitality);
     m_statBundle->insert("Dexterity", m_dexterity);
-    m_statBundle->insert("Chance", m_chance);
+    m_statBundle->insert("Luck", m_luck);
     m_statBundle->insert("Spirit", m_spirit);
 }
 

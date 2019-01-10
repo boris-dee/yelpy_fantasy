@@ -198,6 +198,26 @@ void MainWindow::connectSignals()
     QObject::connect(m_accessoryComboBoxVector->at(1), SIGNAL(currentIndexChanged(QString)), this, SLOT(updateStats2()));
     QObject::connect(m_accessoryComboBoxVector->at(2), SIGNAL(currentIndexChanged(QString)), this, SLOT(updateStats3()));
     QObject::connect(m_accessoryComboBoxVector->at(3), SIGNAL(currentIndexChanged(QString)), this, SLOT(updateStats4()));
+
+    QObject::connect(m_charStatBoxVector->at(0)->getStats()->value("HPMax"), SIGNAL(textChanged(QString)), this, SLOT(checkHPMP1()));
+    QObject::connect(m_charStatBoxVector->at(1)->getStats()->value("HPMax"), SIGNAL(textChanged(QString)), this, SLOT(checkHPMP2()));
+    QObject::connect(m_charStatBoxVector->at(2)->getStats()->value("HPMax"), SIGNAL(textChanged(QString)), this, SLOT(checkHPMP3()));
+    QObject::connect(m_charStatBoxVector->at(3)->getStats()->value("HPMax"), SIGNAL(textChanged(QString)), this, SLOT(checkHPMP4()));
+
+    QObject::connect(m_charStatBoxVector->at(0)->getStats()->value("MPMax"), SIGNAL(textChanged(QString)), this, SLOT(checkHPMP1()));
+    QObject::connect(m_charStatBoxVector->at(1)->getStats()->value("MPMax"), SIGNAL(textChanged(QString)), this, SLOT(checkHPMP2()));
+    QObject::connect(m_charStatBoxVector->at(2)->getStats()->value("MPMax"), SIGNAL(textChanged(QString)), this, SLOT(checkHPMP3()));
+    QObject::connect(m_charStatBoxVector->at(3)->getStats()->value("MPMax"), SIGNAL(textChanged(QString)), this, SLOT(checkHPMP4()));
+
+    QObject::connect(m_charStatBoxVector->at(0)->getStats()->value("HP"), SIGNAL(textChanged(QString)), this, SLOT(setCurrentHPMP1()));
+    QObject::connect(m_charStatBoxVector->at(1)->getStats()->value("HP"), SIGNAL(textChanged(QString)), this, SLOT(setCurrentHPMP2()));
+    QObject::connect(m_charStatBoxVector->at(2)->getStats()->value("HP"), SIGNAL(textChanged(QString)), this, SLOT(setCurrentHPMP3()));
+    QObject::connect(m_charStatBoxVector->at(3)->getStats()->value("HP"), SIGNAL(textChanged(QString)), this, SLOT(setCurrentHPMP4()));
+
+    QObject::connect(m_charStatBoxVector->at(0)->getStats()->value("MP"), SIGNAL(textChanged(QString)), this, SLOT(setCurrentHPMP1()));
+    QObject::connect(m_charStatBoxVector->at(1)->getStats()->value("MP"), SIGNAL(textChanged(QString)), this, SLOT(setCurrentHPMP2()));
+    QObject::connect(m_charStatBoxVector->at(2)->getStats()->value("MP"), SIGNAL(textChanged(QString)), this, SLOT(setCurrentHPMP3()));
+    QObject::connect(m_charStatBoxVector->at(3)->getStats()->value("MP"), SIGNAL(textChanged(QString)), this, SLOT(setCurrentHPMP4()));
 }
 
 void MainWindow::on_addCharButton_clicked(){newDialog("Character");}
@@ -206,22 +226,19 @@ void MainWindow::on_addArmorButton_clicked(){newDialog("Armor");}
 void MainWindow::on_addAccessoryButton_clicked(){newDialog("Accessory");}
 void MainWindow::on_addEnemyButton_clicked(){newDialog("Enemy");}
 
-void MainWindow::on_newButton_clicked()
+void MainWindow::on_newTableButton_clicked()
 {
     bool ok;
     m_tableName = QInputDialog::getText(this, tr(""), tr("Table Name:"), QLineEdit::Normal, QString(), &ok);
 
     if (!m_tableName.isEmpty() && ok)
     {
-        ui->addCharButton->setEnabled(true);
-        ui->addWeaponButton->setEnabled(true);
-        ui->addArmorButton->setEnabled(true);
-        ui->saveButton->setEnabled(true);
-        ui->addEnemyButton->setEnabled(true);
-        ui->addAccessoryButton->setEnabled(true);
-
+        enableButtons();
         m_windowTitle = "Yelpy Fantasy: " + m_tableName;
         setWindowTitle(m_windowTitle);
+
+        ui->newTableButton->setDisabled(true);
+        ui->loadButton->setDisabled(true);
     }
 }
 void MainWindow::on_saveButton_clicked()
@@ -276,18 +293,24 @@ void MainWindow::on_loadButton_clicked()
         m_loadFile->close();
 
         // Enable all buttons
-        ui->addCharButton->setEnabled(true);
-        ui->addWeaponButton->setEnabled(true);
-        ui->addArmorButton->setEnabled(true);
-        ui->saveButton->setEnabled(true);
-        ui->addEnemyButton->setEnabled(true);
-        ui->addAccessoryButton->setEnabled(true);
+        enableButtons();
 
         // Disable the new table button
-        ui->newButton->setEnabled(false);
+        ui->newTableButton->setEnabled(false);
     }
 }
 void MainWindow::on_exitButton_clicked(){MainWindow::close();}
+
+void MainWindow::enableButtons()
+{
+    ui->addCharButton->setEnabled(true);
+    ui->addWeaponButton->setEnabled(true);
+    ui->addArmorButton->setEnabled(true);
+    ui->saveButton->setEnabled(true);
+    ui->addEnemyButton->setEnabled(true);
+    ui->addAccessoryButton->setEnabled(true);
+    ui->fullRegenButton->setEnabled(true);
+}
 
 void MainWindow::newDialog(QString newType)
 {
@@ -296,46 +319,49 @@ void MainWindow::newDialog(QString newType)
     m_addCharDialog->setWindowTitle(windowTitle);
     int dialogReturn = m_addCharDialog->exec();
 
-    // Gather all character's stats
-    QString name              = m_addCharDialog->getCharStatBox()->getStats()->value("Name")->displayText();
-    QString level             = m_addCharDialog->getCharStatBox()->getStats()->value("Level")->displayText();
-    QString hp                = m_addCharDialog->getCharStatBox()->getStats()->value("HP")->displayText();
-    QString mp                = m_addCharDialog->getCharStatBox()->getStats()->value("MP")->displayText();
-    QString strength          = m_addCharDialog->getCharStatBox()->getStats()->value("Strength")->displayText();
-    QString vitality          = m_addCharDialog->getCharStatBox()->getStats()->value("Vitality")->displayText();
-    QString magic             = m_addCharDialog->getCharStatBox()->getStats()->value("Magic")->displayText();
-    QString spirit            = m_addCharDialog->getCharStatBox()->getStats()->value("Spirit")->displayText();
-    QString dexterity         = m_addCharDialog->getCharStatBox()->getStats()->value("Dexterity")->displayText();
-    QString chance            = m_addCharDialog->getCharStatBox()->getStats()->value("Chance")->displayText();
-    QString attack            = m_addCharDialog->getCharStatBox()->getStats()->value("Attack")->displayText();
-    QString attackPercent     = m_addCharDialog->getCharStatBox()->getStats()->value("AttackPercent")->displayText();
-    QString magAttack         = m_addCharDialog->getCharStatBox()->getStats()->value("MagAttack")->displayText();
-    QString magAttackPercent  = m_addCharDialog->getCharStatBox()->getStats()->value("MagAttackPercent")->displayText();
-    QString critHitPercent    = m_addCharDialog->getCharStatBox()->getStats()->value("CritHitPercent")->displayText();
-    QString defense           = m_addCharDialog->getCharStatBox()->getStats()->value("Defense")->displayText();
-    QString magDefense        = m_addCharDialog->getCharStatBox()->getStats()->value("MagDefense")->displayText();
-    QString defensePercent    = m_addCharDialog->getCharStatBox()->getStats()->value("DefensePercent")->displayText();
-    QString magDefPercent     = m_addCharDialog->getCharStatBox()->getStats()->value("MagDefPercent")->displayText();
-    QString weapon            = "None";
-    QString armor             = "None";
-    QString accessory         = "None";
+    QString name = m_addCharDialog->getCharStatBox()->getStats()->value("Name")->displayText();
 
     if (dialogReturn == QDialog::Accepted && !name.isEmpty())
     {
-        createNew(newType, name, level, hp, mp, strength, vitality, magic, spirit, dexterity, chance,
+        // Gather all character's stats
+        QString level             = m_addCharDialog->getCharStatBox()->getStats()->value("Level")->displayText();
+        QString hp                = m_addCharDialog->getCharStatBox()->getStats()->value("HPMax")->displayText();
+        QString mp                = m_addCharDialog->getCharStatBox()->getStats()->value("MPMax")->displayText();
+        QString hpMax             = m_addCharDialog->getCharStatBox()->getStats()->value("HPMax")->displayText();
+        QString mpMax             = m_addCharDialog->getCharStatBox()->getStats()->value("MPMax")->displayText();
+        QString strength          = m_addCharDialog->getCharStatBox()->getStats()->value("Strength")->displayText();
+        QString vitality          = m_addCharDialog->getCharStatBox()->getStats()->value("Vitality")->displayText();
+        QString magic             = m_addCharDialog->getCharStatBox()->getStats()->value("Magic")->displayText();
+        QString spirit            = m_addCharDialog->getCharStatBox()->getStats()->value("Spirit")->displayText();
+        QString dexterity         = m_addCharDialog->getCharStatBox()->getStats()->value("Dexterity")->displayText();
+        QString luck            = m_addCharDialog->getCharStatBox()->getStats()->value("Luck")->displayText();
+        QString attack            = m_addCharDialog->getCharStatBox()->getStats()->value("Attack")->displayText();
+        QString attackPercent     = m_addCharDialog->getCharStatBox()->getStats()->value("AttackPercent")->displayText();
+        QString magAttack         = m_addCharDialog->getCharStatBox()->getStats()->value("MagAttack")->displayText();
+        QString magAttackPercent  = m_addCharDialog->getCharStatBox()->getStats()->value("MagAttackPercent")->displayText();
+        QString critHitPercent    = m_addCharDialog->getCharStatBox()->getStats()->value("CritHitPercent")->displayText();
+        QString defense           = m_addCharDialog->getCharStatBox()->getStats()->value("Defense")->displayText();
+        QString magDefense        = m_addCharDialog->getCharStatBox()->getStats()->value("MagDefense")->displayText();
+        QString defensePercent    = m_addCharDialog->getCharStatBox()->getStats()->value("DefensePercent")->displayText();
+        QString magDefPercent     = m_addCharDialog->getCharStatBox()->getStats()->value("MagDefPercent")->displayText();
+        QString weapon            = "None";
+        QString armor             = "None";
+        QString accessory         = "None";
+
+        createNew(newType, name, level, hp, mp, hpMax, mpMax, strength, vitality, magic, spirit, dexterity, luck,
                   attack, attackPercent, magAttack, magAttackPercent, critHitPercent,
                   defense, defensePercent, magDefense, magDefPercent, weapon, armor, accessory);
     }
 }
 
-void MainWindow::createNew(QString newType, QString name, QString level, QString hp, QString mp, QString strength, QString vitality, QString magic,
-                           QString spirit, QString dexterity, QString chance, QString attack, QString attackPercent, QString magAttack,
+void MainWindow::createNew(QString newType, QString name, QString level, QString hp, QString mp, QString hpMax, QString mpMax, QString strength, QString vitality, QString magic,
+                           QString spirit, QString dexterity, QString luck, QString attack, QString attackPercent, QString magAttack,
                            QString magAttackPercent, QString critHitPercent, QString defense, QString defensePercent, QString magDefense, QString magDefPercent,
                            QString weapon, QString armor, QString accessory)
 {
     if (newType == "Character" || newType == "Enemy")
     {
-        m_newChar = new Character(newType, name, level, hp, mp, strength, vitality, magic, spirit, dexterity, chance,
+        m_newChar = new Character(newType, name, level, hp, mp, hpMax, mpMax, strength, vitality, magic, spirit, dexterity, luck,
                                   attack, attackPercent, magAttack, magAttackPercent, critHitPercent,
                                   defense, defensePercent, magDefense, magDefPercent, weapon, armor, accessory);
 
@@ -382,7 +408,7 @@ void MainWindow::createNew(QString newType, QString name, QString level, QString
     }
     else
     {
-        m_newAccessory = new Item(name, magic, strength, hp, mp, vitality, dexterity, chance, spirit);
+        m_newAccessory = new Item(name, magic, strength, hpMax, mpMax, vitality, dexterity, luck, spirit);
 
         // Store the armor
         m_accessoryVector->push_back(m_newAccessory);
@@ -406,6 +432,51 @@ void MainWindow::updateStats2(){updateStats(1);}
 void MainWindow::updateStats3(){updateStats(2);}
 void MainWindow::updateStats4(){updateStats(3);}
 
+void MainWindow::checkHPMP1(){checkHPMP(0);}
+void MainWindow::checkHPMP2(){checkHPMP(1);}
+void MainWindow::checkHPMP3(){checkHPMP(2);}
+void MainWindow::checkHPMP4(){checkHPMP(3);}
+
+void MainWindow::setCurrentHPMP1(){setCurrentHPMP(0);}
+void MainWindow::setCurrentHPMP2(){setCurrentHPMP(1);}
+void MainWindow::setCurrentHPMP3(){setCurrentHPMP(2);}
+void MainWindow::setCurrentHPMP4(){setCurrentHPMP(3);}
+
+void MainWindow::checkHPMP(int i)
+{
+    QString hpDisplay = m_charStatBoxVector->at(i)->getStats()->value("HP")->displayText();
+    QString hpMaxDisplay = m_charStatBoxVector->at(i)->getStats()->value("HPMax")->displayText();
+    QString mpDisplay = m_charStatBoxVector->at(i)->getStats()->value("MP")->displayText();
+    QString mpMaxDisplay = m_charStatBoxVector->at(i)->getStats()->value("MPMax")->displayText();
+
+    if (hpDisplay.toInt() > hpMaxDisplay.toInt())
+    {
+        m_charStatBoxVector->at(i)->getStats()->value("HP")->setText(hpMaxDisplay);
+    }
+    if (mpDisplay.toInt() > mpMaxDisplay.toInt())
+    {
+        m_charStatBoxVector->at(i)->getStats()->value("MP")->setText(mpMaxDisplay);
+    }
+}
+
+void MainWindow::setCurrentHPMP(int i)
+{
+    //Get character's name and new values of HP and MP
+    QString name = m_charComboBoxVector->at(i)->currentText();
+    QString hpDisplay = m_charStatBoxVector->at(i)->getStats()->value("HP")->displayText();
+    QString mpDisplay = m_charStatBoxVector->at(i)->getStats()->value("MP")->displayText();
+
+    //Loop on characters, find character and update new values of HP and MP
+    for (int iChar(0); iChar < m_charVector->size(); iChar++)
+    {
+        if (m_charVector->at(iChar)->getStats()->value("Name") == name)
+        {
+            m_charVector->at(iChar)->setStat("HP", hpDisplay);
+            m_charVector->at(iChar)->setStat("MP", mpDisplay);
+        }
+    }
+}
+
 void MainWindow::fillStatBox(int i, QString charType, QString charName)
 {
     int itype(0);
@@ -427,7 +498,7 @@ void MainWindow::fillStatBox(int i, QString charType, QString charName)
             QString magic           = m_allCharVector->at(itype)->at(it)->getStats()->value("Magic");
             QString spirit          = m_allCharVector->at(itype)->at(it)->getStats()->value("Spirit");
             QString dexterity       = m_allCharVector->at(itype)->at(it)->getStats()->value("Dexterity");
-            QString chance          = m_allCharVector->at(itype)->at(it)->getStats()->value("Chance");
+            QString luck          = m_allCharVector->at(itype)->at(it)->getStats()->value("Luck");
             QString attack          = m_allCharVector->at(itype)->at(it)->getStats()->value("Attack");
             QString attackPercent   = m_allCharVector->at(itype)->at(it)->getStats()->value("AttackPercent");
             QString magAttack       = m_allCharVector->at(itype)->at(it)->getStats()->value("MagAttack");
@@ -441,30 +512,42 @@ void MainWindow::fillStatBox(int i, QString charType, QString charName)
             QString armor           = m_allCharVector->at(itype)->at(it)->getStats()->value("Armor");
             QString accessory       = m_allCharVector->at(itype)->at(it)->getStats()->value("Accessory");
 
-            // Fill stat box
-            m_allStatBoxVector->at(itype)->at(i)->getStats()->value("Level")->setText(level);
-            m_allStatBoxVector->at(itype)->at(i)->getStats()->value("HP")->setText(hp);
-            m_allStatBoxVector->at(itype)->at(i)->getStats()->value("HPMax")->setText(hpMax);
-            m_allStatBoxVector->at(itype)->at(i)->getStats()->value("MP")->setText(mp);
-            m_allStatBoxVector->at(itype)->at(i)->getStats()->value("MPMax")->setText(mpMax);
-            m_allStatBoxVector->at(itype)->at(i)->getStats()->value("Strength")->setText(strength);
-            m_allStatBoxVector->at(itype)->at(i)->getStats()->value("Vitality")->setText(vitality);
-            m_allStatBoxVector->at(itype)->at(i)->getStats()->value("Magic")->setText(magic);
-            m_allStatBoxVector->at(itype)->at(i)->getStats()->value("Spirit")->setText(spirit);
-            m_allStatBoxVector->at(itype)->at(i)->getStats()->value("Dexterity")->setText(dexterity);
-            m_allStatBoxVector->at(itype)->at(i)->getStats()->value("Chance")->setText(chance);
-            m_allStatBoxVector->at(itype)->at(i)->getStats()->value("Attack")->setText(attack);
-            m_allStatBoxVector->at(itype)->at(i)->getStats()->value("AttackPercent")->setText(attackPercent);
-            m_allStatBoxVector->at(itype)->at(i)->getStats()->value("MagAttack")->setText(magAttack);
-            m_allStatBoxVector->at(itype)->at(i)->getStats()->value("MagAttackPercent")->setText(magAttackPercent);
-            m_allStatBoxVector->at(itype)->at(i)->getStats()->value("CritHitPercent")->setText(critHitPercent);
-            m_allStatBoxVector->at(itype)->at(i)->getStats()->value("Defense")->setText(defense);
-            m_allStatBoxVector->at(itype)->at(i)->getStats()->value("DefensePercent")->setText(defensePercent);
-            m_allStatBoxVector->at(itype)->at(i)->getStats()->value("MagDefense")->setText(magDefense);
-            m_allStatBoxVector->at(itype)->at(i)->getStats()->value("MagDefPercent")->setText(magDefPercent);
-            m_weaponComboBoxVector->at(i)->setCurrentText(weapon);
-            m_armorComboBoxVector->at(i)->setCurrentText(armor);
-            m_accessoryComboBoxVector->at(i)->setCurrentText(accessory);
+            // If character does not have any items (e.g. it is an enemy or a character who has just been created)
+            if (weapon == "None" && armor == "None" && accessory == "None")
+            {
+                m_allStatBoxVector->at(itype)->at(i)->getStats()->value("Level")->setText(level);
+                m_allStatBoxVector->at(itype)->at(i)->getStats()->value("HP")->setText(hp);
+                m_allStatBoxVector->at(itype)->at(i)->getStats()->value("HPMax")->setText(hpMax);
+                m_allStatBoxVector->at(itype)->at(i)->getStats()->value("MP")->setText(mp);
+                m_allStatBoxVector->at(itype)->at(i)->getStats()->value("MPMax")->setText(mpMax);
+                m_allStatBoxVector->at(itype)->at(i)->getStats()->value("Strength")->setText(strength);
+                m_allStatBoxVector->at(itype)->at(i)->getStats()->value("Vitality")->setText(vitality);
+                m_allStatBoxVector->at(itype)->at(i)->getStats()->value("Magic")->setText(magic);
+                m_allStatBoxVector->at(itype)->at(i)->getStats()->value("Spirit")->setText(spirit);
+                m_allStatBoxVector->at(itype)->at(i)->getStats()->value("Dexterity")->setText(dexterity);
+                m_allStatBoxVector->at(itype)->at(i)->getStats()->value("Luck")->setText(luck);
+                m_allStatBoxVector->at(itype)->at(i)->getStats()->value("Attack")->setText(attack);
+                m_allStatBoxVector->at(itype)->at(i)->getStats()->value("AttackPercent")->setText(attackPercent);
+                m_allStatBoxVector->at(itype)->at(i)->getStats()->value("MagAttack")->setText(magAttack);
+                m_allStatBoxVector->at(itype)->at(i)->getStats()->value("MagAttackPercent")->setText(magAttackPercent);
+                m_allStatBoxVector->at(itype)->at(i)->getStats()->value("CritHitPercent")->setText(critHitPercent);
+                m_allStatBoxVector->at(itype)->at(i)->getStats()->value("Defense")->setText(defense);
+                m_allStatBoxVector->at(itype)->at(i)->getStats()->value("DefensePercent")->setText(defensePercent);
+                m_allStatBoxVector->at(itype)->at(i)->getStats()->value("MagDefense")->setText(magDefense);
+                m_allStatBoxVector->at(itype)->at(i)->getStats()->value("MagDefPercent")->setText(magDefPercent);
+            }
+            else
+            {
+                // Use items to update most stats.
+                m_accessoryComboBoxVector->at(i)->setCurrentText(accessory);
+                m_weaponComboBoxVector->at(i)->setCurrentText(weapon);
+                m_armorComboBoxVector->at(i)->setCurrentText(armor);
+                m_allStatBoxVector->at(itype)->at(i)->getStats()->value("Level")->setText(level);
+                m_allStatBoxVector->at(itype)->at(i)->getStats()->value("HP")->setText(hp);
+                m_allStatBoxVector->at(itype)->at(i)->getStats()->value("MP")->setText(mp);
+                m_allStatBoxVector->at(itype)->at(i)->getStats()->value("MagAttack")->setText(magAttack);
+                m_allStatBoxVector->at(itype)->at(i)->getStats()->value("MagAttackPercent")->setText(magAttackPercent);
+            }
         }
     }
 }
@@ -475,11 +558,11 @@ void MainWindow::updateStats(int i)
     QString charName;
     QString charAttack, charAttackPercent, charMagic, charCritHitPercent, charStrength;
     QString charDefense, charDefensePercent, charMagDefense, charMagDefPercent;
-    QString charHP, charMP, charVitality, charSpirit, charDexterity, charChance;
+    QString charHP, charMP, charHPMax, charMPMax, charVitality, charSpirit, charDexterity, charLuck;
     QString weaponAttack, weaponAttackPercent, weaponMagic, weaponCritHitPercent;
     QString armorDefense, armorDefensePercent, armorMagDefense, armorMagDefPercent, armorMagic, armorStrength;
     QString accessoryMagic, accessoryStrength, accessoryHP, accessoryMP, accessoryVitality;
-    QString accessoryDexterity, accessoryChance, accessorySpirit;
+    QString accessoryDexterity, accessoryLuck, accessorySpirit;
 
     // Get weapon, armor, and accessory names in the current i-th stat box.
     QString weaponName = m_weaponComboBoxVector->at(i)->currentText();
@@ -497,7 +580,6 @@ void MainWindow::updateStats(int i)
             m_charVector->at(iChar)->setItems(weaponName, armorName, accessoryName);
         }
     }
-
 
     // Find the weapon in the weapons list
     for (int iWeapon(0); iWeapon < m_weaponVector->size(); iWeapon++)
@@ -535,20 +617,16 @@ void MainWindow::updateStats(int i)
             // Get relevant stats
             accessoryMagic = m_accessoryVector->at(iAccessory)->getStats()->value("Magic");
             accessoryStrength = m_accessoryVector->at(iAccessory)->getStats()->value("Strength");
-            accessoryHP = m_accessoryVector->at(iAccessory)->getStats()->value("HP");
-            accessoryMP = m_accessoryVector->at(iAccessory)->getStats()->value("MP");
+            accessoryHP = m_accessoryVector->at(iAccessory)->getStats()->value("HPMax");
+            accessoryMP = m_accessoryVector->at(iAccessory)->getStats()->value("MPMax");
             accessoryVitality = m_accessoryVector->at(iAccessory)->getStats()->value("Vitality");
             accessorySpirit = m_accessoryVector->at(iAccessory)->getStats()->value("Spirit");
             accessoryDexterity = m_accessoryVector->at(iAccessory)->getStats()->value("Dexterity");
-            accessoryChance = m_accessoryVector->at(iAccessory)->getStats()->value("Chance");
+            accessoryLuck = m_accessoryVector->at(iAccessory)->getStats()->value("Luck");
         }
     }
 
-    // Get the character's base values.
-    //   1. Find the corresponding character
-    charName = m_charComboBoxVector->at(i)->currentText();
-
-    //   2. Loop on characters and get the base stats values
+    //Loop on characters and get the base stats values
     for (int iChar(0); iChar < m_charVector->size(); iChar++)
     {
         if(m_charVector->at(iChar)->getStats()->value("Name") == charName)
@@ -564,10 +642,12 @@ void MainWindow::updateStats(int i)
             charMagDefPercent = m_charVector->at(iChar)->getStats()->value("MagDefPercent");
             charHP = m_charVector->at(iChar)->getStats()->value("HP");
             charMP = m_charVector->at(iChar)->getStats()->value("MP");
+            charHPMax = m_charVector->at(iChar)->getStats()->value("HPMax");
+            charMPMax = m_charVector->at(iChar)->getStats()->value("MPMax");
             charVitality = m_charVector->at(iChar)->getStats()->value("Vitality");
             charSpirit = m_charVector->at(iChar)->getStats()->value("Spirit");
             charDexterity = m_charVector->at(iChar)->getStats()->value("Dexterity");
-            charChance = m_charVector->at(iChar)->getStats()->value("Chance");
+            charLuck = m_charVector->at(iChar)->getStats()->value("Luck");
         }
     }
 
@@ -577,9 +657,9 @@ void MainWindow::updateStats(int i)
     charVitality = QString::number(charVitality.toInt() + accessoryVitality.toInt());
     charSpirit = QString::number(charSpirit.toInt() + accessorySpirit.toInt());
     charDexterity = QString::number(charDexterity.toInt() + accessoryDexterity.toInt());
-    charChance = QString::number(charChance.toInt() + accessoryChance.toInt());
-    charHP = QString::number(charHP.toInt() + accessoryHP.toInt());
-    charMP = QString::number(charMP.toInt() + accessoryMP.toInt());
+    charLuck = QString::number(charLuck.toInt() + accessoryLuck.toInt());
+    charHPMax = QString::number(charHPMax.toInt() + accessoryHP.toInt());
+    charMPMax = QString::number(charMPMax.toInt() + accessoryMP.toInt());
     charAttack = QString::number(charAttack.toInt() + weaponAttack.toInt());
     charAttackPercent = QString::number(charAttackPercent.toInt() + weaponAttackPercent.toInt());
     charCritHitPercent = QString::number(charCritHitPercent.toInt() + weaponCritHitPercent.toInt());
@@ -595,9 +675,9 @@ void MainWindow::updateStats(int i)
     m_charStatBoxVector->at(i)->getStats()->value("Vitality")->setText(charVitality);
     m_charStatBoxVector->at(i)->getStats()->value("Spirit")->setText(charSpirit);
     m_charStatBoxVector->at(i)->getStats()->value("Dexterity")->setText(charDexterity);
-    m_charStatBoxVector->at(i)->getStats()->value("Chance")->setText(charChance);
-    m_charStatBoxVector->at(i)->getStats()->value("HPMax")->setText(charHP);
-    m_charStatBoxVector->at(i)->getStats()->value("MPMax")->setText(charMP);
+    m_charStatBoxVector->at(i)->getStats()->value("Luck")->setText(charLuck);
+    m_charStatBoxVector->at(i)->getStats()->value("HPMax")->setText(charHPMax);
+    m_charStatBoxVector->at(i)->getStats()->value("MPMax")->setText(charMPMax);
     m_charStatBoxVector->at(i)->getStats()->value("Attack")->setText(charAttack);
     m_charStatBoxVector->at(i)->getStats()->value("AttackPercent")->setText(charAttackPercent);
     m_charStatBoxVector->at(i)->getStats()->value("CritHitPercent")->setText(charCritHitPercent);
@@ -732,13 +812,15 @@ void MainWindow::readFromFile()
             QString name              = statBundle->value("Name");
             QString level             = statBundle->value("Level");
             QString hp                = statBundle->value("HP");
+            QString hpMax             = statBundle->value("HPMax");
             QString mp                = statBundle->value("MP");
+            QString mpMax             = statBundle->value("MPMax");
             QString strength          = statBundle->value("Strength");
             QString vitality          = statBundle->value("Vitality");
             QString magic             = statBundle->value("Magic");
             QString spirit            = statBundle->value("Spirit");
             QString dexterity         = statBundle->value("Dexterity");
-            QString chance            = statBundle->value("Chance");
+            QString luck            = statBundle->value("Luck");
             QString attack            = statBundle->value("Attack");
             QString attackPercent     = statBundle->value("AttackPercent");
             QString magAttack         = statBundle->value("MagAttack");
@@ -753,9 +835,32 @@ void MainWindow::readFromFile()
             QString accessory         = statBundle->value("Accessory");
 
             // Create character/enemy
-            createNew(type, name, level, hp, mp, strength, vitality, magic, spirit, dexterity, chance,
+            createNew(type, name, level, hp, mp, hpMax, mpMax, strength, vitality, magic, spirit, dexterity, luck,
                       attack, attackPercent, magAttack, magAttackPercent, critHitPercent,
                       defense, defensePercent, magDefense, magDefPercent, weapon, armor, accessory);
+        }
+    }
+}
+
+void MainWindow::on_fullRegenButton_clicked()
+{
+    for (int iBox(0); iBox < m_nPlayerStatBox; iBox++)
+    {
+        //Get character's name
+        QString name = m_charComboBoxVector->at(iBox)->currentText();
+
+        //Loop on characters, find character and update HP and MP
+        for (int iChar(0); iChar < m_charVector->size(); iChar++)
+        {
+            if (m_charVector->at(iChar)->getStats()->value("Name") == name)
+            {
+                // We use the displayed value of HPMax and MPMax rather than the base value,
+                // which does not account for accessories bonus.
+                QString hpMaxDisplay = m_charStatBoxVector->at(iBox)->getStats()->value("HPMax")->displayText();
+                QString mpMaxDisplay = m_charStatBoxVector->at(iBox)->getStats()->value("MPMax")->displayText();
+                m_charStatBoxVector->at(iBox)->getStats()->value("HP")->setText(hpMaxDisplay);
+                m_charStatBoxVector->at(iBox)->getStats()->value("MP")->setText(mpMaxDisplay);
+            }
         }
     }
 }

@@ -77,9 +77,9 @@ CharStatBox::CharStatBox(QString charType, bool dialog, QWidget *parent) : QWidg
     m_dextEdit = new QLineEdit;
     m_statBundle->insert("Dexterity", m_dextEdit);
 
-    QLabel *chanceLabel = new QLabel(tr("Chance"));
-    m_chanceEdit = new QLineEdit;
-    m_statBundle->insert("Chance", m_chanceEdit);
+    QLabel *luckLabel = new QLabel(tr("Luck"));
+    m_luckEdit = new QLineEdit;
+    m_statBundle->insert("Luck", m_luckEdit);
 
     QLabel *attackLabel = new QLabel(tr("Attack"));
     m_attackEdit = new QLineEdit;
@@ -157,8 +157,8 @@ CharStatBox::CharStatBox(QString charType, bool dialog, QWidget *parent) : QWidg
             lowerGrid->addWidget(m_spiritEdit, 0, 10);
             lowerGrid->addWidget(dextLabel, 1, 3);
             lowerGrid->addWidget(m_dextEdit, 1, 4);
-            lowerGrid->addWidget(chanceLabel, 1, 5);
-            lowerGrid->addWidget(m_chanceEdit, 1, 6);
+            lowerGrid->addWidget(luckLabel, 1, 5);
+            lowerGrid->addWidget(m_luckEdit, 1, 6);
             lowerGrid->addWidget(precisionLabel, 1, 7);
             lowerGrid->addWidget(m_precisionEdit, 1, 8);
             lowerGrid->addWidget(critHitPercentLabel, 1, 9);
@@ -197,8 +197,8 @@ CharStatBox::CharStatBox(QString charType, bool dialog, QWidget *parent) : QWidg
             lowerGrid->addWidget(m_mpMaxEdit, 3, 2);
             lowerGrid->addWidget(dextLabel, 1, 3);
             lowerGrid->addWidget(m_dextEdit, 1, 4);
-            lowerGrid->addWidget(chanceLabel, 1, 5);
-            lowerGrid->addWidget(m_chanceEdit, 1, 6);
+            lowerGrid->addWidget(luckLabel, 1, 5);
+            lowerGrid->addWidget(m_luckEdit, 1, 6);
             lowerGrid->addWidget(attackLabel, 2, 3);
             lowerGrid->addWidget(m_attackEdit, 2, 4);
             lowerGrid->addWidget(attackPercentLabel, 2, 5);
@@ -227,9 +227,9 @@ CharStatBox::CharStatBox(QString charType, bool dialog, QWidget *parent) : QWidg
             lowerGrid->addWidget(levelLabel, 1, 0);
             lowerGrid->addWidget(m_levelEdit, 1, 1);
             lowerGrid->addWidget(hpLabel, 2, 0);
-            lowerGrid->addWidget(m_hpEdit, 2, 1);
+            lowerGrid->addWidget(m_hpMaxEdit, 2, 1);
             lowerGrid->addWidget(mpLabel, 3, 0);
-            lowerGrid->addWidget(m_mpEdit, 3, 1);
+            lowerGrid->addWidget(m_mpMaxEdit, 3, 1);
             lowerGrid->addWidget(strengthLabel, 4, 0);
             lowerGrid->addWidget(m_strengthEdit, 4, 1);
             lowerGrid->addWidget(vitalityLabel, 5, 0);
@@ -240,8 +240,8 @@ CharStatBox::CharStatBox(QString charType, bool dialog, QWidget *parent) : QWidg
             lowerGrid->addWidget(m_spiritEdit, 7, 1);
             lowerGrid->addWidget(dextLabel, 8, 0);
             lowerGrid->addWidget(m_dextEdit, 8, 1);
-            lowerGrid->addWidget(chanceLabel, 9, 0);
-            lowerGrid->addWidget(m_chanceEdit, 9, 1);
+            lowerGrid->addWidget(luckLabel, 9, 0);
+            lowerGrid->addWidget(m_luckEdit, 9, 1);
         }
         else if (charType == "Weapon")
         {
@@ -280,9 +280,9 @@ CharStatBox::CharStatBox(QString charType, bool dialog, QWidget *parent) : QWidg
             lowerGrid->addWidget(nameLabel, 0, 0);
             lowerGrid->addWidget(m_nameEdit, 0, 1);
             lowerGrid->addWidget(hpLabel, 1, 0);
-            lowerGrid->addWidget(m_hpEdit, 1, 1);
+            lowerGrid->addWidget(m_hpMaxEdit, 1, 1);
             lowerGrid->addWidget(mpLabel, 2, 0);
-            lowerGrid->addWidget(m_mpEdit, 2, 1);
+            lowerGrid->addWidget(m_mpMaxEdit, 2, 1);
             lowerGrid->addWidget(strengthLabel, 3, 0);
             lowerGrid->addWidget(m_strengthEdit, 3, 1);
             lowerGrid->addWidget(vitalityLabel, 4, 0);
@@ -293,8 +293,8 @@ CharStatBox::CharStatBox(QString charType, bool dialog, QWidget *parent) : QWidg
             lowerGrid->addWidget(m_spiritEdit, 6, 1);
             lowerGrid->addWidget(dextLabel, 7, 0);
             lowerGrid->addWidget(m_dextEdit, 7, 1);
-            lowerGrid->addWidget(chanceLabel, 8, 0);
-            lowerGrid->addWidget(m_chanceEdit, 8, 1);
+            lowerGrid->addWidget(luckLabel, 8, 0);
+            lowerGrid->addWidget(m_luckEdit, 8, 1);
         }
         else
         {
@@ -303,13 +303,13 @@ CharStatBox::CharStatBox(QString charType, bool dialog, QWidget *parent) : QWidg
             lowerGrid->addWidget(levelLabel, 1, 0);
             lowerGrid->addWidget(m_levelEdit, 1, 1);
             lowerGrid->addWidget(hpLabel, 2, 0);
-            lowerGrid->addWidget(m_hpEdit, 2, 1);
+            lowerGrid->addWidget(m_hpMaxEdit, 2, 1);
             lowerGrid->addWidget(mpLabel, 3, 0);
-            lowerGrid->addWidget(m_mpEdit, 3, 1);
+            lowerGrid->addWidget(m_mpMaxEdit, 3, 1);
             lowerGrid->addWidget(dextLabel, 4, 0);
             lowerGrid->addWidget(m_dextEdit, 4, 1);
-            lowerGrid->addWidget(chanceLabel, 5, 0);
-            lowerGrid->addWidget(m_chanceEdit, 5, 1);
+            lowerGrid->addWidget(luckLabel, 5, 0);
+            lowerGrid->addWidget(m_luckEdit, 5, 1);
             lowerGrid->addWidget(attackLabel, 6, 0);
             lowerGrid->addWidget(m_attackEdit, 6, 1);
             lowerGrid->addWidget(attackPercentLabel, 7, 0);
