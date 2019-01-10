@@ -15,6 +15,7 @@ public:
              QString weapon, QString armor, QString accessory);
 
     QMap<QString, QString>* getStats() const;
+    void setItems(QString weapon, QString armor, QString accessory);
 
 private:
 

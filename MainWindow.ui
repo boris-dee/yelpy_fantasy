@@ -164,7 +164,7 @@
       <item>
        <widget class="QPushButton" name="saveButton">
         <property name="enabled">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
         <property name="toolTip">
          <string>Save Table</string>

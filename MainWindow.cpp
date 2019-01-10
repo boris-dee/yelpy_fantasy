@@ -4,6 +4,7 @@
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QString>
+#include <QStringList>
 #include <QTextStream>
 
 #include <iostream>
@@ -266,11 +267,13 @@ void MainWindow::on_loadButton_clicked()
     {
         // Create the load file
         m_loadFile = new QFile(m_loadFilePath);
-        if (!m_loadFile->open(QIODevice::ReadOnly | QIODevice::Text))
-                return;
+        if (!m_loadFile->open(QIODevice::ReadOnly | QIODevice::Text)){return;}
 
         // Read everything needed
         readFromFile();
+
+        // Close file
+        m_loadFile->close();
 
         // Enable all buttons
         ui->addCharButton->setEnabled(true);
@@ -279,6 +282,9 @@ void MainWindow::on_loadButton_clicked()
         ui->saveButton->setEnabled(true);
         ui->addEnemyButton->setEnabled(true);
         ui->addAccessoryButton->setEnabled(true);
+
+        // Disable the new table button
+        ui->newButton->setEnabled(false);
     }
 }
 void MainWindow::on_exitButton_clicked(){MainWindow::close();}
@@ -431,6 +437,9 @@ void MainWindow::fillStatBox(int i, QString charType, QString charName)
             QString defensePercent  = m_allCharVector->at(itype)->at(it)->getStats()->value("DefensePercent");
             QString magDefense      = m_allCharVector->at(itype)->at(it)->getStats()->value("MagDefense");
             QString magDefPercent   = m_allCharVector->at(itype)->at(it)->getStats()->value("MagDefPercent");
+            QString weapon          = m_allCharVector->at(itype)->at(it)->getStats()->value("Weapon");
+            QString armor           = m_allCharVector->at(itype)->at(it)->getStats()->value("Armor");
+            QString accessory       = m_allCharVector->at(itype)->at(it)->getStats()->value("Accessory");
 
             // Fill stat box
             m_allStatBoxVector->at(itype)->at(i)->getStats()->value("Level")->setText(level);
@@ -453,6 +462,9 @@ void MainWindow::fillStatBox(int i, QString charType, QString charName)
             m_allStatBoxVector->at(itype)->at(i)->getStats()->value("DefensePercent")->setText(defensePercent);
             m_allStatBoxVector->at(itype)->at(i)->getStats()->value("MagDefense")->setText(magDefense);
             m_allStatBoxVector->at(itype)->at(i)->getStats()->value("MagDefPercent")->setText(magDefPercent);
+            m_weaponComboBoxVector->at(i)->setCurrentText(weapon);
+            m_armorComboBoxVector->at(i)->setCurrentText(armor);
+            m_accessoryComboBoxVector->at(i)->setCurrentText(accessory);
         }
     }
 }
@@ -473,6 +485,19 @@ void MainWindow::updateStats(int i)
     QString weaponName = m_weaponComboBoxVector->at(i)->currentText();
     QString armorName = m_armorComboBoxVector->at(i)->currentText();
     QString accessoryName = m_accessoryComboBoxVector->at(i)->currentText();
+
+    // Get whose stat box this is
+    charName = m_charComboBoxVector->at(i)->currentText();
+
+    // Loop over character and set weapon, armor, and accessory to this character
+    for (int iChar(0); iChar < m_charVector->size(); iChar++)
+    {
+        if (m_charVector->at(iChar)->getStats()->value("Name") == charName)
+        {
+            m_charVector->at(iChar)->setItems(weaponName, armorName, accessoryName);
+        }
+    }
+
 
     // Find the weapon in the weapons list
     for (int iWeapon(0); iWeapon < m_weaponVector->size(); iWeapon++)
@@ -602,41 +627,52 @@ void MainWindow::writeToFile()
              " | Weapons: " << m_nWeapons << " | Armors: " << m_nArmors <<
              " | Accessories: " << m_nAccessories << "\n";
 
-    // Write Characters
-    write << "========= CHARACTERS =========\n";
-    for (int charType(0); charType < m_allCharVector->size(); charType++)
+    /* Big fat loop to write all stats from characters, enemies, and items.
+     * Type 1: characters
+     * Type 2: enemies
+     * Type 3: weapons
+     * Type 4: armors
+     * Type 5: accessories */
+    for (int iType(0); iType < 5; iType++)
     {
-        for (int iChar(0); iChar < m_allCharVector->at(charType)->size(); iChar++)
-        {
-            // Get character's name
-            QString charName = m_allCharVector->at(charType)->at(iChar)->getStats()->value("Name");
-            if (!charName.isEmpty())
-            {
-                write << "Character " << iChar << ":\n";
+        int nMax(0);
+        QMap<QString, QString> *charStat = new QMap<QString, QString>;
+        QVector<Character*> *charVector = new QVector<Character*>;
+        QVector<Item*> *itemVector = new QVector<Item*>;
 
-                // Navigate through the character's stat QMap
-                QMap<QString, QString> *charStat = m_allCharVector->at(charType)->at(iChar)->getStats();
+        if (iType == 0){write << "========= CHARACTERS =========\n"; nMax = m_charVector->size(); charVector = m_charVector;}
+        else if (iType == 1){write << "========= BESTIARY =========\n"; nMax = m_enemyVector->size(); charVector = m_enemyVector;}
+        else if (iType == 2){write << "========= WEAPONS =========\n"; nMax = m_weaponVector->size(); itemVector = m_weaponVector;}
+        else if (iType == 3){write << "========= ARMORS =========\n"; nMax = m_armorVector->size(); itemVector = m_armorVector;}
+        else {write << "========= ACCESSORIES =========\n"; nMax = m_accessoryVector->size(); itemVector = m_accessoryVector;}
+
+        for (int i(0); i < nMax; i++)
+        {
+            // Get the name of the thing we are looping over
+            QString name;
+            if (iType == 0 || iType == 1){name = charVector->at(i)->getStats()->value("Name");}
+            else {name = itemVector->at(i)->getStats()->value("Name");}
+
+            if (!name.isEmpty())
+            {
+                if (iType == 0){write << "Character " << i << ":\n";}
+                else if (iType == 1){write << "Enemy " << i << ":\n";}
+                else if (iType == 2){write << "Weapon " << i << ":\n";}
+                else if (iType == 3){write << "Armor " << i << ":\n";}
+                else {write << "Accessory " << i << ":\n";}
+
+                // Navigate through the stat QMap
+                if (iType == 0 || iType == 1){charStat = charVector->at(i)->getStats();}
+                else {charStat = itemVector->at(i)->getStats();}
+
                 QMap<QString, QString>::const_iterator it = charStat->constBegin();
                 while (it != charStat->constEnd())
                 {
                     write << it.key() << ": " << it.value() << " | ";
                     it++;
                 }
-
-                // Write the current weapon, armor, and accessory
-                for (int iComboBox(0); iComboBox < m_charComboBoxVector->size(); iComboBox++)
-                {
-                    // Find which combo box has this character.
-                    if (m_charComboBoxVector->at(iComboBox)->currentText() == charName)
-                    {
-                        // Get weapon, armor and accessory
-                        write << "Weapon: " << m_weaponComboBoxVector->at(iComboBox)->currentText();
-                        write << " | Armor: " << m_armorComboBoxVector->at(iComboBox)->currentText();
-                        write << " | Accessory: " << m_accessoryComboBoxVector->at(iComboBox)->currentText();
-                    }
-                }
+                write << "\n";
             }
-
         }
     }
 }
@@ -648,6 +684,8 @@ void MainWindow::readFromFile()
 
     // Get table Name
     m_tableName = read.readLine().split(": ")[1];
+    m_windowTitle = "Yelpy Fantasy: " + m_tableName;
+    setWindowTitle(m_windowTitle);
 
     // Get number of characters, enemies, weapons and accessories
     QStringList lineList = read.readLine().split(" | ");
@@ -655,52 +693,69 @@ void MainWindow::readFromFile()
     m_nEnemies = lineList[1].split(": ")[1];
     m_nWeapons = lineList[2].split(": ")[1];
     m_nArmors = lineList[3].split(": ")[1];
-    m_nAccessories = lineList[4].split(": ")[1];
+    m_nAccessories = lineList[4].split(": ")[1];    
 
-    // Get all Characters
-    for (int iChar(0); iChar < m_nChar.toInt(); iChar++)
+    /* Big fat loop to get all stats from characters, enemies, and items.
+     * Type 1: characters
+     * Type 2: enemies
+     * Type 3: weapons
+     * Type 4: armors
+     * Type 5: accessories */
+    for (int iType(0); iType < 5; iType++)
     {
-        read.readLine();
-        read.readLine();
-        QStringList lineList = read.readLine().split(" | ");
+        int nMax(0);
+        QString type;
 
-        // Create the stat bundle
-        QMap<QString, QString> *statBundle = new QMap<QString, QString>;
+        read.readLine();
+        if (iType == 0){nMax = m_nChar.toInt(); type = "Character";}
+        else if (iType == 1){nMax = m_nEnemies.toInt(); type = "Enemy";}
+        else if (iType == 2){nMax = m_nWeapons.toInt(); type = "Weapon";}
+        else if (iType == 3){nMax = m_nArmors.toInt(); type = "Armor";}
+        else {nMax = m_nAccessories.toInt(); type = "Accessory";}
 
-        // Navigate through the stat list and populate the bundle
-        for (int iElement(0); iElement < lineList.size(); iElement++)
+        for (int i(0); i < nMax; i++)
         {
-            QStringList statPair = lineList.at(iElement).split(": ");
-            statBundle->insert(statPair[0],statPair[1]);
+            read.readLine();
+            QStringList innerList = read.readLine().split(" | ", QString::SkipEmptyParts);
+
+            // Create the stat bundle
+            QMap<QString, QString> *statBundle = new QMap<QString, QString>;
+
+            // Navigate through the stat list and populate the bundle
+            for (int iElement(0); iElement < innerList.size(); iElement++)
+            {
+                QStringList statPair = innerList.at(iElement).split(": ");
+                statBundle->insert(statPair[0],statPair[1]);
+            }
+
+            // Gather all character's stats
+            QString name              = statBundle->value("Name");
+            QString level             = statBundle->value("Level");
+            QString hp                = statBundle->value("HP");
+            QString mp                = statBundle->value("MP");
+            QString strength          = statBundle->value("Strength");
+            QString vitality          = statBundle->value("Vitality");
+            QString magic             = statBundle->value("Magic");
+            QString spirit            = statBundle->value("Spirit");
+            QString dexterity         = statBundle->value("Dexterity");
+            QString chance            = statBundle->value("Chance");
+            QString attack            = statBundle->value("Attack");
+            QString attackPercent     = statBundle->value("AttackPercent");
+            QString magAttack         = statBundle->value("MagAttack");
+            QString magAttackPercent  = statBundle->value("MagAttackPercent");
+            QString critHitPercent    = statBundle->value("CritHitPercent");
+            QString defense           = statBundle->value("Defense");
+            QString magDefense        = statBundle->value("MagDefense");
+            QString defensePercent    = statBundle->value("DefensePercent");
+            QString magDefPercent     = statBundle->value("MagDefPercent");
+            QString weapon            = statBundle->value("Weapon");
+            QString armor             = statBundle->value("Armor");
+            QString accessory         = statBundle->value("Accessory");
+
+            // Create character/enemy
+            createNew(type, name, level, hp, mp, strength, vitality, magic, spirit, dexterity, chance,
+                      attack, attackPercent, magAttack, magAttackPercent, critHitPercent,
+                      defense, defensePercent, magDefense, magDefPercent, weapon, armor, accessory);
         }
-
-        // Gather all character's stats
-        QString name              = statBundle->value("Name");
-        QString level             = statBundle->value("Level");
-        QString hp                = statBundle->value("HP");
-        QString mp                = statBundle->value("MP");
-        QString strength          = statBundle->value("Strength");
-        QString vitality          = statBundle->value("Vitality");
-        QString magic             = statBundle->value("Magic");
-        QString spirit            = statBundle->value("Spirit");
-        QString dexterity         = statBundle->value("Dexterity");
-        QString chance            = statBundle->value("Chance");
-        QString attack            = statBundle->value("Attack");
-        QString attackPercent     = statBundle->value("AttackPercent");
-        QString magAttack         = statBundle->value("MagAttack");
-        QString magAttackPercent  = statBundle->value("MagAttackPercent");
-        QString critHitPercent    = statBundle->value("CritHitPercent");
-        QString defense           = statBundle->value("Defense");
-        QString magDefense        = statBundle->value("MagDefense");
-        QString defensePercent    = statBundle->value("DefensePercent");
-        QString magDefPercent     = statBundle->value("MagDefPercent");
-        QString weapon            = statBundle->value("Weapon");
-        QString armor             = statBundle->value("Armor");
-        QString accessory         = statBundle->value("Accessory");
-
-        // Create Character
-        createNew("Character", name, level, hp, mp, strength, vitality, magic, spirit, dexterity, chance,
-                  attack, attackPercent, magAttack, magAttackPercent, critHitPercent,
-                  defense, defensePercent, magDefense, magDefPercent, weapon, armor, accessory);
     }
 }

@@ -61,3 +61,15 @@ Character::Character(QString type, QString name, QString level, QString hp, QStr
 }
 
 QMap<QString, QString>* Character::getStats() const {return m_statBundle;}
+
+void Character::setItems(QString weapon, QString armor, QString accessory)
+{
+    m_currentWeapon = weapon;
+    m_currentArmor = armor;
+    m_currentAccessory = accessory;
+
+    // Update bundle
+    m_statBundle->insert("Weapon", m_currentWeapon);
+    m_statBundle->insert("Armor", m_currentArmor);
+    m_statBundle->insert("Accessory", m_currentAccessory);
+}
