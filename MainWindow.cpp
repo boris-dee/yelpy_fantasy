@@ -21,11 +21,11 @@ MainWindow::MainWindow(QWidget *parent) :
     // Display characters and enemies stat boxes
     displayStatBoxes();
 
-    // Set all QLineEdits to readonly and make them smaller
-    formatLineEdits();
-
     // Set model for all combo boxes
     setComboBoxModels();
+
+    // Set model for attacker and target lists
+    setListModels();
 
     // Connect signals (name is changed in combo box) to slots (stats are displayed in stat box)
     connectSignals();
@@ -37,13 +37,32 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::initialization()
-{    
+{
+    // Minor alignments
+    ui->charInfoLayout->setAlignment(ui->charAttackerButton, Qt::AlignHCenter);
+    ui->enemyInfoLayout->setAlignment(ui->enemyAttackerButton, Qt::AlignHCenter);
+    ui->charActionLayout->setAlignment(ui->charDmglabel, Qt::AlignHCenter);
+    ui->enemyActionLayout->setAlignment(ui->enemyDmglabel, Qt::AlignHCenter);
+
+    // Disable battle group box
+    ui->battleGroupBox->setEnabled(false);
+
     // Create models for char/enemy/weapon/armor name combo boxes
     m_charComboBoxModel = new QStandardItemModel;
     m_enemyComboBoxModel = new QStandardItemModel;
     m_weaponComboBoxModel = new QStandardItemModel;
     m_armorComboBoxModel = new QStandardItemModel;
     m_accessoryComboBoxModel = new QStandardItemModel;
+    m_allComboBoxModels = new QVector<QStandardItemModel*>;
+    m_allComboBoxModels->push_back(m_charComboBoxModel);
+    m_allComboBoxModels->push_back(m_enemyComboBoxModel);
+    m_allComboBoxModels->push_back(m_weaponComboBoxModel);
+    m_allComboBoxModels->push_back(m_armorComboBoxModel);
+    m_allComboBoxModels->push_back(m_accessoryComboBoxModel);
+
+    // Create models for attacker and target lists
+    m_charListViewModel = new QStandardItemModel;
+    m_enemyListViewModel = new QStandardItemModel;
 
     // Create storage vector for char/enemy and build the AllChar vector,
     // which stores all characters
@@ -127,17 +146,6 @@ void MainWindow::displayStatBoxes()
     }
 }
 
-void MainWindow::formatLineEdits()
-{
-    QList<QLineEdit*> allQLineEdit = findChildren<QLineEdit*>();
-    for (int i(0); i < allQLineEdit.size(); i++)
-    {
-        allQLineEdit.at(i)->setReadOnly(true);
-        allQLineEdit.at(i)->setMaximumHeight(20);
-        allQLineEdit.at(i)->setMaximumWidth(40);
-    }
-}
-
 void MainWindow::setComboBoxModels()
 {
     // Characters
@@ -171,6 +179,12 @@ void MainWindow::setComboBoxModels()
     }
 }
 
+void MainWindow::setListModels()
+{
+    ui->charListView->setModel(m_charListViewModel);
+    ui->enemyListView->setModel(m_enemyListViewModel);
+}
+
 void MainWindow::connectSignals()
 {
     /* Note: I wanted to loop over combo boxes but the slot also needs the loop counter, and since I cannot pass any
@@ -183,6 +197,7 @@ void MainWindow::connectSignals()
 
     QObject::connect(m_enemyComboBoxVector->at(0), SIGNAL(currentIndexChanged(QString)), this, SLOT(fillEnemyStatBox1(QString)));
     QObject::connect(m_enemyComboBoxVector->at(1), SIGNAL(currentIndexChanged(QString)), this, SLOT(fillEnemyStatBox2(QString)));
+    QObject::connect(m_enemyComboBoxVector->at(2), SIGNAL(currentIndexChanged(QString)), this, SLOT(fillEnemyStatBox3(QString)));
 
     QObject::connect(m_weaponComboBoxVector->at(0), SIGNAL(currentIndexChanged(QString)), this, SLOT(updateStats1()));
     QObject::connect(m_weaponComboBoxVector->at(1), SIGNAL(currentIndexChanged(QString)), this, SLOT(updateStats2()));
@@ -239,6 +254,7 @@ void MainWindow::on_newTableButton_clicked()
 
         ui->newTableButton->setDisabled(true);
         ui->loadButton->setDisabled(true);
+        ui->battleGroupBox->setEnabled(true);
     }
 }
 void MainWindow::on_saveButton_clicked()
@@ -247,7 +263,7 @@ void MainWindow::on_saveButton_clicked()
     if (!m_alreadySaved)
     {
         //Open the save dialog that returns the complete filepath
-        m_saveFilePath = QFileDialog::getSaveFileName(this, tr("Save file"), m_tableName + ".sav", tr("SAV files (*.sav)"));
+        m_saveFilePath = QFileDialog::getSaveFileName(this, tr("Save file"), m_tableName + ".yf", tr("YF files (*.yf)"));
 
         // If user has selected a file, do the following:
         if (!m_saveFilePath.isEmpty())
@@ -277,7 +293,7 @@ void MainWindow::on_saveButton_clicked()
 void MainWindow::on_loadButton_clicked()
 {
     // Open the file browser which returns the file path
-    m_loadFilePath = QFileDialog::getOpenFileName(this, tr("Open File"), QString(), tr("SAV Files (*.sav)"));
+    m_loadFilePath = QFileDialog::getOpenFileName(this, tr("Open File"), QString(), tr("YF Files (*.yf)"));
 
     // If user has selected a file, do the following:
     if (!m_loadFilePath.isEmpty())
@@ -295,6 +311,9 @@ void MainWindow::on_loadButton_clicked()
         // Enable all buttons
         enableButtons();
 
+        // Enable battle scene
+        ui->battleGroupBox->setEnabled(true);
+
         // Disable the new table button
         ui->newTableButton->setEnabled(false);
     }
@@ -310,6 +329,10 @@ void MainWindow::enableButtons()
     ui->addEnemyButton->setEnabled(true);
     ui->addAccessoryButton->setEnabled(true);
     ui->fullRegenButton->setEnabled(true);
+    ui->addAttackButton->setEnabled(true);
+    ui->addMagicButton->setEnabled(true);
+    ui->addSummonButton->setEnabled(true);
+    ui->addItemButton->setEnabled(true);
 }
 
 void MainWindow::newDialog(QString newType)
@@ -382,6 +405,7 @@ void MainWindow::createNew(QString newType, QString name, QString level, QString
             // Populate the model for enemy combo boxes
             QStandardItem *item = new QStandardItem(name);
             m_enemyComboBoxModel->appendRow(item);
+            m_enemyComboBoxModel->sort(0,Qt::AscendingOrder);
         }
     }
     else if (newType == "Weapon")
@@ -417,6 +441,9 @@ void MainWindow::createNew(QString newType, QString name, QString level, QString
         QStandardItem *item = new QStandardItem(name);
         m_accessoryComboBoxModel->appendRow(item);
     }
+
+    // Sort all Combo Box Models
+    for (int iModel(0); iModel < m_allComboBoxModels->size(); iModel++){m_allComboBoxModels->at(iModel)->sort(0, Qt::AscendingOrder);}
 }
 
 void MainWindow::fillCharStatBox1(QString charName){fillStatBox(0, "Character", charName);}
@@ -426,6 +453,7 @@ void MainWindow::fillCharStatBox4(QString charName){fillStatBox(3, "Character", 
 
 void MainWindow::fillEnemyStatBox1(QString enemyName){fillStatBox(0, "Enemy", enemyName);}
 void MainWindow::fillEnemyStatBox2(QString enemyName){fillStatBox(1, "Enemy", enemyName);}
+void MainWindow::fillEnemyStatBox3(QString enemyName){fillStatBox(2, "Enemy", enemyName);}
 
 void MainWindow::updateStats1(){updateStats(0);}
 void MainWindow::updateStats2(){updateStats(1);}
@@ -498,7 +526,7 @@ void MainWindow::fillStatBox(int i, QString charType, QString charName)
             QString magic           = m_allCharVector->at(itype)->at(it)->getStats()->value("Magic");
             QString spirit          = m_allCharVector->at(itype)->at(it)->getStats()->value("Spirit");
             QString dexterity       = m_allCharVector->at(itype)->at(it)->getStats()->value("Dexterity");
-            QString luck          = m_allCharVector->at(itype)->at(it)->getStats()->value("Luck");
+            QString luck            = m_allCharVector->at(itype)->at(it)->getStats()->value("Luck");
             QString attack          = m_allCharVector->at(itype)->at(it)->getStats()->value("Attack");
             QString attackPercent   = m_allCharVector->at(itype)->at(it)->getStats()->value("AttackPercent");
             QString magAttack       = m_allCharVector->at(itype)->at(it)->getStats()->value("MagAttack");
@@ -548,6 +576,12 @@ void MainWindow::fillStatBox(int i, QString charType, QString charName)
                 m_allStatBoxVector->at(itype)->at(i)->getStats()->value("MagAttack")->setText(magAttack);
                 m_allStatBoxVector->at(itype)->at(i)->getStats()->value("MagAttackPercent")->setText(magAttackPercent);
             }
+
+            // Populate the model for character's battle list
+
+            QStandardItem *item = new QStandardItem(charName);
+            if (itype == 0){m_charListViewModel->setItem(i, item);}
+            else{m_enemyListViewModel->setItem(i, item);}
         }
     }
 }

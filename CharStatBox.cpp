@@ -16,7 +16,7 @@ CharStatBox::CharStatBox(QString charType, bool dialog, QWidget *parent) : QWidg
     QLabel *nameLabel = new QLabel(tr("Name"));
     m_nameEdit = new QLineEdit;
     m_statBundle->insert("Name", m_nameEdit);
-    m_nameComboBox = new QComboBox;
+    m_nameComboBox = new QComboBox();
     m_nameComboBox->setMaximumHeight(20);
 
     QLabel *levelLabel = new QLabel(tr("Level"));
@@ -217,6 +217,15 @@ CharStatBox::CharStatBox(QString charType, bool dialog, QWidget *parent) : QWidg
             lowerGrid->addWidget(m_magDefPercentEdit, 3, 10);
         }
 
+        // Formal all line edits
+        QMap<QString, QLineEdit*>::const_iterator it = m_statBundle->constBegin();
+        while (it != m_statBundle->constEnd())
+        {
+            it.value()->setReadOnly(true);
+            it.value()->setMaximumHeight(20);
+            it.value()->setMaximumWidth(40);
+            it++;
+        }
     }
     else
     {

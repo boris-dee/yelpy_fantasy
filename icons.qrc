@@ -11,5 +11,26 @@
         <file>icons/remove.png</file>
         <file>icons/add_accessory.png</file>
         <file>icons/full_regen.png</file>
+        <file>icons/crossed_swords.png</file>
+        <file>icons/swap.png</file>
+        <file>icons/magic.png</file>
+        <file>icons/summon.png</file>
+        <file>icons/items.png</file>
+        <file>icons/stop.png</file>
+        <file>icons/slow.png</file>
+        <file>icons/sleep.png</file>
+        <file>icons/silence.png</file>
+        <file>icons/sadness.png</file>
+        <file>icons/regen.png</file>
+        <file>icons/reflect.png</file>
+        <file>icons/poison.png</file>
+        <file>icons/mbarrier.png</file>
+        <file>icons/haste.png</file>
+        <file>icons/fury.png</file>
+        <file>icons/frog.png</file>
+        <file>icons/darkness.png</file>
+        <file>icons/confusion.png</file>
+        <file>icons/barrier.png</file>
+        <file>icons/deal_damage.png</file>
     </qresource>
 </RCC>

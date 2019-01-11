@@ -25,8 +25,8 @@ public:
 
     void initialization();
     void displayStatBoxes();
-    void formatLineEdits();
     void setComboBoxModels();
+    void setListModels();
     void connectSignals();
     void newDialog(QString newType);
     void createNew(QString newType, QString name, QString level, QString hp, QString mp, QString hpMax, QString mpMax, QString strength, QString vitality, QString magic,
@@ -56,6 +56,7 @@ private slots:
     void fillCharStatBox4(QString charName);
     void fillEnemyStatBox1(QString enemyName);
     void fillEnemyStatBox2(QString enemyName);
+    void fillEnemyStatBox3(QString enemyName);
     void updateStats1();
     void updateStats2();
     void updateStats3();
@@ -77,7 +78,7 @@ private slots:
 
 private:
     bool m_alreadySaved = false;
-    int m_nPlayerStatBox = 4, m_nEnemyStatBox = 2;
+    int m_nPlayerStatBox = 4, m_nEnemyStatBox = 3;
     QString m_tableName, m_saveFilePath, m_loadFilePath;
     QString m_windowTitle;
     QString m_nChar, m_nEnemies, m_nWeapons, m_nArmors, m_nAccessories;
@@ -100,6 +101,8 @@ private:
     QStandardItemModel *m_charComboBoxModel, *m_enemyComboBoxModel;
     QStandardItemModel *m_weaponComboBoxModel, *m_armorComboBoxModel;
     QStandardItemModel *m_accessoryComboBoxModel;
+    QStandardItemModel *m_charListViewModel, *m_enemyListViewModel;
+    QVector<QStandardItemModel*> *m_allComboBoxModels;
 
     Character *m_newChar;
     Item *m_newWeapon, *m_newArmor, *m_newAccessory;
