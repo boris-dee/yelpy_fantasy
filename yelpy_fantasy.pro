@@ -26,17 +26,17 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         MainWindow.cpp \
-        CharStatBox.cpp \
         AddCharDialog.cpp \
         Character.cpp \
-    Item.cpp
+    Item.cpp \
+    StatBox.cpp
 
 HEADERS += \
         MainWindow.h \
-        CharStatBox.h \
         AddCharDialog.h \
         Character.h \
-    Item.h
+    Item.h \
+    StatBox.h
 
 FORMS += \
         MainWindow.ui

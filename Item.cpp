@@ -5,6 +5,32 @@ Item::Item()
      m_statBundle = new QMap<QString,QString>;
 }
 
+// Item overload
+Item::Item(QString name) : m_name(name)
+{
+     m_statBundle = new QMap<QString,QString>;
+     m_statBundle->insert("Name", m_name);
+}
+
+// Attack overload
+Item::Item(QString name, QString factor) : m_name(name), m_factor(factor)
+{
+     m_statBundle = new QMap<QString,QString>;
+     m_statBundle->insert("Name", m_name);
+     m_statBundle->insert("Factor", m_factor);
+}
+
+// Magic and Summons overload
+Item::Item(QString name, QString magAttackPercent, QString factor, QString mpCost) :
+    m_name(name), m_magAttackPercent(magAttackPercent), m_factor(factor), m_mpCost(mpCost)
+{
+    m_statBundle = new QMap<QString,QString>;
+    m_statBundle->insert("Name", m_name);
+    m_statBundle->insert("MagAttackPercent", m_magAttackPercent);
+    m_statBundle->insert("Factor", m_factor);
+    m_statBundle->insert("MPCost", m_mpCost);
+}
+
 // Weapon overload
 Item::Item(QString name, QString attack, QString attackPercent, QString magic, QString critHitPercent) :
     m_name(name), m_attack(attack), m_attackPercent(attackPercent), m_magic(magic), m_critHitPercent(critHitPercent)

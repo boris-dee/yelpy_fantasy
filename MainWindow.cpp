@@ -6,6 +6,7 @@
 #include <QString>
 #include <QStringList>
 #include <QTextStream>
+#include <QtMath>
 
 #include <iostream>
 
@@ -39,26 +40,37 @@ MainWindow::~MainWindow()
 void MainWindow::initialization()
 {
     // Minor alignments
-    ui->charInfoLayout->setAlignment(ui->charAttackerButton, Qt::AlignHCenter);
-    ui->enemyInfoLayout->setAlignment(ui->enemyAttackerButton, Qt::AlignHCenter);
-    ui->charActionLayout->setAlignment(ui->charDmglabel, Qt::AlignHCenter);
-    ui->enemyActionLayout->setAlignment(ui->enemyDmglabel, Qt::AlignHCenter);
+    ui->charInfoLayout->setAlignment(ui->charListView, Qt::AlignHCenter);
+    ui->enemyInfoLayout->setAlignment(ui->enemyListView, Qt::AlignHCenter);
+    ui->charActionLayout->setAlignment(ui->charAttDmgEdit, Qt::AlignRight);
+    ui->charActionLayout->setAlignment(ui->charMagDmgEdit, Qt::AlignRight);
+    ui->charActionLayout->setAlignment(ui->charSumDmgEdit, Qt::AlignRight);
+    ui->charActionLayout->setAlignment(ui->enemyAttDmgEdit, Qt::AlignLeft);
+    ui->charActionLayout->setAlignment(ui->enemyMagDmgEdit, Qt::AlignLeft);
 
     // Disable battle group box
     ui->battleGroupBox->setEnabled(false);
 
-    // Create models for char/enemy/weapon/armor name combo boxes
+    // Create models for name combo boxes
     m_charComboBoxModel = new QStandardItemModel;
     m_enemyComboBoxModel = new QStandardItemModel;
     m_weaponComboBoxModel = new QStandardItemModel;
     m_armorComboBoxModel = new QStandardItemModel;
     m_accessoryComboBoxModel = new QStandardItemModel;
+    m_attackComboBoxModel = new QStandardItemModel;
+    m_magicComboBoxModel = new QStandardItemModel;
+    m_summonComboBoxModel = new QStandardItemModel;
+    m_itemComboBoxModel = new QStandardItemModel;
     m_allComboBoxModels = new QVector<QStandardItemModel*>;
     m_allComboBoxModels->push_back(m_charComboBoxModel);
     m_allComboBoxModels->push_back(m_enemyComboBoxModel);
     m_allComboBoxModels->push_back(m_weaponComboBoxModel);
     m_allComboBoxModels->push_back(m_armorComboBoxModel);
     m_allComboBoxModels->push_back(m_accessoryComboBoxModel);
+    m_allComboBoxModels->push_back(m_attackComboBoxModel);
+    m_allComboBoxModels->push_back(m_magicComboBoxModel);
+    m_allComboBoxModels->push_back(m_summonComboBoxModel);
+    m_allComboBoxModels->push_back(m_itemComboBoxModel);
 
     // Create models for attacker and target lists
     m_charListViewModel = new QStandardItemModel;
@@ -78,36 +90,112 @@ void MainWindow::initialization()
     m_armorVector = new QVector<Item*>;
     m_accessoryVector = new QVector<Item*>;
 
-    // Create blank char/enemy/weapon/armor for combo box purpose
+    // Create storage vector for attacks, magic, summons and items
+    m_attackVector = new QVector<Item*>;
+    m_magicVector = new QVector<Item*>;
+    m_summonVector = new QVector<Item*>;
+    m_itemVector = new QVector<Item*>;
+
+    // Create blank char/enemy/weapon/armor/etc. for combo box purpose
     m_newChar = new Character("Character");
     m_newWeapon = new Item();
     m_newArmor = new Item();
     m_newAccessory = new Item();
+    m_newAttack = new Item();
+    m_newMagic = new Item();
+    m_newSummon = new Item();
+    m_newItem = new Item();
+
     m_enemyVector->push_back(m_newChar);
     m_charVector->push_back(m_newChar);
     m_weaponVector->push_back(m_newWeapon);
     m_armorVector->push_back(m_newArmor);
     m_accessoryVector->push_back(m_newAccessory);
+    m_attackVector->push_back(m_newAttack);
+    m_magicVector->push_back(m_newMagic);
+    m_summonVector->push_back(m_newSummon);
+    m_itemVector->push_back(m_newItem);
+
     m_charComboBoxModel->appendRow(new QStandardItem(""));
     m_enemyComboBoxModel->appendRow(new QStandardItem(""));
     m_weaponComboBoxModel->appendRow(new QStandardItem(""));
     m_armorComboBoxModel->appendRow(new QStandardItem(""));
     m_accessoryComboBoxModel->appendRow(new QStandardItem(""));
+    m_attackComboBoxModel->appendRow(new QStandardItem(""));
+    m_magicComboBoxModel->appendRow(new QStandardItem(""));
+    m_summonComboBoxModel->appendRow(new QStandardItem(""));
+    m_itemComboBoxModel->appendRow(new QStandardItem(""));
 
-    // Create storage vector for char/enemy/weapon/armor combo boxes
+    // Create storage vector for all combo boxes
     m_charComboBoxVector = new QVector<QComboBox*>;
     m_enemyComboBoxVector = new QVector<QComboBox*>;
     m_weaponComboBoxVector = new QVector<QComboBox*>;
     m_armorComboBoxVector = new QVector<QComboBox*>;
     m_accessoryComboBoxVector = new QVector<QComboBox*>;
+    m_attackComboBoxVector = new QVector<QComboBox*>;
+    m_magicComboBoxVector = new QVector<QComboBox*>;
+    m_summonComboBoxVector = new QVector<QComboBox*>;
+    m_itemComboBoxVector = new QVector<QComboBox*>;
+
+    // For attacks, magic, summons and items, populate here combox box vectors
+    m_attackComboBoxVector->push_back(ui->charAttackComboBox);
+    m_attackComboBoxVector->push_back(ui->enemyAttackComboBox);
+
+    m_magicComboBoxVector->push_back(ui->charMagicComboBox);
+    m_magicComboBoxVector->push_back(ui->enemyMagicComboBox);
+
+    m_summonComboBoxVector->push_back(ui->charSummonComboBox);
+
+    m_itemComboBoxVector->push_back(ui->charItemComboBox);
+    m_itemComboBoxVector->push_back(ui->enemyItemComboBox);
 
     // Create storage vector for char/enemy stat boxes and build the AllStatBox vector,
     // which contains all stat boxes
-    m_charStatBoxVector = new QVector<CharStatBox*>;
-    m_enemyStatBoxVector = new QVector<CharStatBox*>;
-    m_allStatBoxVector = new QVector<QVector<CharStatBox*>*>;
+    m_charStatBoxVector = new QVector<StatBox*>;
+    m_enemyStatBoxVector = new QVector<StatBox*>;
+    m_allStatBoxVector = new QVector<QVector<StatBox*>*>;
     m_allStatBoxVector->push_back(m_charStatBoxVector);
     m_allStatBoxVector->push_back(m_enemyStatBoxVector);
+
+    // Create the QMap of ailments QPushButton and store them in a vector
+    m_charAilmentMap = new QMap<QString, QPushButton*>;
+    m_charAilmentMap->insert("Sleep", ui->charSleepButton);
+    m_charAilmentMap->insert("Poison", ui->charPoisonButton);
+    m_charAilmentMap->insert("Confusion", ui->charConfusionButton);
+    m_charAilmentMap->insert("Sadness", ui->charSadnessButton);
+    m_charAilmentMap->insert("Fury", ui->charFuryButton);
+    m_charAilmentMap->insert("Silence", ui->charSilenceButton);
+    m_charAilmentMap->insert("Darkness", ui->charDarknessButton);
+    m_charAilmentMap->insert("Frog", ui->charFrogButton);
+    m_charAilmentMap->insert("Regen", ui->charRegenButton);
+    m_charAilmentMap->insert("Haste", ui->charHasteButton);
+    m_charAilmentMap->insert("Slow", ui->charSlowButton);
+    m_charAilmentMap->insert("Stop", ui->charStopButton);
+    m_charAilmentMap->insert("Barrier", ui->charBarrierButton);
+    m_charAilmentMap->insert("MBarrier", ui->charMbarrierButton);
+    m_charAilmentMap->insert("Reflect", ui->charReflectButton);
+
+    m_enemyAilmentMap = new QMap<QString, QPushButton*>;
+    m_enemyAilmentMap->insert("Sleep", ui->enemySleepButton);
+    m_enemyAilmentMap->insert("Poison", ui->enemyPoisonButton);
+    m_enemyAilmentMap->insert("Confusion", ui->enemyConfusionButton);
+    m_enemyAilmentMap->insert("Sadness", ui->enemySadnessButton);
+    m_enemyAilmentMap->insert("Fury", ui->enemyFuryButton);
+    m_enemyAilmentMap->insert("Silence", ui->enemySilenceButton);
+    m_enemyAilmentMap->insert("Darkness", ui->enemyDarknessButton);
+    m_enemyAilmentMap->insert("Frog", ui->enemyFrogButton);
+    m_enemyAilmentMap->insert("Regen", ui->enemyRegenButton);
+    m_enemyAilmentMap->insert("Haste", ui->enemyHasteButton);
+    m_enemyAilmentMap->insert("Slow", ui->enemySlowButton);
+    m_enemyAilmentMap->insert("Stop", ui->enemyStopButton);
+    m_enemyAilmentMap->insert("Barrier", ui->enemyBarrierButton);
+    m_enemyAilmentMap->insert("MBarrier", ui->enemyMbarrierButton);
+    m_enemyAilmentMap->insert("Reflect", ui->enemyReflectButton);
+
+    m_ailmentMapVector = new QVector<QMap<QString, QPushButton*>*>;
+    m_ailmentMapVector->push_back(m_charAilmentMap);
+    m_ailmentMapVector->push_back(m_enemyAilmentMap);
+
 }
 
 void MainWindow::displayStatBoxes()
@@ -115,9 +203,7 @@ void MainWindow::displayStatBoxes()
     // Display character's stat boxes
     for (int iplayer(0); iplayer < m_nPlayerStatBox; iplayer++)
     {
-        m_charStatBox = new CharStatBox("Character", false);
-        m_charStatBox->setMaximumWidth(800);
-        m_charStatBox->setMaximumHeight(250);
+        m_charStatBox = new StatBox("Character", false);
         ui->characterLayout->addWidget(m_charStatBox);
 
         // Save combo boxes
@@ -133,9 +219,7 @@ void MainWindow::displayStatBoxes()
     // Display enemy's stat boxes
     for (int ienemies(0); ienemies < m_nEnemyStatBox; ienemies++)
     {
-        m_charStatBox = new CharStatBox("Enemy", false);
-        m_charStatBox->setMaximumWidth(800);
-        m_charStatBox->setMaximumHeight(250);
+        m_charStatBox = new StatBox("Enemy", false);
         ui->enemyLayout->addWidget(m_charStatBox);
 
         // Save the name combo boxes
@@ -149,34 +233,31 @@ void MainWindow::displayStatBoxes()
 void MainWindow::setComboBoxModels()
 {
     // Characters
-    for (int i(0); i < m_charComboBoxVector->size(); i++)
-    {
-        m_charComboBoxVector->at(i)->setModel(m_charComboBoxModel);
-    }
+    for (int i(0); i < m_charComboBoxVector->size(); i++){m_charComboBoxVector->at(i)->setModel(m_charComboBoxModel);}
 
     // Enemies
-    for (int j(0); j < m_enemyComboBoxVector->size(); j++)
-    {
-        m_enemyComboBoxVector->at(j)->setModel(m_enemyComboBoxModel);
-    }
+    for (int i(0); i < m_enemyComboBoxVector->size(); i++){m_enemyComboBoxVector->at(i)->setModel(m_enemyComboBoxModel);}
 
     // Weapons
-    for (int k(0); k < m_weaponComboBoxVector->size(); k++)
-    {
-        m_weaponComboBoxVector->at(k)->setModel(m_weaponComboBoxModel);
-    }
+    for (int i(0); i < m_weaponComboBoxVector->size(); i++){m_weaponComboBoxVector->at(i)->setModel(m_weaponComboBoxModel);}
 
     // Armors
-    for (int l(0); l < m_armorComboBoxVector->size(); l++)
-    {
-        m_armorComboBoxVector->at(l)->setModel(m_armorComboBoxModel);
-    }
+    for (int i(0); i < m_armorComboBoxVector->size(); i++){m_armorComboBoxVector->at(i)->setModel(m_armorComboBoxModel);}
 
     // Accessories
-    for (int m(0); m < m_accessoryComboBoxVector->size(); m++)
-    {
-        m_accessoryComboBoxVector->at(m)->setModel(m_accessoryComboBoxModel);
-    }
+    for (int i(0); i < m_accessoryComboBoxVector->size(); i++){m_accessoryComboBoxVector->at(i)->setModel(m_accessoryComboBoxModel);}
+
+    // Attacks
+    for (int i(0); i < m_attackComboBoxVector->size(); i++){m_attackComboBoxVector->at(i)->setModel(m_attackComboBoxModel);}
+
+    // Magic
+    for (int i(0); i < m_magicComboBoxVector->size(); i++){m_magicComboBoxVector->at(i)->setModel(m_magicComboBoxModel);}
+
+    // Summons
+    for (int i(0); i < m_summonComboBoxVector->size(); i++){m_summonComboBoxVector->at(i)->setModel(m_summonComboBoxModel);}
+
+    // Items
+    for (int i(0); i < m_itemComboBoxVector->size(); i++){m_itemComboBoxVector->at(i)->setModel(m_itemComboBoxModel);}
 }
 
 void MainWindow::setListModels()
@@ -190,10 +271,11 @@ void MainWindow::connectSignals()
     /* Note: I wanted to loop over combo boxes but the slot also needs the loop counter, and since I cannot pass any
      * additional argument in the signal, I could not find a more elegant way to NOT create different slots.
      * A better practice would be to customize the signal but I failed miserably. */
-    QObject::connect(m_charComboBoxVector->at(0), SIGNAL(currentIndexChanged(QString)), this, SLOT(fillCharStatBox1(QString)));
-    QObject::connect(m_charComboBoxVector->at(1), SIGNAL(currentIndexChanged(QString)), this, SLOT(fillCharStatBox2(QString)));
-    QObject::connect(m_charComboBoxVector->at(2), SIGNAL(currentIndexChanged(QString)), this, SLOT(fillCharStatBox3(QString)));
-    QObject::connect(m_charComboBoxVector->at(3), SIGNAL(currentIndexChanged(QString)), this, SLOT(fillCharStatBox4(QString)));
+    QObject::connect(m_charComboBoxVector->at(0), SIGNAL(currentIndexChanged(QString)), this, SLOT(fillStatBox1(QString)));
+    QObject::connect(m_charComboBoxVector->at(1), SIGNAL(currentIndexChanged(QString)), this, SLOT(fillStatBox2(QString)));
+    QObject::connect(m_charComboBoxVector->at(2), SIGNAL(currentIndexChanged(QString)), this, SLOT(fillStatBox3(QString)));
+    QObject::connect(m_charComboBoxVector->at(3), SIGNAL(currentIndexChanged(QString)), this, SLOT(fillStatBox4(QString)));
+    QObject::connect(m_charComboBoxVector->at(4), SIGNAL(currentIndexChanged(QString)), this, SLOT(fillStatBox5(QString)));
 
     QObject::connect(m_enemyComboBoxVector->at(0), SIGNAL(currentIndexChanged(QString)), this, SLOT(fillEnemyStatBox1(QString)));
     QObject::connect(m_enemyComboBoxVector->at(1), SIGNAL(currentIndexChanged(QString)), this, SLOT(fillEnemyStatBox2(QString)));
@@ -203,36 +285,58 @@ void MainWindow::connectSignals()
     QObject::connect(m_weaponComboBoxVector->at(1), SIGNAL(currentIndexChanged(QString)), this, SLOT(updateStats2()));
     QObject::connect(m_weaponComboBoxVector->at(2), SIGNAL(currentIndexChanged(QString)), this, SLOT(updateStats3()));
     QObject::connect(m_weaponComboBoxVector->at(3), SIGNAL(currentIndexChanged(QString)), this, SLOT(updateStats4()));
+    QObject::connect(m_weaponComboBoxVector->at(4), SIGNAL(currentIndexChanged(QString)), this, SLOT(updateStats5()));
 
     QObject::connect(m_armorComboBoxVector->at(0), SIGNAL(currentIndexChanged(QString)), this, SLOT(updateStats1()));
     QObject::connect(m_armorComboBoxVector->at(1), SIGNAL(currentIndexChanged(QString)), this, SLOT(updateStats2()));
     QObject::connect(m_armorComboBoxVector->at(2), SIGNAL(currentIndexChanged(QString)), this, SLOT(updateStats3()));
     QObject::connect(m_armorComboBoxVector->at(3), SIGNAL(currentIndexChanged(QString)), this, SLOT(updateStats4()));
+    QObject::connect(m_armorComboBoxVector->at(4), SIGNAL(currentIndexChanged(QString)), this, SLOT(updateStats5()));
 
     QObject::connect(m_accessoryComboBoxVector->at(0), SIGNAL(currentIndexChanged(QString)), this, SLOT(updateStats1()));
     QObject::connect(m_accessoryComboBoxVector->at(1), SIGNAL(currentIndexChanged(QString)), this, SLOT(updateStats2()));
     QObject::connect(m_accessoryComboBoxVector->at(2), SIGNAL(currentIndexChanged(QString)), this, SLOT(updateStats3()));
     QObject::connect(m_accessoryComboBoxVector->at(3), SIGNAL(currentIndexChanged(QString)), this, SLOT(updateStats4()));
+    QObject::connect(m_accessoryComboBoxVector->at(4), SIGNAL(currentIndexChanged(QString)), this, SLOT(updateStats5()));
 
     QObject::connect(m_charStatBoxVector->at(0)->getStats()->value("HPMax"), SIGNAL(textChanged(QString)), this, SLOT(checkHPMP1()));
     QObject::connect(m_charStatBoxVector->at(1)->getStats()->value("HPMax"), SIGNAL(textChanged(QString)), this, SLOT(checkHPMP2()));
     QObject::connect(m_charStatBoxVector->at(2)->getStats()->value("HPMax"), SIGNAL(textChanged(QString)), this, SLOT(checkHPMP3()));
     QObject::connect(m_charStatBoxVector->at(3)->getStats()->value("HPMax"), SIGNAL(textChanged(QString)), this, SLOT(checkHPMP4()));
+    QObject::connect(m_charStatBoxVector->at(4)->getStats()->value("HPMax"), SIGNAL(textChanged(QString)), this, SLOT(checkHPMP5()));
 
     QObject::connect(m_charStatBoxVector->at(0)->getStats()->value("MPMax"), SIGNAL(textChanged(QString)), this, SLOT(checkHPMP1()));
     QObject::connect(m_charStatBoxVector->at(1)->getStats()->value("MPMax"), SIGNAL(textChanged(QString)), this, SLOT(checkHPMP2()));
     QObject::connect(m_charStatBoxVector->at(2)->getStats()->value("MPMax"), SIGNAL(textChanged(QString)), this, SLOT(checkHPMP3()));
     QObject::connect(m_charStatBoxVector->at(3)->getStats()->value("MPMax"), SIGNAL(textChanged(QString)), this, SLOT(checkHPMP4()));
+    QObject::connect(m_charStatBoxVector->at(4)->getStats()->value("MPMax"), SIGNAL(textChanged(QString)), this, SLOT(checkHPMP5()));
 
     QObject::connect(m_charStatBoxVector->at(0)->getStats()->value("HP"), SIGNAL(textChanged(QString)), this, SLOT(setCurrentHPMP1()));
     QObject::connect(m_charStatBoxVector->at(1)->getStats()->value("HP"), SIGNAL(textChanged(QString)), this, SLOT(setCurrentHPMP2()));
     QObject::connect(m_charStatBoxVector->at(2)->getStats()->value("HP"), SIGNAL(textChanged(QString)), this, SLOT(setCurrentHPMP3()));
     QObject::connect(m_charStatBoxVector->at(3)->getStats()->value("HP"), SIGNAL(textChanged(QString)), this, SLOT(setCurrentHPMP4()));
+    QObject::connect(m_charStatBoxVector->at(4)->getStats()->value("HP"), SIGNAL(textChanged(QString)), this, SLOT(setCurrentHPMP5()));
 
     QObject::connect(m_charStatBoxVector->at(0)->getStats()->value("MP"), SIGNAL(textChanged(QString)), this, SLOT(setCurrentHPMP1()));
     QObject::connect(m_charStatBoxVector->at(1)->getStats()->value("MP"), SIGNAL(textChanged(QString)), this, SLOT(setCurrentHPMP2()));
     QObject::connect(m_charStatBoxVector->at(2)->getStats()->value("MP"), SIGNAL(textChanged(QString)), this, SLOT(setCurrentHPMP3()));
     QObject::connect(m_charStatBoxVector->at(3)->getStats()->value("MP"), SIGNAL(textChanged(QString)), this, SLOT(setCurrentHPMP4()));
+    QObject::connect(m_charStatBoxVector->at(4)->getStats()->value("MP"), SIGNAL(textChanged(QString)), this, SLOT(setCurrentHPMP5()));
+
+    QMap<QString, QPushButton*>::const_iterator it = m_charAilmentMap->constBegin();
+    while (it != m_charAilmentMap->constEnd())
+    {
+        QObject::connect(it.value(), SIGNAL(clicked()), this, SLOT(toggleCharAilment()));
+        it++;
+    }
+
+    QMap<QString, QPushButton*>::const_iterator it2 = m_enemyAilmentMap->constBegin();
+    while (it2 != m_enemyAilmentMap->constEnd())
+    {
+        QObject::connect(it2.value(), SIGNAL(clicked()), this, SLOT(toggleEnemyAilment()));
+        it2++;
+    }
+
 }
 
 void MainWindow::on_addCharButton_clicked(){newDialog("Character");}
@@ -240,6 +344,10 @@ void MainWindow::on_addWeaponButton_clicked(){newDialog("Weapon");}
 void MainWindow::on_addArmorButton_clicked(){newDialog("Armor");}
 void MainWindow::on_addAccessoryButton_clicked(){newDialog("Accessory");}
 void MainWindow::on_addEnemyButton_clicked(){newDialog("Enemy");}
+void MainWindow::on_addAttackButton_clicked(){newDialog("Attack");}
+void MainWindow::on_addMagicButton_clicked(){newDialog("Magic");}
+void MainWindow::on_addSummonButton_clicked(){newDialog("Summon");}
+void MainWindow::on_addItemButton_clicked(){newDialog("Item");}
 
 void MainWindow::on_newTableButton_clicked()
 {
@@ -319,6 +427,36 @@ void MainWindow::on_loadButton_clicked()
     }
 }
 void MainWindow::on_exitButton_clicked(){MainWindow::close();}
+void MainWindow::on_fullRegenButton_clicked()
+{
+    for (int iBox(0); iBox < m_nPlayerStatBox; iBox++)
+    {
+        //Get character's name
+        QString name = m_charComboBoxVector->at(iBox)->currentText();
+
+        //Loop on characters, find character and update HP and MP
+        for (int iChar(0); iChar < m_charVector->size(); iChar++)
+        {
+            if (m_charVector->at(iChar)->getStats()->value("Name") == name)
+            {
+                // We use the displayed value of HPMax and MPMax rather than the base value,
+                // which does not account for accessories bonus.
+                QString hpMaxDisplay = m_charStatBoxVector->at(iBox)->getStats()->value("HPMax")->displayText();
+                QString mpMaxDisplay = m_charStatBoxVector->at(iBox)->getStats()->value("MPMax")->displayText();
+                m_charStatBoxVector->at(iBox)->getStats()->value("HP")->setText(hpMaxDisplay);
+                m_charStatBoxVector->at(iBox)->getStats()->value("MP")->setText(mpMaxDisplay);
+            }
+        }
+    }
+}
+
+void MainWindow::on_charAttackComboBox_currentIndexChanged(QString attackName){computeDamage("Character", "Attack", attackName);}
+void MainWindow::on_charMagicComboBox_currentIndexChanged(QString attackName){computeDamage("Character", "Magic", attackName);}
+void MainWindow::on_charSummonComboBox_currentIndexChanged(QString attackName){computeDamage("Character", "Summon", attackName);}
+void MainWindow::on_enemyAttackComboBox_currentIndexChanged(QString attackName){computeDamage("Enemy", "Attack", attackName);}
+void MainWindow::on_enemyMagicComboBox_currentIndexChanged(QString attackName){computeDamage("Enemy", "Magic", attackName);}
+void MainWindow::on_charListView_clicked(QModelIndex index){updateInfo("Character", index);}
+void MainWindow::on_enemyListView_clicked(QModelIndex index){updateInfo("Enemy", index);}
 
 void MainWindow::enableButtons()
 {
@@ -342,51 +480,61 @@ void MainWindow::newDialog(QString newType)
     m_addCharDialog->setWindowTitle(windowTitle);
     int dialogReturn = m_addCharDialog->exec();
 
-    QString name = m_addCharDialog->getCharStatBox()->getStats()->value("Name")->displayText();
+    QString name = m_addCharDialog->getStatBox()->getStats()->value("Name")->displayText();
 
     if (dialogReturn == QDialog::Accepted && !name.isEmpty())
     {
         // Gather all character's stats
-        QString level             = m_addCharDialog->getCharStatBox()->getStats()->value("Level")->displayText();
-        QString hp                = m_addCharDialog->getCharStatBox()->getStats()->value("HPMax")->displayText();
-        QString mp                = m_addCharDialog->getCharStatBox()->getStats()->value("MPMax")->displayText();
-        QString hpMax             = m_addCharDialog->getCharStatBox()->getStats()->value("HPMax")->displayText();
-        QString mpMax             = m_addCharDialog->getCharStatBox()->getStats()->value("MPMax")->displayText();
-        QString strength          = m_addCharDialog->getCharStatBox()->getStats()->value("Strength")->displayText();
-        QString vitality          = m_addCharDialog->getCharStatBox()->getStats()->value("Vitality")->displayText();
-        QString magic             = m_addCharDialog->getCharStatBox()->getStats()->value("Magic")->displayText();
-        QString spirit            = m_addCharDialog->getCharStatBox()->getStats()->value("Spirit")->displayText();
-        QString dexterity         = m_addCharDialog->getCharStatBox()->getStats()->value("Dexterity")->displayText();
-        QString luck            = m_addCharDialog->getCharStatBox()->getStats()->value("Luck")->displayText();
-        QString attack            = m_addCharDialog->getCharStatBox()->getStats()->value("Attack")->displayText();
-        QString attackPercent     = m_addCharDialog->getCharStatBox()->getStats()->value("AttackPercent")->displayText();
-        QString magAttack         = m_addCharDialog->getCharStatBox()->getStats()->value("MagAttack")->displayText();
-        QString magAttackPercent  = m_addCharDialog->getCharStatBox()->getStats()->value("MagAttackPercent")->displayText();
-        QString critHitPercent    = m_addCharDialog->getCharStatBox()->getStats()->value("CritHitPercent")->displayText();
-        QString defense           = m_addCharDialog->getCharStatBox()->getStats()->value("Defense")->displayText();
-        QString magDefense        = m_addCharDialog->getCharStatBox()->getStats()->value("MagDefense")->displayText();
-        QString defensePercent    = m_addCharDialog->getCharStatBox()->getStats()->value("DefensePercent")->displayText();
-        QString magDefPercent     = m_addCharDialog->getCharStatBox()->getStats()->value("MagDefPercent")->displayText();
+        QString level             = m_addCharDialog->getStatBox()->getStats()->value("Level")->displayText();
+        QString hp                = m_addCharDialog->getStatBox()->getStats()->value("HPMax")->displayText();
+        QString mp                = m_addCharDialog->getStatBox()->getStats()->value("MPMax")->displayText();
+        QString hpMax             = m_addCharDialog->getStatBox()->getStats()->value("HPMax")->displayText();
+        QString mpMax             = m_addCharDialog->getStatBox()->getStats()->value("MPMax")->displayText();
+        QString strength          = m_addCharDialog->getStatBox()->getStats()->value("Strength")->displayText();
+        QString vitality          = m_addCharDialog->getStatBox()->getStats()->value("Vitality")->displayText();
+        QString magic             = m_addCharDialog->getStatBox()->getStats()->value("Magic")->displayText();
+        QString spirit            = m_addCharDialog->getStatBox()->getStats()->value("Spirit")->displayText();
+        QString dexterity         = m_addCharDialog->getStatBox()->getStats()->value("Dexterity")->displayText();
+        QString luck              = m_addCharDialog->getStatBox()->getStats()->value("Luck")->displayText();
+        QString attack            = m_addCharDialog->getStatBox()->getStats()->value("Attack")->displayText();
+        QString attackPercent     = m_addCharDialog->getStatBox()->getStats()->value("AttackPercent")->displayText();
+        QString magAttack         = m_addCharDialog->getStatBox()->getStats()->value("MagAttack")->displayText();
+        QString magAttackPercent  = m_addCharDialog->getStatBox()->getStats()->value("MagAttackPercent")->displayText();
+        QString critHitPercent    = m_addCharDialog->getStatBox()->getStats()->value("CritHitPercent")->displayText();
+        QString defense           = m_addCharDialog->getStatBox()->getStats()->value("Defense")->displayText();
+        QString magDefense        = m_addCharDialog->getStatBox()->getStats()->value("MagDefense")->displayText();
+        QString defensePercent    = m_addCharDialog->getStatBox()->getStats()->value("DefensePercent")->displayText();
+        QString magDefPercent     = m_addCharDialog->getStatBox()->getStats()->value("MagDefPercent")->displayText();
         QString weapon            = "None";
         QString armor             = "None";
         QString accessory         = "None";
 
+        // For attacks, magic, summons and items
+        QString factor            = m_addCharDialog->getStatBox()->getStats()->value("Factor")->displayText();
+        QString mpCost            = m_addCharDialog->getStatBox()->getStats()->value("MPCost")->displayText();
+
+        // Status ailments for characters
+        bool poison(false), sadness(false), fury(false), silence(false), darkness(false), frog(false);
+
         createNew(newType, name, level, hp, mp, hpMax, mpMax, strength, vitality, magic, spirit, dexterity, luck,
                   attack, attackPercent, magAttack, magAttackPercent, critHitPercent,
-                  defense, defensePercent, magDefense, magDefPercent, weapon, armor, accessory);
+                  defense, defensePercent, magDefense, magDefPercent, weapon, armor, accessory,
+                  factor, mpCost, poison, sadness, fury, silence, darkness, frog);
     }
 }
 
 void MainWindow::createNew(QString newType, QString name, QString level, QString hp, QString mp, QString hpMax, QString mpMax, QString strength, QString vitality, QString magic,
                            QString spirit, QString dexterity, QString luck, QString attack, QString attackPercent, QString magAttack,
                            QString magAttackPercent, QString critHitPercent, QString defense, QString defensePercent, QString magDefense, QString magDefPercent,
-                           QString weapon, QString armor, QString accessory)
+                           QString weapon, QString armor, QString accessory, QString factor, QString mpCost, bool poison, bool sadness, bool fury,
+                           bool silence, bool darkness, bool frog)
 {
     if (newType == "Character" || newType == "Enemy")
     {
         m_newChar = new Character(newType, name, level, hp, mp, hpMax, mpMax, strength, vitality, magic, spirit, dexterity, luck,
                                   attack, attackPercent, magAttack, magAttackPercent, critHitPercent,
-                                  defense, defensePercent, magDefense, magDefPercent, weapon, armor, accessory);
+                                  defense, defensePercent, magDefense, magDefPercent, weapon, armor, accessory,
+                                  poison, sadness, fury, silence, darkness, frog);
 
         if (newType == "Character")
         {
@@ -405,7 +553,6 @@ void MainWindow::createNew(QString newType, QString name, QString level, QString
             // Populate the model for enemy combo boxes
             QStandardItem *item = new QStandardItem(name);
             m_enemyComboBoxModel->appendRow(item);
-            m_enemyComboBoxModel->sort(0,Qt::AscendingOrder);
         }
     }
     else if (newType == "Weapon")
@@ -430,7 +577,7 @@ void MainWindow::createNew(QString newType, QString name, QString level, QString
         QStandardItem *item = new QStandardItem(name);
         m_armorComboBoxModel->appendRow(item);
     }
-    else
+    else if (newType == "Accessory")
     {
         m_newAccessory = new Item(name, magic, strength, hpMax, mpMax, vitality, dexterity, luck, spirit);
 
@@ -441,15 +588,61 @@ void MainWindow::createNew(QString newType, QString name, QString level, QString
         QStandardItem *item = new QStandardItem(name);
         m_accessoryComboBoxModel->appendRow(item);
     }
+    else if(newType == "Attack")
+    {
+        m_newAttack = new Item(name, factor);
+
+        // Store the attack
+        m_attackVector->push_back(m_newAttack);
+
+        // Populate the model for attack combo boxes
+        QStandardItem *item = new QStandardItem(name);
+        m_attackComboBoxModel->appendRow(item);
+    }
+    else if (newType == "Magic" || newType == "Summon")
+    {
+        m_newMagic = new Item(name, magAttackPercent, factor, mpCost);
+
+        if (newType == "Magic")
+        {
+            // Store the magic
+            m_magicVector->push_back(m_newMagic);
+
+            // Populate the model for magic combo boxes
+            QStandardItem *item = new QStandardItem(name);
+            m_magicComboBoxModel->appendRow(item);
+        }
+        else
+        {
+            // Store the summon
+            m_summonVector->push_back(m_newMagic);
+
+            // Populate the model for summon combo boxes
+            QStandardItem *item = new QStandardItem(name);
+            m_summonComboBoxModel->appendRow(item);
+        }
+    }
+    else if (newType == "Item")
+    {
+        m_newItem = new Item(name);
+
+        // Store the item
+        m_itemVector->push_back(m_newItem);
+
+        // Populate the model for magic combo boxes
+        QStandardItem *item = new QStandardItem(name);
+        m_itemComboBoxModel->appendRow(item);
+    }
 
     // Sort all Combo Box Models
     for (int iModel(0); iModel < m_allComboBoxModels->size(); iModel++){m_allComboBoxModels->at(iModel)->sort(0, Qt::AscendingOrder);}
 }
 
-void MainWindow::fillCharStatBox1(QString charName){fillStatBox(0, "Character", charName);}
-void MainWindow::fillCharStatBox2(QString charName){fillStatBox(1, "Character", charName);}
-void MainWindow::fillCharStatBox3(QString charName){fillStatBox(2, "Character", charName);}
-void MainWindow::fillCharStatBox4(QString charName){fillStatBox(3, "Character", charName);}
+void MainWindow::fillStatBox1(QString charName){fillStatBox(0, "Character", charName);}
+void MainWindow::fillStatBox2(QString charName){fillStatBox(1, "Character", charName);}
+void MainWindow::fillStatBox3(QString charName){fillStatBox(2, "Character", charName);}
+void MainWindow::fillStatBox4(QString charName){fillStatBox(3, "Character", charName);}
+void MainWindow::fillStatBox5(QString charName){fillStatBox(4, "Character", charName);}
 
 void MainWindow::fillEnemyStatBox1(QString enemyName){fillStatBox(0, "Enemy", enemyName);}
 void MainWindow::fillEnemyStatBox2(QString enemyName){fillStatBox(1, "Enemy", enemyName);}
@@ -459,16 +652,19 @@ void MainWindow::updateStats1(){updateStats(0);}
 void MainWindow::updateStats2(){updateStats(1);}
 void MainWindow::updateStats3(){updateStats(2);}
 void MainWindow::updateStats4(){updateStats(3);}
+void MainWindow::updateStats5(){updateStats(4);}
 
 void MainWindow::checkHPMP1(){checkHPMP(0);}
 void MainWindow::checkHPMP2(){checkHPMP(1);}
 void MainWindow::checkHPMP3(){checkHPMP(2);}
 void MainWindow::checkHPMP4(){checkHPMP(3);}
+void MainWindow::checkHPMP5(){checkHPMP(4);}
 
 void MainWindow::setCurrentHPMP1(){setCurrentHPMP(0);}
 void MainWindow::setCurrentHPMP2(){setCurrentHPMP(1);}
 void MainWindow::setCurrentHPMP3(){setCurrentHPMP(2);}
 void MainWindow::setCurrentHPMP4(){setCurrentHPMP(3);}
+void MainWindow::setCurrentHPMP5(){setCurrentHPMP(4);}
 
 void MainWindow::checkHPMP(int i)
 {
@@ -481,9 +677,18 @@ void MainWindow::checkHPMP(int i)
     {
         m_charStatBoxVector->at(i)->getStats()->value("HP")->setText(hpMaxDisplay);
     }
+    if (hpDisplay.toInt() < 1)
+    {
+        m_charStatBoxVector->at(i)->getStats()->value("HP")->setText("0");
+    }
+
     if (mpDisplay.toInt() > mpMaxDisplay.toInt())
     {
         m_charStatBoxVector->at(i)->getStats()->value("MP")->setText(mpMaxDisplay);
+    }
+    if (mpDisplay.toInt() < 1)
+    {
+        m_charStatBoxVector->at(i)->getStats()->value("MP")->setText("0");
     }
 }
 
@@ -590,7 +795,7 @@ void MainWindow::updateStats(int i)
 {
     // Initialize some stuff
     QString charName;
-    QString charAttack, charAttackPercent, charMagic, charCritHitPercent, charStrength;
+    QString charAttack, charAttackPercent, charMagAttack, charMagAttackPercent, charMagic, charCritHitPercent, charStrength;
     QString charDefense, charDefensePercent, charMagDefense, charMagDefPercent;
     QString charHP, charMP, charHPMax, charMPMax, charVitality, charSpirit, charDexterity, charLuck;
     QString weaponAttack, weaponAttackPercent, weaponMagic, weaponCritHitPercent;
@@ -682,6 +887,7 @@ void MainWindow::updateStats(int i)
             charSpirit = m_charVector->at(iChar)->getStats()->value("Spirit");
             charDexterity = m_charVector->at(iChar)->getStats()->value("Dexterity");
             charLuck = m_charVector->at(iChar)->getStats()->value("Luck");
+            charMagAttack = m_charVector->at(iChar)->getStats()->value("MagAttack");
         }
     }
 
@@ -694,12 +900,18 @@ void MainWindow::updateStats(int i)
     charLuck = QString::number(charLuck.toInt() + accessoryLuck.toInt());
     charHPMax = QString::number(charHPMax.toInt() + accessoryHP.toInt());
     charMPMax = QString::number(charMPMax.toInt() + accessoryMP.toInt());
-    charAttack = QString::number(charAttack.toInt() + weaponAttack.toInt());
+
+    charAttack = QString::number(charStrength.toInt() + weaponAttack.toInt());
     charAttackPercent = QString::number(charAttackPercent.toInt() + weaponAttackPercent.toInt());
     charCritHitPercent = QString::number(charCritHitPercent.toInt() + weaponCritHitPercent.toInt());
-    charDefense = QString::number(charDefense.toInt() + armorDefense.toInt());
-    charDefensePercent = QString::number(charDefensePercent.toInt() + armorDefensePercent.toInt());
-    charMagDefense = QString::number(charMagDefense.toInt() + armorMagDefense.toInt());
+
+    charMagAttack = QString::number(charMagic.toInt()) ;
+    //charMagAttackPercent = QString::number();
+
+    charDefense = QString::number(charVitality.toInt() + armorDefense.toInt());
+    charDefensePercent = QString::number(charDexterity.toInt()/4 + armorDefensePercent.toInt());
+
+    charMagDefense = QString::number(charSpirit.toInt() + armorMagDefense.toInt());
     charMagDefPercent = QString::number(charMagDefPercent.toInt() + armorMagDefPercent.toInt());
 
 
@@ -717,6 +929,7 @@ void MainWindow::updateStats(int i)
     m_charStatBoxVector->at(i)->getStats()->value("CritHitPercent")->setText(charCritHitPercent);
     m_charStatBoxVector->at(i)->getStats()->value("Defense")->setText(charDefense);
     m_charStatBoxVector->at(i)->getStats()->value("DefensePercent")->setText(charDefensePercent);
+    m_charStatBoxVector->at(i)->getStats()->value("MagAttack")->setText(charMagAttack);
     m_charStatBoxVector->at(i)->getStats()->value("MagDefense")->setText(charMagDefense);
     m_charStatBoxVector->at(i)->getStats()->value("MagDefPercent")->setText(charMagDefPercent);
 }
@@ -729,25 +942,35 @@ void MainWindow::writeToFile()
     // Write Table name
     write << "Table Name: " << m_tableName << "\n";
 
-    // Write number of characters, enemies, weapons, armors and accessories.
+    // Write number of characters, enemies, weapons, armors and accessories, etc.
     // Note the -1 because there's always a dummy class for combo box purposes.
     m_nChar = QString::number(m_allCharVector->at(0)->size()-1);
     m_nEnemies = QString::number(m_allCharVector->at(1)->size()-1);
     m_nWeapons = QString::number(m_weaponVector->size()-1);
     m_nArmors = QString::number(m_armorVector->size()-1);
     m_nAccessories = QString::number(m_accessoryVector->size()-1);
+    m_nAttacks = QString::number(m_attackVector->size()-1);
+    m_nMagic = QString::number(m_magicVector->size()-1);
+    m_nSummons = QString::number(m_summonVector->size()-1);
+    m_nItems = QString::number(m_itemVector->size()-1);
 
     write << "Characters: " << m_nChar << " | Enemies: " << m_nEnemies <<
              " | Weapons: " << m_nWeapons << " | Armors: " << m_nArmors <<
-             " | Accessories: " << m_nAccessories << "\n";
+             " | Accessories: " << m_nAccessories << " | Attacks: " << m_nAttacks <<
+             " | Magic: " << m_nMagic << " | Summons: " << m_nSummons <<
+             " | Items: " << m_nItems << "\n";
 
-    /* Big fat loop to write all stats from characters, enemies, and items.
+    /* Big fat loop to write all stats from characters, enemies, items, etc.
      * Type 1: characters
      * Type 2: enemies
      * Type 3: weapons
      * Type 4: armors
-     * Type 5: accessories */
-    for (int iType(0); iType < 5; iType++)
+     * Type 5: accessories
+     * Type 6: attacks
+     * Type 7: magic
+     * Type 8: summons
+     * Type 9: items */
+    for (int iType(0); iType < 9; iType++)
     {
         int nMax(0);
         QMap<QString, QString> *charStat = new QMap<QString, QString>;
@@ -758,7 +981,11 @@ void MainWindow::writeToFile()
         else if (iType == 1){write << "========= BESTIARY =========\n"; nMax = m_enemyVector->size(); charVector = m_enemyVector;}
         else if (iType == 2){write << "========= WEAPONS =========\n"; nMax = m_weaponVector->size(); itemVector = m_weaponVector;}
         else if (iType == 3){write << "========= ARMORS =========\n"; nMax = m_armorVector->size(); itemVector = m_armorVector;}
-        else {write << "========= ACCESSORIES =========\n"; nMax = m_accessoryVector->size(); itemVector = m_accessoryVector;}
+        else if (iType == 4){write << "========= ACCESSORIES =========\n"; nMax = m_accessoryVector->size(); itemVector = m_accessoryVector;}
+        else if (iType == 5){write << "========= ATTACKS =========\n"; nMax = m_attackVector->size(); itemVector = m_attackVector;}
+        else if (iType == 6){write << "========= MAGIC =========\n"; nMax = m_magicVector->size(); itemVector = m_magicVector;}
+        else if (iType == 7){write << "========= SUMMONS =========\n"; nMax = m_summonVector->size(); itemVector = m_summonVector;}
+        else if (iType == 8){write << "========= ITEMS =========\n"; nMax = m_itemVector->size(); itemVector = m_itemVector;}
 
         for (int i(0); i < nMax; i++)
         {
@@ -773,7 +1000,11 @@ void MainWindow::writeToFile()
                 else if (iType == 1){write << "Enemy " << i << ":\n";}
                 else if (iType == 2){write << "Weapon " << i << ":\n";}
                 else if (iType == 3){write << "Armor " << i << ":\n";}
-                else {write << "Accessory " << i << ":\n";}
+                else if (iType == 4){write << "Accessory " << i << ":\n";}
+                else if (iType == 5){write << "Attack " << i << ":\n";}
+                else if (iType == 6){write << "Magic " << i << ":\n";}
+                else if (iType == 7){write << "Summon " << i << ":\n";}
+                else if (iType == 8){write << "Item " << i << ":\n";}
 
                 // Navigate through the stat QMap
                 if (iType == 0 || iType == 1){charStat = charVector->at(i)->getStats();}
@@ -784,8 +1015,20 @@ void MainWindow::writeToFile()
                 {
                     write << it.key() << ": " << it.value() << " | ";
                     it++;
-                }
+                }                
                 write << "\n";
+
+                // If char, also navigate through the ailment QMap
+                if (iType == 0 || iType == 1)
+                {
+                    QMap<QString, bool>::const_iterator it = charVector->at(i)->getAilments()->constBegin();
+                    while (it != charVector->at(i)->getAilments()->constEnd())
+                    {
+                        write << it.key() << ": " << it.value() << " | ";
+                        it++;
+                    }
+                    write << "\n";
+                }
             }
         }
     }
@@ -801,21 +1044,29 @@ void MainWindow::readFromFile()
     m_windowTitle = "Yelpy Fantasy: " + m_tableName;
     setWindowTitle(m_windowTitle);
 
-    // Get number of characters, enemies, weapons and accessories
+    // Get number of characters, enemies, weapons, accessories, etc.
     QStringList lineList = read.readLine().split(" | ");
     m_nChar = lineList[0].split(": ")[1];
     m_nEnemies = lineList[1].split(": ")[1];
     m_nWeapons = lineList[2].split(": ")[1];
     m_nArmors = lineList[3].split(": ")[1];
-    m_nAccessories = lineList[4].split(": ")[1];    
+    m_nAccessories = lineList[4].split(": ")[1];
+    m_nAttacks = lineList[5].split(": ")[1];
+    m_nMagic = lineList[6].split(": ")[1];
+    m_nSummons = lineList[7].split(": ")[1];
+    m_nItems = lineList[8].split(": ")[1];
 
     /* Big fat loop to get all stats from characters, enemies, and items.
      * Type 1: characters
      * Type 2: enemies
      * Type 3: weapons
      * Type 4: armors
-     * Type 5: accessories */
-    for (int iType(0); iType < 5; iType++)
+     * Type 5: accessories
+     * Type 6: attacks
+     * Type 7: magic
+     * Type 8: summons
+     * Type 9: items */
+    for (int iType(0); iType < 9; iType++)
     {
         int nMax(0);
         QString type;
@@ -825,20 +1076,24 @@ void MainWindow::readFromFile()
         else if (iType == 1){nMax = m_nEnemies.toInt(); type = "Enemy";}
         else if (iType == 2){nMax = m_nWeapons.toInt(); type = "Weapon";}
         else if (iType == 3){nMax = m_nArmors.toInt(); type = "Armor";}
-        else {nMax = m_nAccessories.toInt(); type = "Accessory";}
+        else if (iType == 4){nMax = m_nAccessories.toInt(); type = "Accessory";}
+        else if (iType == 5){nMax = m_nAttacks.toInt(); type = "Attack";}
+        else if (iType == 6){nMax = m_nMagic.toInt(); type = "Magic";}
+        else if (iType == 7){nMax = m_nSummons.toInt(); type = "Summon";}
+        else if (iType == 8){nMax = m_nItems.toInt(); type = "Item";}
 
         for (int i(0); i < nMax; i++)
         {
             read.readLine();
-            QStringList innerList = read.readLine().split(" | ", QString::SkipEmptyParts);
+            QStringList statList = read.readLine().split(" | ", QString::SkipEmptyParts);
 
             // Create the stat bundle
             QMap<QString, QString> *statBundle = new QMap<QString, QString>;
 
             // Navigate through the stat list and populate the bundle
-            for (int iElement(0); iElement < innerList.size(); iElement++)
+            for (int iElement(0); iElement < statList.size(); iElement++)
             {
-                QStringList statPair = innerList.at(iElement).split(": ");
+                QStringList statPair = statList.at(iElement).split(": ");
                 statBundle->insert(statPair[0],statPair[1]);
             }
 
@@ -854,7 +1109,7 @@ void MainWindow::readFromFile()
             QString magic             = statBundle->value("Magic");
             QString spirit            = statBundle->value("Spirit");
             QString dexterity         = statBundle->value("Dexterity");
-            QString luck            = statBundle->value("Luck");
+            QString luck              = statBundle->value("Luck");
             QString attack            = statBundle->value("Attack");
             QString attackPercent     = statBundle->value("AttackPercent");
             QString magAttack         = statBundle->value("MagAttack");
@@ -867,34 +1122,304 @@ void MainWindow::readFromFile()
             QString weapon            = statBundle->value("Weapon");
             QString armor             = statBundle->value("Armor");
             QString accessory         = statBundle->value("Accessory");
+            QString factor            = statBundle->value("Factor");
+            QString mpCost            = statBundle->value("MPCost");
+
+            // for characters only
+            bool poison(false), sadness(false), fury(false), silence(false), darkness(false), frog(false);
+
+            if (iType == 0 || iType == 1)
+            {
+                QStringList ailmentList = read.readLine().split(" | ", QString::SkipEmptyParts);
+
+                // Create the stat bundle
+                QMap<QString, QString> *ailmentBundle = new QMap<QString, QString>;
+
+                // Navigate through the ailment list and populate the bundle
+                for (int iElement(0); iElement < ailmentList.size(); iElement++)
+                {
+                    QStringList ailmentPair = ailmentList.at(iElement).split(": ");
+                    ailmentBundle->insert(ailmentPair[0],ailmentPair[1]);
+                }
+
+                // Gather all character's stats
+                poison               = (ailmentBundle->value("Poison") == "1" ? true : false);
+                sadness              = (ailmentBundle->value("Sadness") == "1" ? true : false);
+                fury                 = (ailmentBundle->value("Fury") == "1" ? true : false);
+                silence              = (ailmentBundle->value("Silence") == "1" ? true : false);
+                darkness             = (ailmentBundle->value("Darkness") == "1" ? true : false);
+                frog                 = (ailmentBundle->value("Frog") == "1" ? true : false);
+            }
 
             // Create character/enemy
             createNew(type, name, level, hp, mp, hpMax, mpMax, strength, vitality, magic, spirit, dexterity, luck,
                       attack, attackPercent, magAttack, magAttackPercent, critHitPercent,
-                      defense, defensePercent, magDefense, magDefPercent, weapon, armor, accessory);
+                      defense, defensePercent, magDefense, magDefPercent, weapon, armor, accessory, factor, mpCost,
+                      poison, sadness, fury, silence, darkness, frog);
         }
     }
 }
 
-void MainWindow::on_fullRegenButton_clicked()
+void MainWindow::computeDamage(QString charType, QString attackType, QString  attackName)
 {
-    for (int iBox(0); iBox < m_nPlayerStatBox; iBox++)
-    {
-        //Get character's name
-        QString name = m_charComboBoxVector->at(iBox)->currentText();
+    // Initialisations
+    double factor(0), level(0), attack(0), magAttack(0), attackDamage(0), magicDamage(0);
+    double defense(0), magicDefense(0);
+    bool attackerCritHit(false), attackerFrog(false), attackerSadness(false);
+    bool targetBarrier(false), targetMagBarrier(false);
+    QString attackerLevel, attackerAttack, attackerMagAttack;
+    QString targetLevel, targetDefense, targetMagDefense;
+    QString magAttackPercent;
 
-        //Loop on characters, find character and update HP and MP
-        for (int iChar(0); iChar < m_charVector->size(); iChar++)
+
+    /* ===================================
+     * =========== BASE DAMAGE ===========
+     * ===================================*/
+
+    // Get attacker level, attack, and magic
+    QListView *attackerListView = new QListView;
+    QVector<StatBox*> *attackerVector = new QVector<StatBox*>;
+
+    if (charType == "Character"){attackerListView = ui->charListView; attackerVector = m_charStatBoxVector;}
+    else {attackerListView = ui->enemyListView; attackerVector = m_enemyStatBoxVector;}
+
+    QModelIndex index = attackerListView->currentIndex();
+    int attackerIndex = index.row();
+    if (attackerIndex != -1){
+        attackerLevel = attackerVector->at(attackerIndex)->getStats()->value("Level")->displayText();
+        attackerAttack = attackerVector->at(attackerIndex)->getStats()->value("Attack")->displayText();
+        attackerMagAttack = attackerVector->at(attackerIndex)->getStats()->value("MagAttack")->displayText();
+    }
+    level = attackerLevel.toDouble();
+    attack = attackerAttack.toDouble();
+    magAttack = attackerMagAttack.toDouble();
+
+    // Attack Damage = attack+[(attack*level)(attack+level]/1024
+    attackDamage = attackDamage + (attack+((attack*level)*(attack+level))/1024);
+
+    // Magic Damage = 6*(magic+level)
+    magicDamage = magAttack + (6*(magAttack+level));
+
+    /* ===================================
+     * =========== APPLY FACTOR ==========
+     * ===================================*/
+
+    if (attackType == "Attack")
+    {
+        // Get factor
+        for (int iAttack(0); iAttack < m_attackVector->size(); iAttack++)
         {
-            if (m_charVector->at(iChar)->getStats()->value("Name") == name)
+            if (m_attackVector->at(iAttack)->getStats()->value("Name") == attackName)
             {
-                // We use the displayed value of HPMax and MPMax rather than the base value,
-                // which does not account for accessories bonus.
-                QString hpMaxDisplay = m_charStatBoxVector->at(iBox)->getStats()->value("HPMax")->displayText();
-                QString mpMaxDisplay = m_charStatBoxVector->at(iBox)->getStats()->value("MPMax")->displayText();
-                m_charStatBoxVector->at(iBox)->getStats()->value("HP")->setText(hpMaxDisplay);
-                m_charStatBoxVector->at(iBox)->getStats()->value("MP")->setText(mpMaxDisplay);
+                factor = m_attackVector->at(iAttack)->getStats()->value("Factor").toDouble();
+            }
+        }
+    }
+    else if (attackType == "Magic" || attackType == "Summon")
+    {
+        QVector<Item*> *vector = new QVector<Item*>;
+        // Define the correct storage vector depending on Magic/Summon
+        if (attackType == "Magic"){vector = m_magicVector;}
+        else {vector = m_summonVector;}
+
+        // Get factor
+        for (int iMagic(0); iMagic < vector->size(); iMagic++)
+        {
+            if (vector->at(iMagic)->getStats()->value("Name") == attackName)
+            {
+                factor = vector->at(iMagic)->getStats()->value("Factor").toDouble();
+
+                // Two birds, one stone: get MagAttPercent and display the value in the stat box
+                if (attackerIndex != -1)
+                {
+                    magAttackPercent = vector->at(iMagic)->getStats()->value("MagAttackPercent");
+                    attackerVector->at(attackerIndex)->getStats()->value("MagAttackPercent")->setText(magAttackPercent);
+                }
+            }
+        }
+    }
+
+    attackDamage = attackDamage*factor;
+    magicDamage = magicDamage*factor;
+
+    /* ===================================
+     * ========== APPLY DEFENSE ==========
+     * ===================================*/
+
+    // Get target level, attack, and magic
+    QListView *targetListView = new QListView;
+    QVector<StatBox*> *targetVector = new QVector<StatBox*>;
+
+    if (charType == "Character"){targetListView = ui->enemyListView; targetVector = m_enemyStatBoxVector;}
+    else {targetListView = ui->charListView; targetVector = m_charStatBoxVector;}
+
+    QModelIndex index2 = targetListView->currentIndex();
+    int targetIndex = index2.row();
+    if (targetIndex != -1){
+        targetLevel = targetVector->at(targetIndex)->getStats()->value("Level")->displayText();
+        targetDefense = targetVector->at(targetIndex)->getStats()->value("Defense")->displayText();
+        targetMagDefense = targetVector->at(targetIndex)->getStats()->value("MagDefense")->displayText();
+    }
+    level = targetLevel.toDouble();
+    defense = targetDefense.toDouble();
+    magicDefense = targetMagDefense.toDouble();
+
+    attackDamage = attackDamage*(512-defense)/512;
+    magicDamage = magicDamage*(512-magicDefense)/512;
+
+    /* ===================================
+     * ========= APPLY AILMENTS ==========
+     * ===================================*/
+
+    if (attackerCritHit == true){attackDamage = 2*attackDamage;}
+    if (attackerFrog == true){attackDamage = attackDamage/4;}
+    if (attackerSadness == true){attackDamage = 7/10*attackDamage; magicDamage = 7/10*magicDamage;}
+    if (targetBarrier == true){attackDamage = 0.5*attackDamage;}
+    if (targetMagBarrier == true){magicDamage = 2*magicDamage;}
+
+    // Display final damage
+    QLineEdit *attackEdit = new QLineEdit;
+    QLineEdit *magicEdit = new QLineEdit;
+    QLineEdit *summonEdit = new QLineEdit;
+
+    if (charType == "Character"){attackEdit = ui->charAttDmgEdit; magicEdit = ui->charMagDmgEdit; summonEdit = ui->charSumDmgEdit;}
+    else {attackEdit = ui->enemyAttDmgEdit; magicEdit = ui->enemyMagDmgEdit;}
+
+    if (attackType == "Attack"){attackEdit->setText(QString::number(qFloor(attackDamage)));}
+    else if (attackType == "Magic"){magicEdit->setText(QString::number(qFloor(magicDamage)));;}
+    else if (attackType == "Summon") {summonEdit->setText(QString::number(qFloor(magicDamage)));}
+}
+
+void MainWindow::toggleCharAilment()
+{
+    QObject *sendingButton = sender();
+
+    // Navigate through char QMap and find the sender
+    QMap<QString, QPushButton*>::const_iterator it = m_charAilmentMap->constBegin();
+    while (it != m_charAilmentMap->constEnd())
+    {
+        if(sendingButton == it.value()){toggleAilment("Character", it.key());}
+        it++;
+    }
+}
+
+void MainWindow::toggleEnemyAilment()
+{
+    QObject *sendingButton = sender();
+
+    // Navigate through enemy QMap and find the sender
+    QMap<QString, QPushButton*>::const_iterator it = m_enemyAilmentMap->constBegin();
+    while (it != m_enemyAilmentMap->constEnd())
+    {
+        if(sendingButton == it.value()){toggleAilment("Enemy", it.key());}
+        it++;
+    }
+}
+
+void MainWindow::toggleAilment(QString charType, QString ailment)
+{
+    // Set storage vector and list view depending on char type
+    QVector<Character*> *vector = new QVector<Character*>;
+    QListView *listView = new QListView;
+
+    if (charType == "Character"){vector = m_charVector; listView = ui->charListView;}
+    else{vector = m_enemyVector; listView = ui->enemyListView;}
+
+    // Get character's name
+    QModelIndex index = listView->currentIndex();
+    QString name = index.data().toString();
+
+    // Look for character and toggle sleep value
+    for (int iChar(0); iChar < vector->size(); iChar++)
+    {
+        if (vector->at(iChar)->getStats()->value("Name") == name)
+        {
+            vector->at(iChar)->setAilment(ailment, !vector->at(iChar)->getAilments()->value(ailment));
+        }
+    }
+}
+
+void MainWindow::updateInfo(QString charType, QModelIndex index)
+{
+    // Get character and enemy attack, magic, and summon if any
+    QString charCurrentAttack = ui->charAttackComboBox->currentText();
+    QString charCurrentMagic = ui->charMagicComboBox->currentText();
+    QString charCurrentSummon = ui->charSummonComboBox->currentText();
+    QString enemyCurrentAttack = ui->enemyAttackComboBox->currentText();
+    QString enemyCurrentMagic = ui->enemyMagicComboBox->currentText();
+
+    // Update damage
+    computeDamage("Character", "Attack", charCurrentAttack);
+    computeDamage("Character", "Magic", charCurrentMagic);
+    computeDamage("Character", "Summon", charCurrentSummon);
+    computeDamage("Enemy", "Attack", enemyCurrentAttack);
+    computeDamage("Enemy", "Magic", enemyCurrentMagic);
+
+    // Update ailments
+    updateAilments(charType, index);
+}
+
+void MainWindow::updateAilments(QString charType, QModelIndex index)
+{
+    QString name = index.data(Qt::DisplayRole).toString();
+
+    QVector<Character*> *vector = new QVector<Character*>;
+    QMap<QString, QPushButton*> *qMap = new QMap<QString, QPushButton*>;
+
+    if (charType == "Character"){vector = m_charVector; qMap = m_charAilmentMap;}
+    else {vector = m_enemyVector; qMap = m_enemyAilmentMap;}
+
+    for (int iChar(0); iChar < vector->size(); iChar++)
+    {
+        if (vector->at(iChar)->getStats()->value("Name") == name)
+        {
+            // Loop over ailments and activate button if true
+            QMap<QString, bool>::const_iterator it = vector->at(iChar)->getAilments()->constBegin();
+            while (it != vector->at(iChar)->getAilments()->constEnd())
+            {
+                // Set button
+                qMap->value(it.key())->setChecked(it.value());
+                it++;
             }
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

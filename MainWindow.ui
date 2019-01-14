@@ -6,9 +6,21 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1000</width>
-    <height>800</height>
+    <width>800</width>
+    <height>1000</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>0</width>
+    <height>1000</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>800</width>
+    <height>1000</height>
+   </size>
   </property>
   <property name="font">
    <font>
@@ -20,15 +32,15 @@
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout_2">
-    <item row="1" column="1">
-     <layout class="QGridLayout" name="enemyLayout"/>
-    </item>
     <item row="1" column="0" rowspan="2">
      <layout class="QGridLayout" name="characterLayout">
       <property name="spacing">
        <number>6</number>
       </property>
      </layout>
+    </item>
+    <item row="1" column="1">
+     <layout class="QGridLayout" name="enemyLayout"/>
     </item>
     <item row="0" column="0" colspan="2">
      <layout class="QHBoxLayout" name="menuLayout">
@@ -271,7 +283,7 @@
        </widget>
       </item>
       <item>
-       <widget class="Line" name="line_2">
+       <widget class="Line" name="menuLine1">
         <property name="frameShadow">
          <enum>QFrame::Plain</enum>
         </property>
@@ -415,7 +427,7 @@
        </widget>
       </item>
       <item>
-       <widget class="Line" name="line">
+       <widget class="Line" name="menuLine2">
         <property name="frameShadow">
          <enum>QFrame::Plain</enum>
         </property>
@@ -469,180 +481,392 @@
       <layout class="QGridLayout" name="gridLayout_3">
        <item row="0" column="0">
         <layout class="QGridLayout" name="battleGridLayout">
-         <item row="0" column="1">
-          <layout class="QVBoxLayout" name="charActionLayout">
+         <item row="0" column="5">
+          <layout class="QVBoxLayout" name="enemyInfoLayout">
            <item>
-            <widget class="QLabel" name="charAttacklabel">
-             <property name="enabled">
-              <bool>true</bool>
-             </property>
-             <property name="text">
-              <string>Attack</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QComboBox" name="charAttackComboBox">
-             <property name="frame">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="charMagiclabel">
-             <property name="enabled">
-              <bool>true</bool>
-             </property>
-             <property name="text">
-              <string>Magic</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QComboBox" name="charMagicComboBox"/>
-           </item>
-           <item>
-            <widget class="QLabel" name="charItemlabel">
-             <property name="enabled">
-              <bool>true</bool>
-             </property>
-             <property name="text">
-              <string>Items</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QComboBox" name="charItemComboBox"/>
-           </item>
-           <item>
-            <widget class="QLabel" name="charSummonlabel">
-             <property name="enabled">
-              <bool>true</bool>
-             </property>
-             <property name="text">
-              <string>Summon</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QComboBox" name="charSummonComboBox"/>
-           </item>
-           <item>
-            <spacer name="verticalSpacer_7">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
+            <widget class="QListView" name="enemyListView">
+             <property name="maximumSize">
               <size>
-               <width>20</width>
-               <height>40</height>
+               <width>150</width>
+               <height>100</height>
               </size>
              </property>
-            </spacer>
-           </item>
-           <item>
-            <widget class="QLabel" name="charDmglabel">
-             <property name="enabled">
-              <bool>true</bool>
-             </property>
-             <property name="text">
-              <string>Damage</string>
+             <property name="editTriggers">
+              <set>QAbstractItemView::NoEditTriggers</set>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="charDmgEdit">
-             <property name="readOnly">
-              <bool>true</bool>
+            <widget class="QGroupBox" name="enemyInfoBox">
+             <property name="title">
+              <string/>
              </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item row="0" column="3">
-          <layout class="QVBoxLayout" name="enemyActionLayout">
-           <item>
-            <widget class="QLabel" name="enemyAttacklabel">
-             <property name="enabled">
-              <bool>true</bool>
-             </property>
-             <property name="layoutDirection">
-              <enum>Qt::LeftToRight</enum>
-             </property>
-             <property name="text">
-              <string>Attack</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QComboBox" name="enemyAttackComboBox"/>
-           </item>
-           <item>
-            <widget class="QLabel" name="enemyMagiclabel">
-             <property name="enabled">
-              <bool>true</bool>
-             </property>
-             <property name="text">
-              <string>Magic</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QComboBox" name="enemyMagicComboBox"/>
-           </item>
-           <item>
-            <widget class="QLabel" name="enemyItemlabel">
-             <property name="enabled">
-              <bool>true</bool>
-             </property>
-             <property name="text">
-              <string>Items</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QComboBox" name="enemyItemComboBox"/>
-           </item>
-           <item>
-            <spacer name="verticalSpacer_3">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
-            <widget class="QLabel" name="enemyDmglabel">
-             <property name="enabled">
-              <bool>true</bool>
-             </property>
-             <property name="text">
-              <string>Damage</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="enemyDmgEdit">
-             <property name="readOnly">
-              <bool>true</bool>
-             </property>
+             <layout class="QGridLayout" name="gridLayout">
+              <item row="0" column="0">
+               <layout class="QGridLayout" name="enemyStatusLayout">
+                <item row="1" column="1">
+                 <widget class="QPushButton" name="enemyFuryButton">
+                  <property name="toolTip">
+                   <string>Fury</string>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="icons.qrc">
+                    <normaloff>:/icons/fury.png</normaloff>:/icons/fury.png</iconset>
+                  </property>
+                  <property name="iconSize">
+                   <size>
+                    <width>32</width>
+                    <height>32</height>
+                   </size>
+                  </property>
+                  <property name="checkable">
+                   <bool>true</bool>
+                  </property>
+                  <property name="flat">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="1">
+                 <widget class="QPushButton" name="enemySlowButton">
+                  <property name="toolTip">
+                   <string>Slow</string>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="icons.qrc">
+                    <normaloff>:/icons/slow.png</normaloff>:/icons/slow.png</iconset>
+                  </property>
+                  <property name="iconSize">
+                   <size>
+                    <width>32</width>
+                    <height>32</height>
+                   </size>
+                  </property>
+                  <property name="checkable">
+                   <bool>true</bool>
+                  </property>
+                  <property name="flat">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <widget class="QPushButton" name="enemyPoisonButton">
+                  <property name="toolTip">
+                   <string>Poison</string>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="icons.qrc">
+                    <normaloff>:/icons/poison.png</normaloff>:/icons/poison.png</iconset>
+                  </property>
+                  <property name="iconSize">
+                   <size>
+                    <width>32</width>
+                    <height>32</height>
+                   </size>
+                  </property>
+                  <property name="checkable">
+                   <bool>true</bool>
+                  </property>
+                  <property name="flat">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QPushButton" name="enemySadnessButton">
+                  <property name="toolTip">
+                   <string>Sadness</string>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="icons.qrc">
+                    <normaloff>:/icons/sadness.png</normaloff>:/icons/sadness.png</iconset>
+                  </property>
+                  <property name="iconSize">
+                   <size>
+                    <width>32</width>
+                    <height>32</height>
+                   </size>
+                  </property>
+                  <property name="checkable">
+                   <bool>true</bool>
+                  </property>
+                  <property name="flat">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="2">
+                 <widget class="QPushButton" name="enemySilenceButton">
+                  <property name="toolTip">
+                   <string>Silence</string>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="icons.qrc">
+                    <normaloff>:/icons/silence.png</normaloff>:/icons/silence.png</iconset>
+                  </property>
+                  <property name="iconSize">
+                   <size>
+                    <width>32</width>
+                    <height>32</height>
+                   </size>
+                  </property>
+                  <property name="checkable">
+                   <bool>true</bool>
+                  </property>
+                  <property name="flat">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="0">
+                 <widget class="QPushButton" name="enemySleepButton">
+                  <property name="toolTip">
+                   <string>Sleep</string>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="icons.qrc">
+                    <normaloff>:/icons/sleep.png</normaloff>:/icons/sleep.png</iconset>
+                  </property>
+                  <property name="iconSize">
+                   <size>
+                    <width>32</width>
+                    <height>32</height>
+                   </size>
+                  </property>
+                  <property name="checkable">
+                   <bool>true</bool>
+                  </property>
+                  <property name="flat">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="2">
+                 <widget class="QPushButton" name="enemyConfusionButton">
+                  <property name="toolTip">
+                   <string>Confusion</string>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="icons.qrc">
+                    <normaloff>:/icons/confusion.png</normaloff>:/icons/confusion.png</iconset>
+                  </property>
+                  <property name="iconSize">
+                   <size>
+                    <width>32</width>
+                    <height>32</height>
+                   </size>
+                  </property>
+                  <property name="checkable">
+                   <bool>true</bool>
+                  </property>
+                  <property name="flat">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="2">
+                 <widget class="QPushButton" name="enemyRegenButton">
+                  <property name="toolTip">
+                   <string>Regen</string>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="icons.qrc">
+                    <normaloff>:/icons/regen.png</normaloff>:/icons/regen.png</iconset>
+                  </property>
+                  <property name="iconSize">
+                   <size>
+                    <width>32</width>
+                    <height>32</height>
+                   </size>
+                  </property>
+                  <property name="checkable">
+                   <bool>true</bool>
+                  </property>
+                  <property name="flat">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="1">
+                 <widget class="QPushButton" name="enemyFrogButton">
+                  <property name="toolTip">
+                   <string>Frog</string>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="icons.qrc">
+                    <normaloff>:/icons/frog.png</normaloff>:/icons/frog.png</iconset>
+                  </property>
+                  <property name="iconSize">
+                   <size>
+                    <width>32</width>
+                    <height>32</height>
+                   </size>
+                  </property>
+                  <property name="checkable">
+                   <bool>true</bool>
+                  </property>
+                  <property name="flat">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="0">
+                 <widget class="QPushButton" name="enemyDarknessButton">
+                  <property name="toolTip">
+                   <string>Darkness</string>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="icons.qrc">
+                    <normaloff>:/icons/darkness.png</normaloff>:/icons/darkness.png</iconset>
+                  </property>
+                  <property name="iconSize">
+                   <size>
+                    <width>32</width>
+                    <height>32</height>
+                   </size>
+                  </property>
+                  <property name="checkable">
+                   <bool>true</bool>
+                  </property>
+                  <property name="flat">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="2">
+                 <widget class="QPushButton" name="enemyStopButton">
+                  <property name="toolTip">
+                   <string>Stop</string>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="icons.qrc">
+                    <normaloff>:/icons/stop.png</normaloff>:/icons/stop.png</iconset>
+                  </property>
+                  <property name="iconSize">
+                   <size>
+                    <width>32</width>
+                    <height>32</height>
+                   </size>
+                  </property>
+                  <property name="checkable">
+                   <bool>true</bool>
+                  </property>
+                  <property name="flat">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="0">
+                 <widget class="QPushButton" name="enemyHasteButton">
+                  <property name="toolTip">
+                   <string>Haste</string>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="icons.qrc">
+                    <normaloff>:/icons/haste.png</normaloff>:/icons/haste.png</iconset>
+                  </property>
+                  <property name="iconSize">
+                   <size>
+                    <width>32</width>
+                    <height>32</height>
+                   </size>
+                  </property>
+                  <property name="checkable">
+                   <bool>true</bool>
+                  </property>
+                  <property name="flat">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="4" column="0">
+                 <widget class="QPushButton" name="enemyBarrierButton">
+                  <property name="toolTip">
+                   <string>Barrier</string>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="icons.qrc">
+                    <normaloff>:/icons/barrier.png</normaloff>:/icons/barrier.png</iconset>
+                  </property>
+                  <property name="iconSize">
+                   <size>
+                    <width>32</width>
+                    <height>32</height>
+                   </size>
+                  </property>
+                  <property name="checkable">
+                   <bool>true</bool>
+                  </property>
+                  <property name="flat">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="4" column="1">
+                 <widget class="QPushButton" name="enemyMbarrierButton">
+                  <property name="toolTip">
+                   <string>MBarrier</string>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="icons.qrc">
+                    <normaloff>:/icons/mbarrier.png</normaloff>:/icons/mbarrier.png</iconset>
+                  </property>
+                  <property name="iconSize">
+                   <size>
+                    <width>32</width>
+                    <height>32</height>
+                   </size>
+                  </property>
+                  <property name="checkable">
+                   <bool>true</bool>
+                  </property>
+                  <property name="flat">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="4" column="2">
+                 <widget class="QPushButton" name="enemyReflectButton">
+                  <property name="toolTip">
+                   <string>Reflect</string>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="icons.qrc">
+                    <normaloff>:/icons/reflect.png</normaloff>:/icons/reflect.png</iconset>
+                  </property>
+                  <property name="iconSize">
+                   <size>
+                    <width>32</width>
+                    <height>32</height>
+                   </size>
+                  </property>
+                  <property name="checkable">
+                   <bool>true</bool>
+                  </property>
+                  <property name="flat">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+             </layout>
             </widget>
            </item>
           </layout>
@@ -665,16 +889,6 @@
              </property>
              <property name="editTriggers">
               <set>QAbstractItemView::NoEditTriggers</set>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="charAttackerButton">
-             <property name="toolTip">
-              <string>Attacking?</string>
-             </property>
-             <property name="text">
-              <string/>
              </property>
             </widget>
            </item>
@@ -1053,410 +1267,119 @@
            </item>
           </layout>
          </item>
-         <item row="0" column="4">
-          <layout class="QVBoxLayout" name="enemyInfoLayout">
-           <item>
-            <widget class="QListView" name="enemyListView">
-             <property name="maximumSize">
-              <size>
-               <width>150</width>
-               <height>100</height>
-              </size>
+         <item row="0" column="3">
+          <layout class="QGridLayout" name="enemyActionLayout">
+           <property name="sizeConstraint">
+            <enum>QLayout::SetDefaultConstraint</enum>
+           </property>
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item row="2" column="3">
+            <widget class="QLabel" name="enemyMagiclabel">
+             <property name="enabled">
+              <bool>true</bool>
              </property>
-             <property name="editTriggers">
-              <set>QAbstractItemView::NoEditTriggers</set>
+             <property name="text">
+              <string>Magic</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
              </property>
             </widget>
            </item>
-           <item>
-            <widget class="QRadioButton" name="enemyAttackerButton">
+           <item row="3" column="2" colspan="2">
+            <widget class="QComboBox" name="enemyMagicComboBox"/>
+           </item>
+           <item row="2" column="2">
+            <widget class="QLineEdit" name="enemyMagDmgEdit">
+             <property name="maximumSize">
+              <size>
+               <width>60</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="1" rowspan="2">
+            <widget class="QPushButton" name="enemyItemButton">
              <property name="toolTip">
-              <string>Attacking?</string>
+              <string>Item!</string>
              </property>
              <property name="text">
               <string/>
              </property>
+             <property name="icon">
+              <iconset resource="icons.qrc">
+               <normaloff>:/icons/items.png</normaloff>:/icons/items.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>32</width>
+               <height>32</height>
+              </size>
+             </property>
+             <property name="checkable">
+              <bool>false</bool>
+             </property>
+             <property name="autoExclusive">
+              <bool>false</bool>
+             </property>
+             <property name="flat">
+              <bool>true</bool>
+             </property>
             </widget>
            </item>
-           <item>
-            <widget class="QGroupBox" name="enemyInfoBox">
-             <property name="title">
+           <item row="6" column="3">
+            <widget class="QLabel" name="enemyItemlabel">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
+             <property name="text">
+              <string>Items</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1" rowspan="2">
+            <widget class="QPushButton" name="enemyMagicButton">
+             <property name="toolTip">
+              <string>Magic!</string>
+             </property>
+             <property name="text">
               <string/>
              </property>
-             <layout class="QHBoxLayout" name="horizontalLayout_3">
-              <item>
-               <layout class="QGridLayout" name="enemyStatusLayout">
-                <item row="1" column="1">
-                 <widget class="QPushButton" name="enemyFuryButton">
-                  <property name="toolTip">
-                   <string>Fury</string>
-                  </property>
-                  <property name="text">
-                   <string/>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="icons.qrc">
-                    <normaloff>:/icons/fury.png</normaloff>:/icons/fury.png</iconset>
-                  </property>
-                  <property name="iconSize">
-                   <size>
-                    <width>32</width>
-                    <height>32</height>
-                   </size>
-                  </property>
-                  <property name="checkable">
-                   <bool>true</bool>
-                  </property>
-                  <property name="flat">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="1">
-                 <widget class="QPushButton" name="enemySlowButton">
-                  <property name="toolTip">
-                   <string>Slow</string>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="icons.qrc">
-                    <normaloff>:/icons/slow.png</normaloff>:/icons/slow.png</iconset>
-                  </property>
-                  <property name="iconSize">
-                   <size>
-                    <width>32</width>
-                    <height>32</height>
-                   </size>
-                  </property>
-                  <property name="checkable">
-                   <bool>true</bool>
-                  </property>
-                  <property name="flat">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="1">
-                 <widget class="QPushButton" name="enemyPoisonButton">
-                  <property name="toolTip">
-                   <string>Poison</string>
-                  </property>
-                  <property name="text">
-                   <string/>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="icons.qrc">
-                    <normaloff>:/icons/poison.png</normaloff>:/icons/poison.png</iconset>
-                  </property>
-                  <property name="iconSize">
-                   <size>
-                    <width>32</width>
-                    <height>32</height>
-                   </size>
-                  </property>
-                  <property name="checkable">
-                   <bool>true</bool>
-                  </property>
-                  <property name="flat">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="0">
-                 <widget class="QPushButton" name="enemySadnessButton">
-                  <property name="toolTip">
-                   <string>Sadness</string>
-                  </property>
-                  <property name="text">
-                   <string/>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="icons.qrc">
-                    <normaloff>:/icons/sadness.png</normaloff>:/icons/sadness.png</iconset>
-                  </property>
-                  <property name="iconSize">
-                   <size>
-                    <width>32</width>
-                    <height>32</height>
-                   </size>
-                  </property>
-                  <property name="checkable">
-                   <bool>true</bool>
-                  </property>
-                  <property name="flat">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="2">
-                 <widget class="QPushButton" name="enemySilenceButton">
-                  <property name="toolTip">
-                   <string>Silence</string>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="icons.qrc">
-                    <normaloff>:/icons/silence.png</normaloff>:/icons/silence.png</iconset>
-                  </property>
-                  <property name="iconSize">
-                   <size>
-                    <width>32</width>
-                    <height>32</height>
-                   </size>
-                  </property>
-                  <property name="checkable">
-                   <bool>true</bool>
-                  </property>
-                  <property name="flat">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="0">
-                 <widget class="QPushButton" name="enemySleepButton">
-                  <property name="toolTip">
-                   <string>Sleep</string>
-                  </property>
-                  <property name="text">
-                   <string/>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="icons.qrc">
-                    <normaloff>:/icons/sleep.png</normaloff>:/icons/sleep.png</iconset>
-                  </property>
-                  <property name="iconSize">
-                   <size>
-                    <width>32</width>
-                    <height>32</height>
-                   </size>
-                  </property>
-                  <property name="checkable">
-                   <bool>true</bool>
-                  </property>
-                  <property name="flat">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="2">
-                 <widget class="QPushButton" name="enemyConfusionButton">
-                  <property name="toolTip">
-                   <string>Confusion</string>
-                  </property>
-                  <property name="text">
-                   <string/>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="icons.qrc">
-                    <normaloff>:/icons/confusion.png</normaloff>:/icons/confusion.png</iconset>
-                  </property>
-                  <property name="iconSize">
-                   <size>
-                    <width>32</width>
-                    <height>32</height>
-                   </size>
-                  </property>
-                  <property name="checkable">
-                   <bool>true</bool>
-                  </property>
-                  <property name="flat">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="2">
-                 <widget class="QPushButton" name="enemyRegenButton">
-                  <property name="toolTip">
-                   <string>Regen</string>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="icons.qrc">
-                    <normaloff>:/icons/regen.png</normaloff>:/icons/regen.png</iconset>
-                  </property>
-                  <property name="iconSize">
-                   <size>
-                    <width>32</width>
-                    <height>32</height>
-                   </size>
-                  </property>
-                  <property name="checkable">
-                   <bool>true</bool>
-                  </property>
-                  <property name="flat">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="1">
-                 <widget class="QPushButton" name="enemyFrogButton">
-                  <property name="toolTip">
-                   <string>Frog</string>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="icons.qrc">
-                    <normaloff>:/icons/frog.png</normaloff>:/icons/frog.png</iconset>
-                  </property>
-                  <property name="iconSize">
-                   <size>
-                    <width>32</width>
-                    <height>32</height>
-                   </size>
-                  </property>
-                  <property name="checkable">
-                   <bool>true</bool>
-                  </property>
-                  <property name="flat">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="0">
-                 <widget class="QPushButton" name="enemyDarknessButton">
-                  <property name="toolTip">
-                   <string>Darkness</string>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="icons.qrc">
-                    <normaloff>:/icons/darkness.png</normaloff>:/icons/darkness.png</iconset>
-                  </property>
-                  <property name="iconSize">
-                   <size>
-                    <width>32</width>
-                    <height>32</height>
-                   </size>
-                  </property>
-                  <property name="checkable">
-                   <bool>true</bool>
-                  </property>
-                  <property name="flat">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="2">
-                 <widget class="QPushButton" name="enemyStopButton">
-                  <property name="toolTip">
-                   <string>Stop</string>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="icons.qrc">
-                    <normaloff>:/icons/stop.png</normaloff>:/icons/stop.png</iconset>
-                  </property>
-                  <property name="iconSize">
-                   <size>
-                    <width>32</width>
-                    <height>32</height>
-                   </size>
-                  </property>
-                  <property name="checkable">
-                   <bool>true</bool>
-                  </property>
-                  <property name="flat">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="0">
-                 <widget class="QPushButton" name="enemyHasteButton">
-                  <property name="toolTip">
-                   <string>Haste</string>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="icons.qrc">
-                    <normaloff>:/icons/haste.png</normaloff>:/icons/haste.png</iconset>
-                  </property>
-                  <property name="iconSize">
-                   <size>
-                    <width>32</width>
-                    <height>32</height>
-                   </size>
-                  </property>
-                  <property name="checkable">
-                   <bool>true</bool>
-                  </property>
-                  <property name="flat">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="4" column="0">
-                 <widget class="QPushButton" name="enemyBarrierButton">
-                  <property name="toolTip">
-                   <string>Barrier</string>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="icons.qrc">
-                    <normaloff>:/icons/barrier.png</normaloff>:/icons/barrier.png</iconset>
-                  </property>
-                  <property name="iconSize">
-                   <size>
-                    <width>32</width>
-                    <height>32</height>
-                   </size>
-                  </property>
-                  <property name="checkable">
-                   <bool>true</bool>
-                  </property>
-                  <property name="flat">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="4" column="1">
-                 <widget class="QPushButton" name="enemyMbarrierButton">
-                  <property name="toolTip">
-                   <string>MBarrier</string>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="icons.qrc">
-                    <normaloff>:/icons/mbarrier.png</normaloff>:/icons/mbarrier.png</iconset>
-                  </property>
-                  <property name="iconSize">
-                   <size>
-                    <width>32</width>
-                    <height>32</height>
-                   </size>
-                  </property>
-                  <property name="checkable">
-                   <bool>true</bool>
-                  </property>
-                  <property name="flat">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="4" column="2">
-                 <widget class="QPushButton" name="enemyReflectButton">
-                  <property name="toolTip">
-                   <string>Reflect</string>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="icons.qrc">
-                    <normaloff>:/icons/reflect.png</normaloff>:/icons/reflect.png</iconset>
-                  </property>
-                  <property name="iconSize">
-                   <size>
-                    <width>32</width>
-                    <height>32</height>
-                   </size>
-                  </property>
-                  <property name="checkable">
-                   <bool>true</bool>
-                  </property>
-                  <property name="flat">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-             </layout>
+             <property name="icon">
+              <iconset resource="icons.qrc">
+               <normaloff>:/icons/magic.png</normaloff>:/icons/magic.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>32</width>
+               <height>32</height>
+              </size>
+             </property>
+             <property name="checkable">
+              <bool>false</bool>
+             </property>
+             <property name="autoExclusive">
+              <bool>false</bool>
+             </property>
+             <property name="flat">
+              <bool>true</bool>
+             </property>
             </widget>
            </item>
-          </layout>
-         </item>
-         <item row="0" column="2">
-          <layout class="QVBoxLayout" name="calcVLayout">
-           <item>
-            <widget class="QPushButton" name="attackButton">
+           <item row="0" column="1" rowspan="2">
+            <widget class="QPushButton" name="enemyAttackButton">
              <property name="toolTip">
               <string>Attack!</string>
              </property>
@@ -1469,22 +1392,100 @@
              </property>
              <property name="iconSize">
               <size>
-               <width>64</width>
-               <height>64</height>
+               <width>32</width>
+               <height>32</height>
               </size>
              </property>
              <property name="checkable">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
              <property name="autoExclusive">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
              <property name="flat">
               <bool>true</bool>
              </property>
             </widget>
            </item>
-           <item>
+           <item row="0" column="2">
+            <widget class="QLineEdit" name="enemyAttDmgEdit">
+             <property name="maximumSize">
+              <size>
+               <width>60</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="2" colspan="2">
+            <widget class="QComboBox" name="enemyAttackComboBox"/>
+           </item>
+           <item row="4" column="2">
+            <spacer name="verticalSpacer_6">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item row="0" column="3">
+            <widget class="QLabel" name="enemyAttacklabel">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
+             <property name="layoutDirection">
+              <enum>Qt::LeftToRight</enum>
+             </property>
+             <property name="text">
+              <string>Attack</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="2" colspan="2">
+            <widget class="QComboBox" name="enemyItemComboBox"/>
+           </item>
+          </layout>
+         </item>
+         <item row="0" column="1">
+          <layout class="QGridLayout" name="charActionLayout">
+           <item row="4" column="0">
+            <widget class="QLabel" name="charSummonlabel">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
+             <property name="text">
+              <string>Summon</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QLineEdit" name="charMagDmgEdit">
+             <property name="maximumSize">
+              <size>
+               <width>60</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="2" rowspan="2">
             <widget class="QPushButton" name="magicButton">
              <property name="toolTip">
               <string>Magic!</string>
@@ -1498,22 +1499,70 @@
              </property>
              <property name="iconSize">
               <size>
-               <width>64</width>
-               <height>64</height>
+               <width>32</width>
+               <height>32</height>
               </size>
              </property>
              <property name="checkable">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
              <property name="autoExclusive">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
              <property name="flat">
               <bool>true</bool>
              </property>
             </widget>
            </item>
-           <item>
+           <item row="5" column="0" colspan="2">
+            <widget class="QComboBox" name="charSummonComboBox"/>
+           </item>
+           <item row="0" column="2" rowspan="2">
+            <widget class="QPushButton" name="charAttackButton">
+             <property name="toolTip">
+              <string>Attack!</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="icons.qrc">
+               <normaloff>:/icons/crossed_swords.png</normaloff>:/icons/crossed_swords.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>32</width>
+               <height>32</height>
+              </size>
+             </property>
+             <property name="checkable">
+              <bool>false</bool>
+             </property>
+             <property name="autoExclusive">
+              <bool>false</bool>
+             </property>
+             <property name="flat">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0" colspan="2">
+            <widget class="QComboBox" name="charMagicComboBox"/>
+           </item>
+           <item row="6" column="1">
+            <spacer name="verticalSpacer_3">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item row="4" column="2" rowspan="2">
             <widget class="QPushButton" name="summonButton">
              <property name="toolTip">
               <string>Summon!</string>
@@ -1527,22 +1576,32 @@
              </property>
              <property name="iconSize">
               <size>
-               <width>64</width>
-               <height>64</height>
+               <width>32</width>
+               <height>32</height>
               </size>
              </property>
              <property name="checkable">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
              <property name="autoExclusive">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
              <property name="flat">
               <bool>true</bool>
              </property>
             </widget>
            </item>
-           <item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="charMagiclabel">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
+             <property name="text">
+              <string>Magic</string>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="2" rowspan="2">
             <widget class="QPushButton" name="itemButton">
              <property name="toolTip">
               <string>Item!</string>
@@ -1556,45 +1615,118 @@
              </property>
              <property name="iconSize">
               <size>
-               <width>64</width>
-               <height>64</height>
+               <width>32</width>
+               <height>32</height>
               </size>
              </property>
              <property name="checkable">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
              <property name="autoExclusive">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
              <property name="flat">
               <bool>true</bool>
              </property>
             </widget>
            </item>
-           <item>
-            <widget class="QPushButton" name="applyDmgButton">
-             <property name="toolTip">
-              <string>Deal Damage</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="icon">
-              <iconset resource="icons.qrc">
-               <normaloff>:/icons/deal_damage.png</normaloff>:/icons/deal_damage.png</iconset>
-             </property>
-             <property name="iconSize">
+           <item row="8" column="0" colspan="2">
+            <widget class="QComboBox" name="charItemComboBox"/>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLineEdit" name="charAttDmgEdit">
+             <property name="maximumSize">
               <size>
-               <width>64</width>
-               <height>64</height>
+               <width>60</width>
+               <height>16777215</height>
               </size>
              </property>
-             <property name="flat">
+             <property name="inputMask">
+              <string/>
+             </property>
+             <property name="maxLength">
+              <number>32767</number>
+             </property>
+             <property name="frame">
               <bool>true</bool>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+             <property name="placeholderText">
+              <string/>
+             </property>
+             <property name="clearButtonEnabled">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="charAttacklabel">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
+             <property name="text">
+              <string>Attack</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0" colspan="2">
+            <widget class="QComboBox" name="charAttackComboBox">
+             <property name="frame">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="1">
+            <widget class="QLineEdit" name="charSumDmgEdit">
+             <property name="maximumSize">
+              <size>
+               <width>60</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="0">
+            <widget class="QLabel" name="charItemlabel">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
+             <property name="text">
+              <string>Items</string>
              </property>
             </widget>
            </item>
           </layout>
+         </item>
+         <item row="0" column="2">
+          <widget class="Line" name="centralLine">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Plain</enum>
+           </property>
+           <property name="lineWidth">
+            <number>1</number>
+           </property>
+           <property name="midLineWidth">
+            <number>0</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>

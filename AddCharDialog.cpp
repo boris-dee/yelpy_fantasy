@@ -13,7 +13,7 @@ AddCharDialog::AddCharDialog(QString charType, QWidget *parent) : QDialog(parent
     QVBoxLayout *gridLayout = new QVBoxLayout;
     QHBoxLayout *buttonLayout = new QHBoxLayout;
 
-    m_charStatBox = new CharStatBox(charType, true);
+    m_charStatBox = new StatBox(charType, true);
 
     QPushButton *saveCharButton = new QPushButton;
     saveCharButton->setMaximumWidth(80);
@@ -41,4 +41,4 @@ AddCharDialog::AddCharDialog(QString charType, QWidget *parent) : QDialog(parent
     QObject::connect(saveCharButton, SIGNAL(clicked()), this, SLOT(accept()));
 }
 
-CharStatBox* AddCharDialog::getCharStatBox() const{return m_charStatBox;}
+StatBox* AddCharDialog::getStatBox() const{return m_charStatBox;}

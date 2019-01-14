@@ -2,7 +2,7 @@
 #define MAINWINDOW_H
 
 #include "AddCharDialog.h"
-#include "CharStatBox.h"
+#include "StatBox.h"
 #include "Character.h"
 #include "Item.h"
 
@@ -32,7 +32,8 @@ public:
     void createNew(QString newType, QString name, QString level, QString hp, QString mp, QString hpMax, QString mpMax, QString strength, QString vitality, QString magic,
                    QString spirit, QString dexterity, QString luck, QString attack, QString attackPercent, QString magAttack,
                    QString magAttackPercent, QString critHitPercent, QString defense, QString defensePercent,
-                   QString magDefense, QString magDefPercent, QString weapon, QString armor, QString accessory);
+                   QString magDefense, QString magDefPercent, QString weapon, QString armor, QString accessory, QString factor, QString mpCost,
+                   bool poison, bool sadness, bool fury, bool silence, bool darkness, bool frog);
     void fillStatBox(int i, QString charType, QString charName);
     void updateStats(int i);
     void checkHPMP(int i);
@@ -40,6 +41,9 @@ public:
     void writeToFile();
     void readFromFile();
     void enableButtons();
+    void computeDamage(QString charType, QString type, QString name);
+    void updateInfo(QString charType, QModelIndex index);
+    void updateAilments(QString charType, QModelIndex index);
 
 private slots:
     void on_addCharButton_clicked();
@@ -49,11 +53,29 @@ private slots:
     void on_addAccessoryButton_clicked();
     void on_exitButton_clicked();
     void on_newTableButton_clicked();
+    void on_addAttackButton_clicked();
+    void on_addMagicButton_clicked();
+    void on_addSummonButton_clicked();
+    void on_addItemButton_clicked();
+    void on_saveButton_clicked();
+    void on_loadButton_clicked();
+    void on_fullRegenButton_clicked();
+    void on_charAttackComboBox_currentIndexChanged(QString attackName);
+    void on_charMagicComboBox_currentIndexChanged(QString attackName);
+    void on_charSummonComboBox_currentIndexChanged(QString attackName);
+    void on_enemyAttackComboBox_currentIndexChanged(QString attackName);
+    void on_enemyMagicComboBox_currentIndexChanged(QString attackName);
+    void on_charListView_clicked(QModelIndex index);
+    void on_enemyListView_clicked(QModelIndex index);
+    void toggleCharAilment();
+    void toggleEnemyAilment();
+    void toggleAilment(QString charType, QString ailment);
 
-    void fillCharStatBox1(QString charName);
-    void fillCharStatBox2(QString charName);
-    void fillCharStatBox3(QString charName);
-    void fillCharStatBox4(QString charName);
+    void fillStatBox1(QString charName);
+    void fillStatBox2(QString charName);
+    void fillStatBox3(QString charName);
+    void fillStatBox4(QString charName);
+    void fillStatBox5(QString charName);
     void fillEnemyStatBox1(QString enemyName);
     void fillEnemyStatBox2(QString enemyName);
     void fillEnemyStatBox3(QString enemyName);
@@ -61,51 +83,57 @@ private slots:
     void updateStats2();
     void updateStats3();
     void updateStats4();
+    void updateStats5();
     void checkHPMP1();
     void checkHPMP2();
     void checkHPMP3();
     void checkHPMP4();
+    void checkHPMP5();
     void setCurrentHPMP1();
     void setCurrentHPMP2();
     void setCurrentHPMP3();
     void setCurrentHPMP4();
-
-    void on_saveButton_clicked();
-
-    void on_loadButton_clicked();
-
-    void on_fullRegenButton_clicked();
+    void setCurrentHPMP5();
 
 private:
     bool m_alreadySaved = false;
-    int m_nPlayerStatBox = 4, m_nEnemyStatBox = 3;
+    int m_nPlayerStatBox = 5, m_nEnemyStatBox = 3;
     QString m_tableName, m_saveFilePath, m_loadFilePath;
     QString m_windowTitle;
     QString m_nChar, m_nEnemies, m_nWeapons, m_nArmors, m_nAccessories;
+    QString m_nAttacks, m_nMagic, m_nSummons, m_nItems;
 
     AddCharDialog *m_addCharDialog;
-    CharStatBox *m_charStatBox;
+    StatBox *m_charStatBox;
 
-    QVector<CharStatBox*> *m_charStatBoxVector, *m_enemyStatBoxVector;
-    QVector<QVector<CharStatBox*>*> *m_allStatBoxVector;
+    QVector<StatBox*> *m_charStatBoxVector, *m_enemyStatBoxVector;
+    QVector<QVector<StatBox*>*> *m_allStatBoxVector;
 
     QVector<Character*> *m_charVector, *m_enemyVector;
     QVector<QVector<Character*>*> *m_allCharVector;
 
     QVector<Item*> *m_weaponVector, *m_armorVector, *m_accessoryVector;
+    QVector<Item*> *m_attackVector, *m_magicVector, *m_summonVector, *m_itemVector;
 
     QVector<QComboBox*> *m_charComboBoxVector, *m_enemyComboBoxVector;
     QVector<QComboBox*> *m_weaponComboBoxVector, *m_armorComboBoxVector;
-    QVector<QComboBox*> *m_accessoryComboBoxVector;
+    QVector<QComboBox*> *m_accessoryComboBoxVector, *m_attackComboBoxVector;
+    QVector<QComboBox*> *m_magicComboBoxVector, *m_summonComboBoxVector;
+    QVector<QComboBox*> *m_itemComboBoxVector;
 
     QStandardItemModel *m_charComboBoxModel, *m_enemyComboBoxModel;
     QStandardItemModel *m_weaponComboBoxModel, *m_armorComboBoxModel;
     QStandardItemModel *m_accessoryComboBoxModel;
     QStandardItemModel *m_charListViewModel, *m_enemyListViewModel;
+    QStandardItemModel *m_attackComboBoxModel, *m_magicComboBoxModel, *m_summonComboBoxModel, *m_itemComboBoxModel;
     QVector<QStandardItemModel*> *m_allComboBoxModels;
+
+    QMap<QString, QPushButton*> *m_charAilmentMap, *m_enemyAilmentMap;
+    QVector<QMap<QString, QPushButton*>*> *m_ailmentMapVector;
 
     Character *m_newChar;
     Item *m_newWeapon, *m_newArmor, *m_newAccessory;
+    Item *m_newAttack, *m_newMagic, *m_newSummon, *m_newItem;
     QFile *m_saveFile, *m_loadFile;
 
     Ui::MainWindow *ui;

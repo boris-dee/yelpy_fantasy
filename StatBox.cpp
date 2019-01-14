@@ -1,4 +1,4 @@
-#include "CharStatBox.h"
+#include "StatBox.h"
 
 #include <QComboBox>
 #include <QGridLayout>
@@ -6,7 +6,7 @@
 #include <QLabel>
 #include <QProgressBar>
 
-CharStatBox::CharStatBox(QString charType, bool dialog, QWidget *parent) : QWidget(parent)
+StatBox::StatBox(QString charType, bool dialog, QWidget *parent) : QWidget(parent)
 {
     QGroupBox *statBox = new QGroupBox;
     m_statBundle = new QMap<QString, QLineEdit*>;
@@ -25,6 +25,7 @@ CharStatBox::CharStatBox(QString charType, bool dialog, QWidget *parent) : QWidg
     QProgressBar *expBar = new QProgressBar;
     expBar->setMaximumHeight(20);
     expBar->setMaximumWidth(100);
+    expBar->setTextVisible(false);
 
     QLabel *hpLabel = new QLabel(tr("HP"));
     m_hpEdit = new QLineEdit;
@@ -43,7 +44,6 @@ CharStatBox::CharStatBox(QString charType, bool dialog, QWidget *parent) : QWidg
     QLabel *limitLabel = new QLabel(tr("Limit Break"));
     QProgressBar *limitBar = new QProgressBar;
     limitBar->setMaximumHeight(20);
-    limitBar->setMaximumWidth(100);
 
     QLabel *weaponLabel = new QLabel(tr("Weapon"));
     m_weaponComboBox = new QComboBox;
@@ -97,19 +97,19 @@ CharStatBox::CharStatBox(QString charType, bool dialog, QWidget *parent) : QWidg
     m_defensePercentEdit = new QLineEdit;
     m_statBundle->insert("DefensePercent", m_defensePercentEdit);
 
-    QLabel *magAttackLabel = new QLabel(tr("Magic Attack"));
+    QLabel *magAttackLabel = new QLabel(tr("Mag. Attack"));
     m_magAttackEdit = new QLineEdit;
     m_statBundle->insert("MagAttack", m_magAttackEdit);
 
-    QLabel *magAttPercentLabel = new QLabel(tr("Magic Attack %"));
+    QLabel *magAttPercentLabel = new QLabel(tr("Mag. Attack %"));
     m_magAttPercentEdit = new QLineEdit;
     m_statBundle->insert("MagAttackPercent", m_magAttPercentEdit);
 
-    QLabel *magDefenseLabel = new QLabel(tr("Magic Defense"));
+    QLabel *magDefenseLabel = new QLabel(tr("Mag. Defense"));
     m_magDefenseEdit = new QLineEdit;
     m_statBundle->insert("MagDefense", m_magDefenseEdit);
 
-    QLabel *magDefPercentLabel = new QLabel(tr("Magic Defense %"));
+    QLabel *magDefPercentLabel = new QLabel(tr("Mag. Defense %"));
     m_magDefPercentEdit = new QLineEdit;
     m_statBundle->insert("MagDefPercent", m_magDefPercentEdit);
 
@@ -120,6 +120,15 @@ CharStatBox::CharStatBox(QString charType, bool dialog, QWidget *parent) : QWidg
     QLabel *critHitPercentLabel = new QLabel(tr("Critical Hit %"));
     m_critHitPercentEdit = new QLineEdit;
     m_statBundle->insert("CritHitPercent", m_critHitPercentEdit);
+
+    // Case of attack, magic, summons.
+    QLabel *factorLabel = new QLabel(tr("Factor"));
+    m_factorEdit = new QLineEdit;
+    m_statBundle->insert("Factor", m_factorEdit);
+
+    QLabel *mpCostLabel = new QLabel(tr("MP Cost"));
+    m_mpCostEdit = new QLineEdit;
+    m_statBundle->insert("MPCost", m_mpCostEdit);
 
     // Assemble the grid differently depending on Char/Enemy/Dialog.
     QGridLayout *lowerGrid = new QGridLayout;
@@ -139,46 +148,51 @@ CharStatBox::CharStatBox(QString charType, bool dialog, QWidget *parent) : QWidg
             lowerGrid->addWidget(mpLabel, 3, 0);
             lowerGrid->addWidget(m_mpEdit, 3, 1);
             lowerGrid->addWidget(m_mpMaxEdit, 3, 2);
-            lowerGrid->addWidget(limitLabel, 4, 0, 1, 2);
-            lowerGrid->addWidget(limitBar, 5, 0, 1, 2);
-            lowerGrid->addWidget(weaponLabel, 4, 3);
-            lowerGrid->addWidget(m_weaponComboBox, 5, 3, 1, 2);
-            lowerGrid->addWidget(armorLabel, 4, 5);
-            lowerGrid->addWidget(m_armorComboBox, 5, 5, 1, 2);
-            lowerGrid->addWidget(accessoryLabel, 4, 7);
-            lowerGrid->addWidget(m_accessoryComboBox, 5, 7, 1, 2);
-            lowerGrid->addWidget(strengthLabel, 0, 3);
-            lowerGrid->addWidget(m_strengthEdit, 0, 4);
-            lowerGrid->addWidget(vitalityLabel, 0, 5);
-            lowerGrid->addWidget(m_vitalityEdit, 0, 6);
-            lowerGrid->addWidget(magicLabel, 0, 7);
-            lowerGrid->addWidget(m_magicEdit, 0, 8);
-            lowerGrid->addWidget(spiritLabel, 0, 9);
-            lowerGrid->addWidget(m_spiritEdit, 0, 10);
-            lowerGrid->addWidget(dextLabel, 1, 3);
-            lowerGrid->addWidget(m_dextEdit, 1, 4);
-            lowerGrid->addWidget(luckLabel, 1, 5);
-            lowerGrid->addWidget(m_luckEdit, 1, 6);
-            lowerGrid->addWidget(precisionLabel, 1, 7);
-            lowerGrid->addWidget(m_precisionEdit, 1, 8);
-            lowerGrid->addWidget(critHitPercentLabel, 1, 9);
-            lowerGrid->addWidget(m_critHitPercentEdit, 1, 10);
-            lowerGrid->addWidget(attackLabel, 2, 3);
-            lowerGrid->addWidget(m_attackEdit, 2, 4);
-            lowerGrid->addWidget(attackPercentLabel, 2, 5);
-            lowerGrid->addWidget(m_attackPercentEdit, 2, 6);
-            lowerGrid->addWidget(magAttackLabel, 2, 7);
-            lowerGrid->addWidget(m_magAttackEdit, 2, 8);
-            lowerGrid->addWidget(magAttPercentLabel, 2, 9);
-            lowerGrid->addWidget(m_magAttPercentEdit, 2, 10);
-            lowerGrid->addWidget(defenseLabel, 3, 3);
-            lowerGrid->addWidget(m_defenseEdit, 3, 4);
-            lowerGrid->addWidget(defensePercentLabel, 3, 5);
-            lowerGrid->addWidget(m_defensePercentEdit, 3, 6);
-            lowerGrid->addWidget(magDefenseLabel, 3, 7);
-            lowerGrid->addWidget(m_magDefenseEdit, 3, 8);
-            lowerGrid->addWidget(magDefPercentLabel, 3, 9);
-            lowerGrid->addWidget(m_magDefPercentEdit, 3, 10);
+
+            lowerGrid->addWidget(limitLabel, 0, 3);
+            lowerGrid->addWidget(limitBar, 0, 4, 1, 2);
+            lowerGrid->addWidget(weaponLabel, 1, 3);
+            lowerGrid->addWidget(m_weaponComboBox, 1, 4, 1, 2);
+            lowerGrid->addWidget(armorLabel, 2, 3);
+            lowerGrid->addWidget(m_armorComboBox, 2, 4, 1, 2);
+            lowerGrid->addWidget(accessoryLabel, 3, 3);
+            lowerGrid->addWidget(m_accessoryComboBox, 3, 4, 1, 2);
+
+            lowerGrid->addWidget(strengthLabel, 0, 6);
+            lowerGrid->addWidget(m_strengthEdit, 0, 7);
+            lowerGrid->addWidget(vitalityLabel, 0, 8);
+            lowerGrid->addWidget(m_vitalityEdit, 0, 9);
+            lowerGrid->addWidget(magicLabel, 0, 10);
+            lowerGrid->addWidget(m_magicEdit, 0, 11);
+            lowerGrid->addWidget(spiritLabel, 0, 12);
+            lowerGrid->addWidget(m_spiritEdit, 0, 13);
+
+            lowerGrid->addWidget(dextLabel, 1, 6);
+            lowerGrid->addWidget(m_dextEdit, 1, 7);
+            lowerGrid->addWidget(luckLabel, 1, 8);
+            lowerGrid->addWidget(m_luckEdit, 1, 9);
+            lowerGrid->addWidget(precisionLabel, 1, 10);
+            lowerGrid->addWidget(m_precisionEdit, 1, 11);
+            lowerGrid->addWidget(critHitPercentLabel, 1, 12);
+            lowerGrid->addWidget(m_critHitPercentEdit, 1, 13);
+
+            lowerGrid->addWidget(attackLabel, 2, 6);
+            lowerGrid->addWidget(m_attackEdit, 2, 7);
+            lowerGrid->addWidget(magAttackLabel, 2, 8);
+            lowerGrid->addWidget(m_magAttackEdit, 2, 9);
+            lowerGrid->addWidget(defenseLabel, 2, 10);
+            lowerGrid->addWidget(m_defenseEdit, 2, 11);
+            lowerGrid->addWidget(magDefenseLabel, 2, 12);
+            lowerGrid->addWidget(m_magDefenseEdit, 2, 13);
+
+            lowerGrid->addWidget(attackPercentLabel, 3, 6);
+            lowerGrid->addWidget(m_attackPercentEdit, 3, 7);
+            lowerGrid->addWidget(magAttPercentLabel, 3, 8);
+            lowerGrid->addWidget(m_magAttPercentEdit, 3, 9);
+            lowerGrid->addWidget(defensePercentLabel, 3, 10);
+            lowerGrid->addWidget(m_defensePercentEdit, 3, 11);
+            lowerGrid->addWidget(magDefPercentLabel, 3, 12);
+            lowerGrid->addWidget(m_magDefPercentEdit, 3, 13);
         }
         else
         {
@@ -188,33 +202,35 @@ CharStatBox::CharStatBox(QString charType, bool dialog, QWidget *parent) : QWidg
             lowerGrid->addWidget(m_levelEdit, 1, 1);
             lowerGrid->addWidget(expBar, 1, 2);
             expBar->setValue(100);
-            expBar->setTextVisible(false);
             lowerGrid->addWidget(hpLabel, 2, 0);
             lowerGrid->addWidget(m_hpEdit, 2, 1);
             lowerGrid->addWidget(m_hpMaxEdit, 2, 2);
             lowerGrid->addWidget(mpLabel, 3, 0);
             lowerGrid->addWidget(m_mpEdit, 3, 1);
             lowerGrid->addWidget(m_mpMaxEdit, 3, 2);
-            lowerGrid->addWidget(dextLabel, 1, 3);
-            lowerGrid->addWidget(m_dextEdit, 1, 4);
-            lowerGrid->addWidget(luckLabel, 1, 5);
-            lowerGrid->addWidget(m_luckEdit, 1, 6);
-            lowerGrid->addWidget(attackLabel, 2, 3);
-            lowerGrid->addWidget(m_attackEdit, 2, 4);
-            lowerGrid->addWidget(attackPercentLabel, 2, 5);
-            lowerGrid->addWidget(m_attackPercentEdit, 2, 6);
-            lowerGrid->addWidget(magAttackLabel, 2, 7);
-            lowerGrid->addWidget(m_magAttackEdit, 2, 8);
-            lowerGrid->addWidget(magAttPercentLabel, 2, 9);
-            lowerGrid->addWidget(m_magAttPercentEdit, 2, 10);
-            lowerGrid->addWidget(defenseLabel, 3, 3);
-            lowerGrid->addWidget(m_defenseEdit, 3, 4);
-            lowerGrid->addWidget(defensePercentLabel, 3, 5);
-            lowerGrid->addWidget(m_defensePercentEdit, 3, 6);
-            lowerGrid->addWidget(magDefenseLabel, 3, 7);
-            lowerGrid->addWidget(m_magDefenseEdit, 3, 8);
-            lowerGrid->addWidget(magDefPercentLabel, 3, 9);
-            lowerGrid->addWidget(m_magDefPercentEdit, 3, 10);
+
+            lowerGrid->addWidget(attackLabel, 0, 6);
+            lowerGrid->addWidget(m_attackEdit, 0, 7);
+            lowerGrid->addWidget(magAttackLabel, 0, 8);
+            lowerGrid->addWidget(m_magAttackEdit, 0, 9);
+            lowerGrid->addWidget(defenseLabel, 0, 10);
+            lowerGrid->addWidget(m_defenseEdit, 0, 11);
+            lowerGrid->addWidget(magDefenseLabel, 0, 12);
+            lowerGrid->addWidget(m_magDefenseEdit, 0, 13);
+
+            lowerGrid->addWidget(attackPercentLabel, 1, 6);
+            lowerGrid->addWidget(m_attackPercentEdit, 1, 7);
+            lowerGrid->addWidget(magAttPercentLabel, 1, 8);
+            lowerGrid->addWidget(m_magAttPercentEdit, 1, 9);
+            lowerGrid->addWidget(defensePercentLabel, 1, 10);
+            lowerGrid->addWidget(m_defensePercentEdit, 1, 11);
+            lowerGrid->addWidget(magDefPercentLabel, 1, 12);
+            lowerGrid->addWidget(m_magDefPercentEdit, 1, 13);
+
+            lowerGrid->addWidget(dextLabel, 2, 6);
+            lowerGrid->addWidget(m_dextEdit, 2, 7);
+            lowerGrid->addWidget(luckLabel, 2, 8);
+            lowerGrid->addWidget(m_luckEdit, 2, 9);
         }
 
         // Formal all line edits
@@ -305,6 +321,30 @@ CharStatBox::CharStatBox(QString charType, bool dialog, QWidget *parent) : QWidg
             lowerGrid->addWidget(luckLabel, 8, 0);
             lowerGrid->addWidget(m_luckEdit, 8, 1);
         }
+        else if (charType == "Attack")
+        {
+            lowerGrid->addWidget(nameLabel, 0, 0);
+            lowerGrid->addWidget(m_nameEdit, 0, 1);
+            lowerGrid->addWidget(factorLabel, 1, 0);
+            lowerGrid->addWidget(m_factorEdit, 1, 1);
+        }
+        else if (charType == "Magic" || charType == "Summon")
+        {
+            lowerGrid->addWidget(nameLabel, 0, 0);
+            lowerGrid->addWidget(m_nameEdit, 0, 1);
+            lowerGrid->addWidget(factorLabel, 1, 0);
+            lowerGrid->addWidget(m_factorEdit, 1, 1);
+            lowerGrid->addWidget(magAttPercentLabel, 2, 0);
+            lowerGrid->addWidget(m_magAttPercentEdit, 2, 1);
+            lowerGrid->addWidget(mpCostLabel, 3, 0);
+            lowerGrid->addWidget(m_mpCostEdit, 3, 1);
+
+        }
+        else if (charType == "Item")
+        {
+            lowerGrid->addWidget(nameLabel, 0, 0);
+            lowerGrid->addWidget(m_nameEdit, 0, 1);
+        }
         else
         {
             lowerGrid->addWidget(nameLabel, 0, 0);
@@ -346,12 +386,12 @@ CharStatBox::CharStatBox(QString charType, bool dialog, QWidget *parent) : QWidg
     upperGrid->addWidget(statBox);
 }
 
-QMap<QString, QLineEdit*>* CharStatBox::getStats() const {return m_statBundle;}
+QMap<QString, QLineEdit*>* StatBox::getStats() const {return m_statBundle;}
 
-QComboBox* CharStatBox::getNameComboBox() const {return m_nameComboBox;}
+QComboBox* StatBox::getNameComboBox() const {return m_nameComboBox;}
 
-QComboBox* CharStatBox::getWeaponComboBox() const {return m_weaponComboBox;}
+QComboBox* StatBox::getWeaponComboBox() const {return m_weaponComboBox;}
 
-QComboBox* CharStatBox::getArmorComboBox() const {return m_armorComboBox;}
+QComboBox* StatBox::getArmorComboBox() const {return m_armorComboBox;}
 
-QComboBox* CharStatBox::getAccessoryComboBox() const {return m_accessoryComboBox;}
+QComboBox* StatBox::getAccessoryComboBox() const {return m_accessoryComboBox;}
