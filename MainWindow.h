@@ -95,6 +95,16 @@ private slots:
     void setCurrentHPMP4();
     void setCurrentHPMP5();
 
+    void on_charAttackButton_clicked();
+
+    void on_magicButton_clicked();
+
+    void on_summonButton_clicked();
+
+    void on_enemyAttackButton_clicked();
+
+    void on_enemyMagicButton_clicked();
+
 private:
     bool m_alreadySaved = false;
     int m_nPlayerStatBox = 5, m_nEnemyStatBox = 3;

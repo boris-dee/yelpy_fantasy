@@ -171,10 +171,6 @@ StatBox::StatBox(QString charType, bool dialog, QWidget *parent) : QWidget(paren
             lowerGrid->addWidget(m_dextEdit, 1, 7);
             lowerGrid->addWidget(luckLabel, 1, 8);
             lowerGrid->addWidget(m_luckEdit, 1, 9);
-            lowerGrid->addWidget(precisionLabel, 1, 10);
-            lowerGrid->addWidget(m_precisionEdit, 1, 11);
-            lowerGrid->addWidget(critHitPercentLabel, 1, 12);
-            lowerGrid->addWidget(m_critHitPercentEdit, 1, 13);
 
             lowerGrid->addWidget(attackLabel, 2, 6);
             lowerGrid->addWidget(m_attackEdit, 2, 7);

@@ -45,8 +45,8 @@ void MainWindow::initialization()
     ui->charActionLayout->setAlignment(ui->charAttDmgEdit, Qt::AlignRight);
     ui->charActionLayout->setAlignment(ui->charMagDmgEdit, Qt::AlignRight);
     ui->charActionLayout->setAlignment(ui->charSumDmgEdit, Qt::AlignRight);
-    ui->charActionLayout->setAlignment(ui->enemyAttDmgEdit, Qt::AlignLeft);
-    ui->charActionLayout->setAlignment(ui->enemyMagDmgEdit, Qt::AlignLeft);
+    ui->enemyActionLayout->setAlignment(ui->enemyAttDmgEdit, Qt::AlignLeft);
+    ui->enemyActionLayout->setAlignment(ui->enemyMagDmgEdit, Qt::AlignLeft);
 
     // Disable battle group box
     ui->battleGroupBox->setEnabled(false);
@@ -458,6 +458,129 @@ void MainWindow::on_enemyMagicComboBox_currentIndexChanged(QString attackName){c
 void MainWindow::on_charListView_clicked(QModelIndex index){updateInfo("Character", index);}
 void MainWindow::on_enemyListView_clicked(QModelIndex index){updateInfo("Enemy", index);}
 
+void MainWindow::on_charAttackButton_clicked()
+{
+    // Get enemy index
+    QModelIndex index = ui->enemyListView->currentIndex();
+    int enemyIndex = index.row();
+
+    // Get char damage
+    int charDamage = ui->charAttDmgEdit->displayText().toInt();
+
+    // Apply damage
+    int enemyHP = m_enemyStatBoxVector->at(enemyIndex)->getStats()->value("HP")->displayText().toInt();
+    enemyHP = enemyHP - charDamage;
+    m_enemyStatBoxVector->at(enemyIndex)->getStats()->value("HP")->setText(QString::number(enemyHP));
+
+    // Update enemy HP
+    QString enemyName = index.data(Qt::DisplayRole).toString();
+    for (int iEnemy(0); iEnemy < m_enemyVector->size(); iEnemy++)
+    {
+        if (m_enemyVector->at(iEnemy)->getStats()->value("Name") == enemyName)
+        {
+            m_enemyVector->at(iEnemy)->setStat("HP", QString::number(enemyHP));
+        }
+    }
+}
+void MainWindow::on_magicButton_clicked()
+{
+    // Get enemy index
+    QModelIndex index = ui->enemyListView->currentIndex();
+    int enemyIndex = index.row();
+
+    // Get char damage
+    int charDamage = ui->charMagDmgEdit->displayText().toInt();
+
+    // Apply damage
+    int enemyHP = m_enemyStatBoxVector->at(enemyIndex)->getStats()->value("HP")->displayText().toInt();
+    enemyHP = enemyHP - charDamage;
+    m_enemyStatBoxVector->at(enemyIndex)->getStats()->value("HP")->setText(QString::number(enemyHP));
+
+    // Update enemy HP
+    QString enemyName = index.data(Qt::DisplayRole).toString();
+    for (int iEnemy(0); iEnemy < m_enemyVector->size(); iEnemy++)
+    {
+        if (m_enemyVector->at(iEnemy)->getStats()->value("Name") == enemyName)
+        {
+            m_enemyVector->at(iEnemy)->setStat("HP", QString::number(enemyHP));
+        }
+    }
+}
+void MainWindow::on_summonButton_clicked()
+{
+    // Get enemy index
+    QModelIndex index = ui->enemyListView->currentIndex();
+    int enemyIndex = index.row();
+
+    // Get char damage
+    int charDamage = ui->charSumDmgEdit->displayText().toInt();
+
+    // Apply damage
+    int enemyHP = m_enemyStatBoxVector->at(enemyIndex)->getStats()->value("HP")->displayText().toInt();
+    enemyHP = enemyHP - charDamage;
+    m_enemyStatBoxVector->at(enemyIndex)->getStats()->value("HP")->setText(QString::number(enemyHP));
+
+    // Update enemy HP
+    QString enemyName = index.data(Qt::DisplayRole).toString();
+    for (int iEnemy(0); iEnemy < m_enemyVector->size(); iEnemy++)
+    {
+        if (m_enemyVector->at(iEnemy)->getStats()->value("Name") == enemyName)
+        {
+            m_enemyVector->at(iEnemy)->setStat("HP", QString::number(enemyHP));
+        }
+    }
+}
+void MainWindow::on_enemyAttackButton_clicked()
+{
+    // Get char index
+    QModelIndex index = ui->charListView->currentIndex();
+    int charIndex = index.row();
+
+    // Get enemy damage
+    int enemyDamage = ui->enemyAttDmgEdit->displayText().toInt();
+
+    // Apply damage and update enemy HP
+    int charHP = m_charStatBoxVector->at(charIndex)->getStats()->value("HP")->displayText().toInt();
+    charHP = charHP - enemyDamage;
+
+    QString charName = index.data(Qt::DisplayRole).toString();
+    for (int iChar(0); iChar< m_charVector->size(); iChar++)
+    {
+        if (m_charVector->at(iChar)->getStats()->value("Name") == charName)
+        {
+            m_charVector->at(iChar)->setStat("HP", QString::number(charHP));
+        }
+    }
+
+    // Display new HP
+    m_charStatBoxVector->at(charIndex)->getStats()->value("HP")->setText(QString::number(charHP));
+
+}
+void MainWindow::on_enemyMagicButton_clicked()
+{
+    // Get char index
+    QModelIndex index = ui->charListView->currentIndex();
+    int charIndex = index.row();
+
+    // Get enemy damage
+    int enemyDamage = ui->enemyMagDmgEdit->displayText().toInt();
+
+    // Apply damage
+    int charHP = m_charStatBoxVector->at(charIndex)->getStats()->value("HP")->displayText().toInt();
+    charHP = charHP - enemyDamage;
+    m_charStatBoxVector->at(charIndex)->getStats()->value("HP")->setText(QString::number(charHP));
+
+    // Update enemy HP
+    QString charName = index.data(Qt::DisplayRole).toString();
+    for (int iChar(0); iChar< m_charVector->size(); iChar++)
+    {
+        if (m_charVector->at(iChar)->getStats()->value("Name") == charName)
+        {
+            m_charVector->at(iChar)->setStat("HP", QString::number(charHP));
+        }
+    }
+}
+
 void MainWindow::enableButtons()
 {
     ui->addCharButton->setEnabled(true);
@@ -694,6 +817,9 @@ void MainWindow::checkHPMP(int i)
 
 void MainWindow::setCurrentHPMP(int i)
 {
+    // Check new value of HP and/or MP
+    checkHPMP(i);
+
     //Get character's name and new values of HP and MP
     QString name = m_charComboBoxVector->at(i)->currentText();
     QString hpDisplay = m_charStatBoxVector->at(i)->getStats()->value("HP")->displayText();
@@ -707,7 +833,7 @@ void MainWindow::setCurrentHPMP(int i)
             m_charVector->at(iChar)->setStat("HP", hpDisplay);
             m_charVector->at(iChar)->setStat("MP", mpDisplay);
         }
-    }
+    } 
 }
 
 void MainWindow::fillStatBox(int i, QString charType, QString charName)
@@ -943,7 +1069,7 @@ void MainWindow::writeToFile()
     write << "Table Name: " << m_tableName << "\n";
 
     // Write number of characters, enemies, weapons, armors and accessories, etc.
-    // Note the -1 because there's always a dummy class for combo box purposes.
+    // Note the -1 because there's always a dummy item for combo box purpose
     m_nChar = QString::number(m_allCharVector->at(0)->size()-1);
     m_nEnemies = QString::number(m_allCharVector->at(1)->size()-1);
     m_nWeapons = QString::number(m_weaponVector->size()-1);
@@ -1160,136 +1286,6 @@ void MainWindow::readFromFile()
     }
 }
 
-void MainWindow::computeDamage(QString charType, QString attackType, QString  attackName)
-{
-    // Initialisations
-    double factor(0), level(0), attack(0), magAttack(0), attackDamage(0), magicDamage(0);
-    double defense(0), magicDefense(0);
-    bool attackerCritHit(false), attackerFrog(false), attackerSadness(false);
-    bool targetBarrier(false), targetMagBarrier(false);
-    QString attackerLevel, attackerAttack, attackerMagAttack;
-    QString targetLevel, targetDefense, targetMagDefense;
-    QString magAttackPercent;
-
-
-    /* ===================================
-     * =========== BASE DAMAGE ===========
-     * ===================================*/
-
-    // Get attacker level, attack, and magic
-    QListView *attackerListView = new QListView;
-    QVector<StatBox*> *attackerVector = new QVector<StatBox*>;
-
-    if (charType == "Character"){attackerListView = ui->charListView; attackerVector = m_charStatBoxVector;}
-    else {attackerListView = ui->enemyListView; attackerVector = m_enemyStatBoxVector;}
-
-    QModelIndex index = attackerListView->currentIndex();
-    int attackerIndex = index.row();
-    if (attackerIndex != -1){
-        attackerLevel = attackerVector->at(attackerIndex)->getStats()->value("Level")->displayText();
-        attackerAttack = attackerVector->at(attackerIndex)->getStats()->value("Attack")->displayText();
-        attackerMagAttack = attackerVector->at(attackerIndex)->getStats()->value("MagAttack")->displayText();
-    }
-    level = attackerLevel.toDouble();
-    attack = attackerAttack.toDouble();
-    magAttack = attackerMagAttack.toDouble();
-
-    // Attack Damage = attack+[(attack*level)(attack+level]/1024
-    attackDamage = attackDamage + (attack+((attack*level)*(attack+level))/1024);
-
-    // Magic Damage = 6*(magic+level)
-    magicDamage = magAttack + (6*(magAttack+level));
-
-    /* ===================================
-     * =========== APPLY FACTOR ==========
-     * ===================================*/
-
-    if (attackType == "Attack")
-    {
-        // Get factor
-        for (int iAttack(0); iAttack < m_attackVector->size(); iAttack++)
-        {
-            if (m_attackVector->at(iAttack)->getStats()->value("Name") == attackName)
-            {
-                factor = m_attackVector->at(iAttack)->getStats()->value("Factor").toDouble();
-            }
-        }
-    }
-    else if (attackType == "Magic" || attackType == "Summon")
-    {
-        QVector<Item*> *vector = new QVector<Item*>;
-        // Define the correct storage vector depending on Magic/Summon
-        if (attackType == "Magic"){vector = m_magicVector;}
-        else {vector = m_summonVector;}
-
-        // Get factor
-        for (int iMagic(0); iMagic < vector->size(); iMagic++)
-        {
-            if (vector->at(iMagic)->getStats()->value("Name") == attackName)
-            {
-                factor = vector->at(iMagic)->getStats()->value("Factor").toDouble();
-
-                // Two birds, one stone: get MagAttPercent and display the value in the stat box
-                if (attackerIndex != -1)
-                {
-                    magAttackPercent = vector->at(iMagic)->getStats()->value("MagAttackPercent");
-                    attackerVector->at(attackerIndex)->getStats()->value("MagAttackPercent")->setText(magAttackPercent);
-                }
-            }
-        }
-    }
-
-    attackDamage = attackDamage*factor;
-    magicDamage = magicDamage*factor;
-
-    /* ===================================
-     * ========== APPLY DEFENSE ==========
-     * ===================================*/
-
-    // Get target level, attack, and magic
-    QListView *targetListView = new QListView;
-    QVector<StatBox*> *targetVector = new QVector<StatBox*>;
-
-    if (charType == "Character"){targetListView = ui->enemyListView; targetVector = m_enemyStatBoxVector;}
-    else {targetListView = ui->charListView; targetVector = m_charStatBoxVector;}
-
-    QModelIndex index2 = targetListView->currentIndex();
-    int targetIndex = index2.row();
-    if (targetIndex != -1){
-        targetLevel = targetVector->at(targetIndex)->getStats()->value("Level")->displayText();
-        targetDefense = targetVector->at(targetIndex)->getStats()->value("Defense")->displayText();
-        targetMagDefense = targetVector->at(targetIndex)->getStats()->value("MagDefense")->displayText();
-    }
-    level = targetLevel.toDouble();
-    defense = targetDefense.toDouble();
-    magicDefense = targetMagDefense.toDouble();
-
-    attackDamage = attackDamage*(512-defense)/512;
-    magicDamage = magicDamage*(512-magicDefense)/512;
-
-    /* ===================================
-     * ========= APPLY AILMENTS ==========
-     * ===================================*/
-
-    if (attackerCritHit == true){attackDamage = 2*attackDamage;}
-    if (attackerFrog == true){attackDamage = attackDamage/4;}
-    if (attackerSadness == true){attackDamage = 7/10*attackDamage; magicDamage = 7/10*magicDamage;}
-    if (targetBarrier == true){attackDamage = 0.5*attackDamage;}
-    if (targetMagBarrier == true){magicDamage = 2*magicDamage;}
-
-    // Display final damage
-    QLineEdit *attackEdit = new QLineEdit;
-    QLineEdit *magicEdit = new QLineEdit;
-    QLineEdit *summonEdit = new QLineEdit;
-
-    if (charType == "Character"){attackEdit = ui->charAttDmgEdit; magicEdit = ui->charMagDmgEdit; summonEdit = ui->charSumDmgEdit;}
-    else {attackEdit = ui->enemyAttDmgEdit; magicEdit = ui->enemyMagDmgEdit;}
-
-    if (attackType == "Attack"){attackEdit->setText(QString::number(qFloor(attackDamage)));}
-    else if (attackType == "Magic"){magicEdit->setText(QString::number(qFloor(magicDamage)));;}
-    else if (attackType == "Summon") {summonEdit->setText(QString::number(qFloor(magicDamage)));}
-}
-
 void MainWindow::toggleCharAilment()
 {
     QObject *sendingButton = sender();
@@ -1348,15 +1344,15 @@ void MainWindow::updateInfo(QString charType, QModelIndex index)
     QString enemyCurrentAttack = ui->enemyAttackComboBox->currentText();
     QString enemyCurrentMagic = ui->enemyMagicComboBox->currentText();
 
+    // Update ailments
+    updateAilments(charType, index);
+
     // Update damage
     computeDamage("Character", "Attack", charCurrentAttack);
     computeDamage("Character", "Magic", charCurrentMagic);
     computeDamage("Character", "Summon", charCurrentSummon);
     computeDamage("Enemy", "Attack", enemyCurrentAttack);
     computeDamage("Enemy", "Magic", enemyCurrentMagic);
-
-    // Update ailments
-    updateAilments(charType, index);
 }
 
 void MainWindow::updateAilments(QString charType, QModelIndex index)
@@ -1385,41 +1381,252 @@ void MainWindow::updateAilments(QString charType, QModelIndex index)
     }
 }
 
+void MainWindow::computeDamage(QString charType, QString attackType, QString attackName)
+{
+    // Debug
+    //std::cout << "Character Type: " << charType.toStdString() << " | Attack Type: " << attackType.toStdString() << " | Attack Name: " << attackName.toStdString() << std::endl;
 
+    // Initialisations
+    double attackFactor(0), magicFactor(0), level(0), targetLevel(0), attack(0), magAttack(0), attackDamage(0), magicDamage(0), chance(0), critHitPercent(0);
+    double defense(0), magicDefense(0), dexterity(0), attackPercent(0), defensePercent(0), targetDefPercent(0), precision(0), magAttPercent(0);
+    QString attackerLevel, attackerAttack, attackerMagAttack;
+    QString targetDefense, targetMagDefense;
+    QString magAttackPercent;
 
+    // Debug
+    //std::cout << "(1) Attack Damage: " << attackDamage << " | Magic Damage: " << magicDamage << std::endl;
 
+    /* ===================================
+     * =========== BASE DAMAGE ===========
+     * ===================================*/
 
+    // Initialise a few things
+    QListView *attackerListView = new QListView;
+    QListView *targetListView = new QListView;
 
+    QVector<StatBox*> *attackerVector = new QVector<StatBox*>;
+    QVector<StatBox*> *targetVector = new QVector<StatBox*>;
 
+    QMap<QString, QPushButton*> *attackerAilmentMap = new QMap<QString, QPushButton*>;
+    QMap<QString, QPushButton*> *targetAilmentMap = new QMap<QString, QPushButton*>;
 
+    if (charType == "Character")
+    {
+        attackerListView = ui->charListView;
+        targetListView = ui->enemyListView;
 
+        attackerVector = m_charStatBoxVector;
+        targetVector = m_enemyStatBoxVector;
 
+        attackerAilmentMap = m_charAilmentMap;
+        targetAilmentMap = m_enemyAilmentMap;
+    }
+    else
+    {
+        attackerListView = ui->enemyListView;
+        targetListView = ui->charListView;
 
+        attackerVector = m_enemyStatBoxVector;
+        targetVector = m_charStatBoxVector;
 
+        attackerAilmentMap = m_enemyAilmentMap;
+        targetAilmentMap = m_charAilmentMap;
+    }
 
+    // Get attacker level, attack, and magic
+    QModelIndex index = attackerListView->currentIndex();
+    int attackerIndex = index.row();
+    if (attackerIndex != -1){
+        attackerLevel = attackerVector->at(attackerIndex)->getStats()->value("Level")->displayText();
+        attackerAttack = attackerVector->at(attackerIndex)->getStats()->value("Attack")->displayText();
+        attackerMagAttack = attackerVector->at(attackerIndex)->getStats()->value("MagAttack")->displayText();
+    }
+    level = attackerLevel.toDouble();
+    attack = attackerAttack.toDouble();
+    magAttack = attackerMagAttack.toDouble();
 
+    // Attack Damage = attack+[(attack*level)(attack+level]/1024
+    attackDamage = attackDamage + (attack+((attack*level)*(attack+level))/1024);
 
+    // Magic Damage = 6*(magic+level)
+    magicDamage = magAttack + (6*(magAttack+level));
 
+    // Debug
+    //std::cout << "(2) Attack Damage: " << attackDamage << " | Magic Damage: " << magicDamage << std::endl;
 
+    /* ===================================
+     * =========== APPLY FACTOR ==========
+     * ===================================*/
 
+    // Get attack factor
+    for (int iAttack(0); iAttack < m_attackVector->size(); iAttack++)
+    {
+        if (m_attackVector->at(iAttack)->getStats()->value("Name") == attackName)
+        {
+            attackFactor = m_attackVector->at(iAttack)->getStats()->value("Factor").toDouble();
+        }
+    }
 
+    // Get magic factor
+    QVector<Item*> *vector = new QVector<Item*>;
+    // Define the correct storage vector depending on Magic/Summon
+    if (attackType == "Magic"){vector = m_magicVector;}
+    else if (attackType == "Summon"){vector = m_summonVector;}
 
+    // Get magic factor
+    for (int iMagic(0); iMagic < vector->size(); iMagic++)
+    {
+        if (vector->at(iMagic)->getStats()->value("Name") == attackName)
+        {
+            magicFactor = vector->at(iMagic)->getStats()->value("Factor").toDouble();
 
+            // Two birds, one stone: get MagAttPercent and display the value in the stat box
+            if (attackerIndex != -1)
+            {
+                magAttackPercent = vector->at(iMagic)->getStats()->value("MagAttackPercent");
+                attackerVector->at(attackerIndex)->getStats()->value("MagAttackPercent")->setText(magAttackPercent);
+            }
+        }
+    }
 
+    attackDamage = attackDamage*attackFactor;
+    magicDamage = magicDamage*magicFactor;
 
+    // Debug
+    //std::cout << "(3) Attack Damage: " << attackDamage << " | Magic Damage: " << magicDamage << std::endl;
 
+    /* ===================================
+     * ========== APPLY DEFENSE ==========
+     * ===================================*/
 
+    // Get target attack, and magic
+    QModelIndex index2 = targetListView->currentIndex();
+    int targetIndex = index2.row();
+    if (targetIndex != -1){
+        targetDefense = targetVector->at(targetIndex)->getStats()->value("Defense")->displayText();
+        targetMagDefense = targetVector->at(targetIndex)->getStats()->value("MagDefense")->displayText();
+    }
+    defense = targetDefense.toDouble();
+    magicDefense = targetMagDefense.toDouble();
 
+    attackDamage = attackDamage*(512-defense)/512.0;
+    magicDamage = magicDamage*(512-magicDefense)/512.0;
 
+    // Debug
+    //std::cout << "(4) Attack Damage: " << attackDamage << " | Magic Damage: " << magicDamage << std::endl;
 
+    /* ===================================
+     * ========= APPLY AILMENTS ==========
+     * ===================================*/
 
+    if (attackerAilmentMap->value("Frog")->isChecked()){attackDamage = attackDamage/4.0;}
+    if (attackerAilmentMap->value("Sadness")->isChecked()){attackDamage = 7.0/10.0*attackDamage; magicDamage = 7.0/10.0*magicDamage;}
+    if (targetAilmentMap->value("Barrier")->isChecked()){attackDamage = 0.5*attackDamage;}
+    if (targetAilmentMap->value("MBarrier")->isChecked()){magicDamage = 0.5*magicDamage;}
 
+    // Debug
+    //std::cout << "(5) Attack Damage: " << attackDamage << " | Magic Damage: " << magicDamage << std::endl;
 
+    /* ===================================
+     * ======== COMPUTE PRECISION ========
+     * ===================================*/
 
+    QLineEdit *attPrecEdit = new QLineEdit;
+    QLineEdit *magPrecEdit = new QLineEdit;
 
+    if (charType == "Character"){attPrecEdit = ui->charAttPrecEdit; magPrecEdit = ui->charMagPrecEdit;}
+    else {attPrecEdit = ui->enemyAttPrecEdit; magPrecEdit = ui->enemyMagPrecEdit;}
 
+    if (attackType == "Attack")
+    {
+        // precision = dexterity/4 + att% + def% attacker - def% target
+        if (attackerIndex != -1 && targetIndex != -1)
+        {
+            dexterity = attackerVector->at(attackerIndex)->getStats()->value("Dexterity")->displayText().toDouble();
 
+            attackPercent = attackerVector->at(attackerIndex)->getStats()->value("AttackPercent")->displayText().toDouble();
+            if (attackerAilmentMap->value("Darkness")->isChecked()){attackPercent = attackPercent/2.0;}
 
+            defensePercent = attackerVector->at(attackerIndex)->getStats()->value("DefensePercent")->displayText().toDouble();
 
+            targetDefPercent = targetVector->at(targetIndex)->getStats()->value("DefensePercent")->displayText().toDouble();
 
+            precision = dexterity/4. + attackPercent + defensePercent - targetDefPercent;
+            if (attackerAilmentMap->value("Fury")->isChecked()){precision = precision*0.7;}
+
+            // Final check and display
+            if (precision < 0){precision = 0;}
+            attPrecEdit->setText(QString::number(qFloor(precision)));
+        }
+    }
+    else if (attackType == "Magic" || attackType == "Summon")
+    {
+        // precision = mag attack % + level - (target level/2) - 1
+        if (attackerIndex != -1 && targetIndex != -1)
+        {
+            magAttPercent = magAttackPercent.toDouble();
+            targetLevel = targetVector->at(targetIndex)->getStats()->value("Level")->displayText().toDouble();
+
+            if (attackerAilmentMap->value("Fury")->isChecked()){magAttPercent = magAttPercent*0.7;}
+
+            precision = magAttPercent + level - (targetLevel/2.) - 1;
+
+            // Final check and display
+            if (precision < 0){precision = 0;}
+            if (attackType == "Magic"){magPrecEdit->setText(QString::number(qFloor(precision)));}
+            else {ui->charSumPrecEdit->setText(QString::number(qFloor(precision)));}
+        }
+    }
+
+    /* ===================================
+     * ======== COMPUTE CRIT. HIT ========
+     * ===================================*/
+
+    QLineEdit *attCritEdit = new QLineEdit;
+    if (charType == "Character"){attCritEdit = ui->charCritEdit;}
+    else {attCritEdit = ui->enemyCritEdit;}
+
+    if (attackType == "Attack")
+    {
+        // crit. hit% = (chance/4 + Delta level)/4
+        if (attackerIndex != -1 && targetIndex != -1)
+        {
+            chance = attackerVector->at(attackerIndex)->getStats()->value("Luck")->displayText().toDouble();
+            targetLevel = targetVector->at(targetIndex)->getStats()->value("Level")->displayText().toDouble();
+
+            critHitPercent = (chance/4. + level - targetLevel)/4.;
+
+            // Add bonus due to weapon
+            if (charType == "Character")
+            {
+                QString weaponName = attackerVector->at(attackerIndex)->getWeaponComboBox()->currentText();
+                for (int iWeapon(0); iWeapon < m_weaponVector->size(); iWeapon++)
+                {
+                    if (m_weaponVector->at(iWeapon)->getStats()->value("Name") == weaponName)
+                    {
+                        critHitPercent = critHitPercent + m_weaponVector->at(iWeapon)->getStats()->value("CritHitPercent").toDouble();
+                    }
+                }
+            }
+
+            // Display
+            if (critHitPercent < 0){critHitPercent = 0;}
+            attCritEdit->setText(QString::number(qFloor(critHitPercent)));
+        }
+    }
+
+    /* ===================================
+     * ========= DISPLAY DAMAGE ==========
+     * ===================================*/
+    QLineEdit *attackEdit = new QLineEdit;
+    QLineEdit *magicEdit = new QLineEdit;
+    QLineEdit *summonEdit = new QLineEdit;
+
+    if (charType == "Character"){attackEdit = ui->charAttDmgEdit; magicEdit = ui->charMagDmgEdit; summonEdit = ui->charSumDmgEdit;}
+    else {attackEdit = ui->enemyAttDmgEdit; magicEdit = ui->enemyMagDmgEdit;}
+
+    if (attackType == "Attack"){attackEdit->setText(QString::number(qFloor(attackDamage)));}
+    else if (attackType == "Magic"){magicEdit->setText(QString::number(qFloor(magicDamage)));;}
+    else if (attackType == "Summon") {summonEdit->setText(QString::number(qFloor(magicDamage)));}
+}
 
