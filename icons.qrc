@@ -32,5 +32,6 @@
         <file>icons/confusion.png</file>
         <file>icons/barrier.png</file>
         <file>icons/deal_damage.png</file>
+        <file>icons/exp.png</file>
     </qresource>
 </RCC>

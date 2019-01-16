@@ -6,8 +6,11 @@
 #include <QString>
 #include <QStringList>
 #include <QTextStream>
+#include <QTime>
 #include <QtMath>
 
+#include <thread>
+#include <chrono>
 #include <iostream>
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -30,6 +33,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Connect signals (name is changed in combo box) to slots (stats are displayed in stat box)
     connectSignals();
+
+    // Load level data
+    loadLevelData();
 }
 
 MainWindow::~MainWindow()
@@ -196,6 +202,9 @@ void MainWindow::initialization()
     m_ailmentMapVector->push_back(m_charAilmentMap);
     m_ailmentMapVector->push_back(m_enemyAilmentMap);
 
+    // Create the storage for levels data
+    m_levelVector = new QVector<QStringList>;
+
 }
 
 void MainWindow::displayStatBoxes()
@@ -355,6 +364,36 @@ void MainWindow::connectSignals()
 
 }
 
+void MainWindow::loadLevelData()
+{
+    // Initialise resource
+    Q_INIT_RESOURCE(data);
+    QFile levelFile(":/data/levels.dat");
+    if (!levelFile.open(QIODevice::ReadOnly | QIODevice::Text))
+            return;
+
+    // Create input text stream
+    QTextStream read(&levelFile);
+
+    QStringList list;
+
+    // Header
+    read.readLine();
+
+    for(int iLevel(0); iLevel < 99; iLevel++)
+    {
+        // Header
+        list = read.readLine().split(" ", QString::SkipEmptyParts);
+        list.removeAll("-");
+
+        // vector will contain, for each level (row):
+        // LVL|EXP|HPmin|HPmax|MPmin|MPmax|STRmin|STRmax|VITmin|VITmax|MAGmin|MAGmax|SPImin|SPImax|DEXmin|DEXmax|LUCmin|LUCmax
+
+        m_levelVector->append(list);
+    }
+    levelFile.close();
+}
+
 void MainWindow::on_addCharButton_clicked(){newDialog("Character");}
 void MainWindow::on_addWeaponButton_clicked(){newDialog("Weapon");}
 void MainWindow::on_addArmorButton_clicked(){newDialog("Armor");}
@@ -462,6 +501,88 @@ void MainWindow::on_fullRegenButton_clicked()
                 m_charStatBoxVector->at(iBox)->getStats()->value("HP")->setText(hpMaxDisplay);
                 m_charStatBoxVector->at(iBox)->getStats()->value("MP")->setText(mpMaxDisplay);
             }
+        }
+    }
+}
+void MainWindow::on_expButton_clicked()
+{
+    bool ok;
+    QString expGain = QInputDialog::getText(this, tr(""), tr("Experience Gain:"), QLineEdit::Normal, QString(), &ok);
+
+    if (!expGain.isEmpty() && ok)
+    {
+        // Loop over statbox
+        for (int iStatBox(0); iStatBox < m_nPlayerStatBox; iStatBox++)
+        {
+            if (!m_charStatBoxVector->at(iStatBox)->getNameComboBox()->currentText().isEmpty())
+            {
+                // Get character's name and level
+                QString charName = m_charStatBoxVector->at(iStatBox)->getNameComboBox()->currentText();
+                QString charLevel = m_charStatBoxVector->at(iStatBox)->getStats()->value("Level")->displayText();
+
+                // Loop over Character
+                for (int iChar(0); iChar < m_charVector->size(); iChar++)
+                {
+                    if (m_charVector->at(iChar)->getStats()->value("Name") == charName)
+                    {
+                        // Current character exp points
+                        int charExpPoints =  m_charVector->at(iChar)->getStats()->value("ExpPoints").toInt();
+
+                        // Compute new exp points
+                        charExpPoints = charExpPoints + expGain.toInt();
+
+                        // Check corresponding level on levels data
+                        for (int iLevel(charLevel.toInt()-1); iLevel < m_levelVector->size(); iLevel++)
+                        {
+                            if (m_levelVector->at(iLevel)[1].toInt() > charExpPoints)
+                            {
+                                // Get the exp points needed for previous level
+                                int prevLevelExpPoints = m_levelVector->at(iLevel-1)[1].toInt();
+
+                                // Get the exp points needed for next level
+                                int nextLevelExpPoints = m_levelVector->at(iLevel)[1].toInt();
+
+                                // Calculate percentage towards next level
+                                double percent = (charExpPoints - prevLevelExpPoints)*100.0/(nextLevelExpPoints - prevLevelExpPoints);
+
+                                // Set the exp bar to this percent
+                                m_charStatBoxVector->at(iStatBox)->getExpBar()->setValue(qFloor(percent));
+
+                                // Set character new level and exp points and display
+                                if (m_levelVector->at(iLevel-1)[0] != charLevel.toInt())
+                                {
+                                    qsrand(QTime::currentTime().msec());
+
+                                    charLevel = m_levelVector->at(iLevel-1)[0];
+                                    m_charVector->at(iChar)->setStat("ExpPoints", QString::number(charExpPoints));
+                                    m_charVector->at(iChar)->setStat("Level", charLevel);
+                                    m_charStatBoxVector->at(iStatBox)->getStats()->value("Level")->setText(charLevel);
+
+                                    for (int iStat(2); iStat < m_levelVector->at(iLevel-1).size(); iStat+=2)
+                                    {
+                                        // Update stats for new levels
+                                        int lowBound = m_levelVector->at(iLevel-1)[iStat].toInt();
+                                        int highBound = m_levelVector->at(iLevel-1)[iStat+1].toInt();
+                                        int randomValue = (qrand()%(highBound-lowBound+1))+lowBound;
+
+                                        if (iStat == 2){m_charVector->at(iChar)->setStat("HPMax", QString::number(randomValue));}
+                                        if (iStat == 4){m_charVector->at(iChar)->setStat("MPMax", QString::number(randomValue));}
+                                        if (iStat == 6){m_charVector->at(iChar)->setStat("Strength", QString::number(randomValue));}
+                                        if (iStat == 8){m_charVector->at(iChar)->setStat("Vitality", QString::number(randomValue));}
+                                        if (iStat == 10){m_charVector->at(iChar)->setStat("Magic", QString::number(randomValue));}
+                                        if (iStat == 12){m_charVector->at(iChar)->setStat("Spirit", QString::number(randomValue));}
+                                        if (iStat == 14){m_charVector->at(iChar)->setStat("Dexterity", QString::number(randomValue));}
+                                        if (iStat == 16){m_charVector->at(iChar)->setStat("Luck", QString::number(randomValue));}
+                                    }
+                                }
+                                break;
+                            }
+                        }
+                        m_charVector->at(iChar)->setStat("ExpPoints", QString::number(charExpPoints));
+                    }
+                }
+            }
+            updateStats(iStatBox);
         }
     }
 }
@@ -714,6 +835,7 @@ void MainWindow::enableButtons()
     ui->addMagicButton->setEnabled(true);
     ui->addSummonButton->setEnabled(true);
     ui->addItemButton->setEnabled(true);
+    ui->expButton->setEnabled(true);
 }
 
 void MainWindow::newDialog(QString newType)
@@ -753,6 +875,9 @@ void MainWindow::newDialog(QString newType)
         QString accessory         = "None";
         QString limitBreak        = "0";
 
+        // Get experience points depending on level
+        QString expPoints         = m_levelVector->at(level.toInt()-1)[1];
+
         // For attacks, magic, summons and items
         QString factor            = m_addCharDialog->getStatBox()->getStats()->value("Factor")->displayText();
         QString mpCost            = m_addCharDialog->getStatBox()->getStats()->value("MPCost")->displayText();
@@ -760,22 +885,22 @@ void MainWindow::newDialog(QString newType)
         // Status ailments for characters
         bool poison(false), sadness(false), fury(false), silence(false), darkness(false), frog(false);
 
-        createNew(newType, name, level, hp, mp, hpMax, mpMax, strength, vitality, magic, spirit, dexterity, luck,
+        createNew(newType, name, level, expPoints, hp, mp, hpMax, mpMax, strength, vitality, magic, spirit, dexterity, luck,
                   limitBreak, attack, attackPercent, magAttack, magAttackPercent, critHitPercent,
                   defense, defensePercent, magDefense, magDefPercent, weapon, armor, accessory,
                   factor, mpCost, poison, sadness, fury, silence, darkness, frog);
     }
 }
 
-void MainWindow::createNew(QString newType, QString name, QString level, QString hp, QString mp, QString hpMax, QString mpMax, QString strength, QString vitality, QString magic,
-                           QString spirit, QString dexterity, QString luck, QString limitBreak, QString attack, QString attackPercent, QString magAttack,
+void MainWindow::createNew(QString newType, QString name, QString level, QString expPoints, QString hp, QString mp, QString hpMax, QString mpMax, QString strength, QString vitality,
+                           QString magic, QString spirit, QString dexterity, QString luck, QString limitBreak, QString attack, QString attackPercent, QString magAttack,
                            QString magAttackPercent, QString critHitPercent, QString defense, QString defensePercent, QString magDefense, QString magDefPercent,
                            QString weapon, QString armor, QString accessory, QString factor, QString mpCost, bool poison, bool sadness, bool fury,
                            bool silence, bool darkness, bool frog)
 {
     if (newType == "Character" || newType == "Enemy")
     {
-        m_newChar = new Character(newType, name, level, hp, mp, hpMax, mpMax, strength, vitality, magic, spirit, dexterity, luck,
+        m_newChar = new Character(newType, name, level, expPoints, hp, mp, hpMax, mpMax, strength, vitality, magic, spirit, dexterity, luck,
                                   limitBreak, attack, attackPercent, magAttack, magAttackPercent, critHitPercent,
                                   defense, defensePercent, magDefense, magDefPercent, weapon, armor, accessory,
                                   poison, sadness, fury, silence, darkness, frog);
@@ -1382,6 +1507,7 @@ void MainWindow::readFromFile()
             // Gather all character's stats
             QString name              = statBundle->value("Name");
             QString level             = statBundle->value("Level");
+            QString expPoints         = statBundle->value("ExpPoints");
             QString hp                = statBundle->value("HP");
             QString hpMax             = statBundle->value("HPMax");
             QString mp                = statBundle->value("MP");
@@ -1435,7 +1561,7 @@ void MainWindow::readFromFile()
             }
 
             // Create character/enemy
-            createNew(type, name, level, hp, mp, hpMax, mpMax, strength, vitality, magic, spirit, dexterity, luck,
+            createNew(type, name, level, expPoints, hp, mp, hpMax, mpMax, strength, vitality, magic, spirit, dexterity, luck,
                       limitBreak, attack, attackPercent, magAttack, magAttackPercent, critHitPercent,
                       defense, defensePercent, magDefense, magDefPercent, weapon, armor, accessory, factor, mpCost,
                       poison, sadness, fury, silence, darkness, frog);

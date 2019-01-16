@@ -28,9 +28,10 @@ public:
     void setComboBoxModels();
     void setListModels();
     void connectSignals();
+    void loadLevelData();
     void newDialog(QString newType);
-    void createNew(QString newType, QString name, QString level, QString hp, QString mp, QString hpMax, QString mpMax, QString strength, QString vitality, QString magic,
-                   QString spirit, QString dexterity, QString luck, QString limitBreak, QString attack, QString attackPercent, QString magAttack,
+    void createNew(QString newType, QString name, QString level, QString expPoints, QString hp, QString mp, QString hpMax, QString mpMax, QString strength, QString vitality,
+                   QString magic, QString spirit, QString dexterity, QString luck, QString limitBreak, QString attack, QString attackPercent, QString magAttack,
                    QString magAttackPercent, QString critHitPercent, QString defense, QString defensePercent,
                    QString magDefense, QString magDefPercent, QString weapon, QString armor, QString accessory, QString factor, QString mpCost,
                    bool poison, bool sadness, bool fury, bool silence, bool darkness, bool frog);
@@ -60,6 +61,7 @@ private slots:
     void on_saveButton_clicked();
     void on_loadButton_clicked();
     void on_fullRegenButton_clicked();
+    void on_expButton_clicked();
     void on_charAttackButton_clicked();
     void on_charMagicButton_clicked();
     void on_charSummonButton_clicked();
@@ -118,6 +120,8 @@ private:
 
     AddCharDialog *m_addCharDialog;
     StatBox *m_charStatBox;
+
+    QVector<QStringList> *m_levelVector;
 
     QVector<StatBox*> *m_charStatBoxVector, *m_enemyStatBoxVector;
     QVector<QVector<StatBox*>*> *m_allStatBoxVector;

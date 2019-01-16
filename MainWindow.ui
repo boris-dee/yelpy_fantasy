@@ -468,6 +468,32 @@
         </property>
        </widget>
       </item>
+      <item>
+       <widget class="QPushButton" name="expButton">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="toolTip">
+         <string>Add Experience Points</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="icons.qrc">
+          <normaloff>:/icons/exp.png</normaloff>:/icons/exp.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>32</width>
+          <height>32</height>
+         </size>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
      </layout>
     </item>
     <item row="2" column="1">
@@ -1278,6 +1304,35 @@
            <property name="bottomMargin">
             <number>0</number>
            </property>
+           <item row="3" column="1">
+            <widget class="QPushButton" name="enemyAttackButton">
+             <property name="toolTip">
+              <string>Attack!</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="icons.qrc">
+               <normaloff>:/icons/crossed_swords.png</normaloff>:/icons/crossed_swords.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>32</width>
+               <height>32</height>
+              </size>
+             </property>
+             <property name="checkable">
+              <bool>false</bool>
+             </property>
+             <property name="autoExclusive">
+              <bool>false</bool>
+             </property>
+             <property name="flat">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
            <item row="4" column="3">
             <widget class="QLabel" name="enemyMagiclabel">
              <property name="enabled">
@@ -1307,35 +1362,6 @@
              </property>
             </widget>
            </item>
-           <item row="10" column="1" rowspan="2">
-            <widget class="QPushButton" name="enemyItemButton">
-             <property name="toolTip">
-              <string>Item!</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="icon">
-              <iconset resource="icons.qrc">
-               <normaloff>:/icons/items.png</normaloff>:/icons/items.png</iconset>
-             </property>
-             <property name="iconSize">
-              <size>
-               <width>32</width>
-               <height>32</height>
-              </size>
-             </property>
-             <property name="checkable">
-              <bool>false</bool>
-             </property>
-             <property name="autoExclusive">
-              <bool>false</bool>
-             </property>
-             <property name="flat">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
            <item row="10" column="3">
             <widget class="QLabel" name="enemyItemlabel">
              <property name="enabled">
@@ -1346,64 +1372,6 @@
              </property>
              <property name="alignment">
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="1" rowspan="4">
-            <widget class="QPushButton" name="enemyMagicButton">
-             <property name="toolTip">
-              <string>Magic!</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="icon">
-              <iconset resource="icons.qrc">
-               <normaloff>:/icons/magic.png</normaloff>:/icons/magic.png</iconset>
-             </property>
-             <property name="iconSize">
-              <size>
-               <width>32</width>
-               <height>32</height>
-              </size>
-             </property>
-             <property name="checkable">
-              <bool>false</bool>
-             </property>
-             <property name="autoExclusive">
-              <bool>false</bool>
-             </property>
-             <property name="flat">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1" rowspan="4">
-            <widget class="QPushButton" name="enemyAttackButton">
-             <property name="toolTip">
-              <string>Attack!</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="icon">
-              <iconset resource="icons.qrc">
-               <normaloff>:/icons/crossed_swords.png</normaloff>:/icons/crossed_swords.png</iconset>
-             </property>
-             <property name="iconSize">
-              <size>
-               <width>32</width>
-               <height>32</height>
-              </size>
-             </property>
-             <property name="checkable">
-              <bool>false</bool>
-             </property>
-             <property name="autoExclusive">
-              <bool>false</bool>
-             </property>
-             <property name="flat">
-              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -1551,7 +1519,84 @@
              </property>
             </widget>
            </item>
+           <item row="11" column="1">
+            <widget class="QPushButton" name="enemyItemButton">
+             <property name="toolTip">
+              <string>Item!</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="icons.qrc">
+               <normaloff>:/icons/items.png</normaloff>:/icons/items.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>32</width>
+               <height>32</height>
+              </size>
+             </property>
+             <property name="checkable">
+              <bool>false</bool>
+             </property>
+             <property name="autoExclusive">
+              <bool>false</bool>
+             </property>
+             <property name="flat">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="1">
+            <widget class="QPushButton" name="enemyMagicButton">
+             <property name="toolTip">
+              <string>Magic!</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="icons.qrc">
+               <normaloff>:/icons/magic.png</normaloff>:/icons/magic.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>32</width>
+               <height>32</height>
+              </size>
+             </property>
+             <property name="checkable">
+              <bool>false</bool>
+             </property>
+             <property name="autoExclusive">
+              <bool>false</bool>
+             </property>
+             <property name="flat">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
           </layout>
+         </item>
+         <item row="0" column="2">
+          <widget class="Line" name="centralLine">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Plain</enum>
+           </property>
+           <property name="lineWidth">
+            <number>1</number>
+           </property>
+           <property name="midLineWidth">
+            <number>0</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+          </widget>
          </item>
          <item row="0" column="1">
           <layout class="QGridLayout" name="charActionLayout">
@@ -1661,35 +1706,6 @@
            <item row="10" column="0" colspan="2">
             <widget class="QComboBox" name="charSummonComboBox"/>
            </item>
-           <item row="0" column="2" rowspan="4">
-            <widget class="QPushButton" name="charAttackButton">
-             <property name="toolTip">
-              <string>Attack!</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="icon">
-              <iconset resource="icons.qrc">
-               <normaloff>:/icons/crossed_swords.png</normaloff>:/icons/crossed_swords.png</iconset>
-             </property>
-             <property name="iconSize">
-              <size>
-               <width>32</width>
-               <height>32</height>
-              </size>
-             </property>
-             <property name="checkable">
-              <bool>false</bool>
-             </property>
-             <property name="autoExclusive">
-              <bool>false</bool>
-             </property>
-             <property name="flat">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
            <item row="7" column="0" colspan="2">
             <widget class="QComboBox" name="charMagicComboBox"/>
            </item>
@@ -1706,35 +1722,6 @@
              </property>
             </spacer>
            </item>
-           <item row="8" column="2" rowspan="3">
-            <widget class="QPushButton" name="charSummonButton">
-             <property name="toolTip">
-              <string>Summon!</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="icon">
-              <iconset resource="icons.qrc">
-               <normaloff>:/icons/summon.png</normaloff>:/icons/summon.png</iconset>
-             </property>
-             <property name="iconSize">
-              <size>
-               <width>32</width>
-               <height>32</height>
-              </size>
-             </property>
-             <property name="checkable">
-              <bool>false</bool>
-             </property>
-             <property name="autoExclusive">
-              <bool>false</bool>
-             </property>
-             <property name="flat">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
            <item row="4" column="0">
             <widget class="QLabel" name="charMagiclabel">
              <property name="enabled">
@@ -1742,35 +1729,6 @@
              </property>
              <property name="text">
               <string>Magic</string>
-             </property>
-            </widget>
-           </item>
-           <item row="12" column="2" rowspan="2">
-            <widget class="QPushButton" name="charItemButton">
-             <property name="toolTip">
-              <string>Item!</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="icon">
-              <iconset resource="icons.qrc">
-               <normaloff>:/icons/items.png</normaloff>:/icons/items.png</iconset>
-             </property>
-             <property name="iconSize">
-              <size>
-               <width>32</width>
-               <height>32</height>
-              </size>
-             </property>
-             <property name="checkable">
-              <bool>false</bool>
-             </property>
-             <property name="autoExclusive">
-              <bool>false</bool>
-             </property>
-             <property name="flat">
-              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -1893,7 +1851,36 @@
              </property>
             </widget>
            </item>
-           <item row="4" column="2" rowspan="4">
+           <item row="3" column="2">
+            <widget class="QPushButton" name="charAttackButton">
+             <property name="toolTip">
+              <string>Attack!</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="icons.qrc">
+               <normaloff>:/icons/crossed_swords.png</normaloff>:/icons/crossed_swords.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>32</width>
+               <height>32</height>
+              </size>
+             </property>
+             <property name="checkable">
+              <bool>false</bool>
+             </property>
+             <property name="autoExclusive">
+              <bool>false</bool>
+             </property>
+             <property name="flat">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="2">
             <widget class="QPushButton" name="charMagicButton">
              <property name="toolTip">
               <string>Magic!</string>
@@ -1922,26 +1909,65 @@
              </property>
             </widget>
            </item>
+           <item row="10" column="2">
+            <widget class="QPushButton" name="charSummonButton">
+             <property name="toolTip">
+              <string>Summon!</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="icons.qrc">
+               <normaloff>:/icons/summon.png</normaloff>:/icons/summon.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>32</width>
+               <height>32</height>
+              </size>
+             </property>
+             <property name="checkable">
+              <bool>false</bool>
+             </property>
+             <property name="autoExclusive">
+              <bool>false</bool>
+             </property>
+             <property name="flat">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="13" column="2">
+            <widget class="QPushButton" name="charItemButton">
+             <property name="toolTip">
+              <string>Item!</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="icons.qrc">
+               <normaloff>:/icons/items.png</normaloff>:/icons/items.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>32</width>
+               <height>32</height>
+              </size>
+             </property>
+             <property name="checkable">
+              <bool>false</bool>
+             </property>
+             <property name="autoExclusive">
+              <bool>false</bool>
+             </property>
+             <property name="flat">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
           </layout>
-         </item>
-         <item row="0" column="2">
-          <widget class="Line" name="centralLine">
-           <property name="enabled">
-            <bool>true</bool>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Plain</enum>
-           </property>
-           <property name="lineWidth">
-            <number>1</number>
-           </property>
-           <property name="midLineWidth">
-            <number>0</number>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-          </widget>
          </item>
         </layout>
        </item>

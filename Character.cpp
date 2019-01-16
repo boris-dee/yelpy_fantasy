@@ -6,14 +6,14 @@ Character::Character(QString type): m_type(type)
     m_statBundle->insert("Type", m_type);
 }
 
-Character::Character(QString type, QString name, QString level, QString hp, QString mp, QString hpMax, QString mpMax,
+Character::Character(QString type, QString name, QString level, QString expPoints, QString hp, QString mp, QString hpMax, QString mpMax,
                      QString strength, QString vitality, QString magic, QString spirit,
                      QString dexterity, QString luck, QString limitBreak, QString attack, QString attackPercent,
                      QString magAttack, QString magAttackPercent, QString critHitPercent,
                      QString defense, QString defensePercent, QString magDefense, QString magDefPercent,
                      QString weapon, QString armor, QString accessory, bool poison, bool sadness, bool fury,
                      bool silence, bool darkness, bool frog) :
-    m_type(type), m_name(name), m_level(level), m_hp(hp), m_mp(mp), m_hpMax(hpMax), m_mpMax(mpMax),
+    m_type(type), m_name(name), m_level(level), m_expPoints(expPoints), m_hp(hp), m_mp(mp), m_hpMax(hpMax), m_mpMax(mpMax),
     m_strength(strength), m_vitality(vitality), m_magic(magic), m_spirit(spirit), m_dexterity(dexterity),
     m_luck(luck), m_limitBreak(limitBreak), m_attack(attack), m_attackPercent(attackPercent),
     m_magAttack(magAttack), m_magAttackPercent(magAttackPercent), m_critHitPercent(critHitPercent),
@@ -28,6 +28,7 @@ Character::Character(QString type, QString name, QString level, QString hp, QStr
     m_statBundle->insert("Type", m_type);
     m_statBundle->insert("Name", m_name);
     m_statBundle->insert("Level", m_level);
+    m_statBundle->insert("ExpPoints", m_expPoints);
     m_statBundle->insert("HP", m_hp);
     m_statBundle->insert("HPMax", m_hpMax);
     m_statBundle->insert("MP", m_mp);
