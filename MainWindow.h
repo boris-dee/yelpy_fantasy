@@ -30,14 +30,14 @@ public:
     void connectSignals();
     void newDialog(QString newType);
     void createNew(QString newType, QString name, QString level, QString hp, QString mp, QString hpMax, QString mpMax, QString strength, QString vitality, QString magic,
-                   QString spirit, QString dexterity, QString luck, QString attack, QString attackPercent, QString magAttack,
+                   QString spirit, QString dexterity, QString luck, QString limitBreak, QString attack, QString attackPercent, QString magAttack,
                    QString magAttackPercent, QString critHitPercent, QString defense, QString defensePercent,
                    QString magDefense, QString magDefPercent, QString weapon, QString armor, QString accessory, QString factor, QString mpCost,
                    bool poison, bool sadness, bool fury, bool silence, bool darkness, bool frog);
     void fillStatBox(int i, QString charType, QString charName);
     void updateStats(int i);
-    void checkHPMP(int i);
-    void setCurrentHPMP(int i);
+    void checkHPMP(int i, QString charType);
+    void setHPMP(int i, QString charType);
     void writeToFile();
     void readFromFile();
     void enableButtons();
@@ -60,6 +60,13 @@ private slots:
     void on_saveButton_clicked();
     void on_loadButton_clicked();
     void on_fullRegenButton_clicked();
+    void on_charAttackButton_clicked();
+    void on_charMagicButton_clicked();
+    void on_charSummonButton_clicked();
+    void on_charItemButton_clicked();
+    void on_enemyAttackButton_clicked();
+    void on_enemyMagicButton_clicked();
+    //void on_enemyItemButton_clicked();
     void on_charAttackComboBox_currentIndexChanged(QString attackName);
     void on_charMagicComboBox_currentIndexChanged(QString attackName);
     void on_charSummonComboBox_currentIndexChanged(QString attackName);
@@ -84,26 +91,22 @@ private slots:
     void updateStats3();
     void updateStats4();
     void updateStats5();
-    void checkHPMP1();
-    void checkHPMP2();
-    void checkHPMP3();
-    void checkHPMP4();
-    void checkHPMP5();
-    void setCurrentHPMP1();
-    void setCurrentHPMP2();
-    void setCurrentHPMP3();
-    void setCurrentHPMP4();
-    void setCurrentHPMP5();
-
-    void on_charAttackButton_clicked();
-
-    void on_magicButton_clicked();
-
-    void on_summonButton_clicked();
-
-    void on_enemyAttackButton_clicked();
-
-    void on_enemyMagicButton_clicked();
+    void checkCharHPMP1();
+    void checkCharHPMP2();
+    void checkCharHPMP3();
+    void checkCharHPMP4();
+    void checkCharHPMP5();
+    void checkEnemyHPMP1();
+    void checkEnemyHPMP2();
+    void checkEnemyHPMP3();
+    void setCharHPMP1();
+    void setCharHPMP2();
+    void setCharHPMP3();
+    void setCharHPMP4();
+    void setCharHPMP5();
+    void setEnemyHPMP1();
+    void setEnemyHPMP2();
+    void setEnemyHPMP3();
 
 private:
     bool m_alreadySaved = false;

@@ -4,6 +4,7 @@
 #include <QComboBox>
 #include <QLineEdit>
 #include <QPushButton>
+#include <QProgressBar>
 #include <QString>
 #include <QWidget>
 
@@ -18,6 +19,8 @@ public:
     QComboBox* getArmorComboBox() const;
     QComboBox* getWeaponComboBox() const;
     QComboBox* getAccessoryComboBox() const;
+    QProgressBar* getLimitBar() const;
+    QProgressBar* getExpBar() const;
 
 private:
     QMap<QString, QLineEdit*> *m_statBundle;
@@ -27,6 +30,7 @@ private:
     QLineEdit *m_magAttackEdit, *m_magAttPercentEdit, *m_magDefenseEdit, *m_magDefPercentEdit;
     QLineEdit *m_precisionEdit, *m_critHitPercentEdit, *m_factorEdit, *m_mpCostEdit;
     QComboBox *m_nameComboBox, *m_weaponComboBox, *m_armorComboBox, *m_accessoryComboBox;
+    QProgressBar *m_expBar, *m_limitBar;
 };
 
 #endif // STATBOX_H

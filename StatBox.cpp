@@ -22,10 +22,11 @@ StatBox::StatBox(QString charType, bool dialog, QWidget *parent) : QWidget(paren
     QLabel *levelLabel = new QLabel(tr("Level"));
     m_levelEdit = new QLineEdit;
     m_statBundle->insert("Level", m_levelEdit);
-    QProgressBar *expBar = new QProgressBar;
-    expBar->setMaximumHeight(20);
-    expBar->setMaximumWidth(100);
-    expBar->setTextVisible(false);
+
+    m_expBar = new QProgressBar;
+    m_expBar->setMaximumHeight(20);
+    m_expBar->setMaximumWidth(100);
+    m_expBar->setTextVisible(false);
 
     QLabel *hpLabel = new QLabel(tr("HP"));
     m_hpEdit = new QLineEdit;
@@ -42,8 +43,9 @@ StatBox::StatBox(QString charType, bool dialog, QWidget *parent) : QWidget(paren
     m_statBundle->insert("MPMax", m_mpMaxEdit);
 
     QLabel *limitLabel = new QLabel(tr("Limit Break"));
-    QProgressBar *limitBar = new QProgressBar;
-    limitBar->setMaximumHeight(20);
+    m_limitBar = new QProgressBar;
+    m_limitBar->setMaximumHeight(20);
+    m_limitBar->setTextVisible(false);
 
     QLabel *weaponLabel = new QLabel(tr("Weapon"));
     m_weaponComboBox = new QComboBox;
@@ -141,7 +143,7 @@ StatBox::StatBox(QString charType, bool dialog, QWidget *parent) : QWidget(paren
             lowerGrid->addWidget(m_nameComboBox, 0, 1, 1, 2);
             lowerGrid->addWidget(levelLabel, 1, 0);
             lowerGrid->addWidget(m_levelEdit, 1, 1);
-            lowerGrid->addWidget(expBar, 1, 2);
+            lowerGrid->addWidget(m_expBar, 1, 2);
             lowerGrid->addWidget(hpLabel, 2, 0);
             lowerGrid->addWidget(m_hpEdit, 2, 1);
             lowerGrid->addWidget(m_hpMaxEdit, 2, 2);
@@ -150,7 +152,7 @@ StatBox::StatBox(QString charType, bool dialog, QWidget *parent) : QWidget(paren
             lowerGrid->addWidget(m_mpMaxEdit, 3, 2);
 
             lowerGrid->addWidget(limitLabel, 0, 3);
-            lowerGrid->addWidget(limitBar, 0, 4, 1, 2);
+            lowerGrid->addWidget(m_limitBar, 0, 4, 1, 2);
             lowerGrid->addWidget(weaponLabel, 1, 3);
             lowerGrid->addWidget(m_weaponComboBox, 1, 4, 1, 2);
             lowerGrid->addWidget(armorLabel, 2, 3);
@@ -196,8 +198,8 @@ StatBox::StatBox(QString charType, bool dialog, QWidget *parent) : QWidget(paren
             lowerGrid->addWidget(m_nameComboBox, 0, 1, 1, 2);
             lowerGrid->addWidget(levelLabel, 1, 0);
             lowerGrid->addWidget(m_levelEdit, 1, 1);
-            lowerGrid->addWidget(expBar, 1, 2);
-            expBar->setValue(100);
+            lowerGrid->addWidget(m_expBar, 1, 2);
+            m_expBar->setValue(100);
             lowerGrid->addWidget(hpLabel, 2, 0);
             lowerGrid->addWidget(m_hpEdit, 2, 1);
             lowerGrid->addWidget(m_hpMaxEdit, 2, 2);
@@ -391,3 +393,7 @@ QComboBox* StatBox::getWeaponComboBox() const {return m_weaponComboBox;}
 QComboBox* StatBox::getArmorComboBox() const {return m_armorComboBox;}
 
 QComboBox* StatBox::getAccessoryComboBox() const {return m_accessoryComboBox;}
+
+QProgressBar* StatBox::getLimitBar() const {return m_limitBar;}
+
+QProgressBar* StatBox::getExpBar() const {return m_expBar;}

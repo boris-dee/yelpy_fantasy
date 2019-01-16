@@ -8,14 +8,14 @@ Character::Character(QString type): m_type(type)
 
 Character::Character(QString type, QString name, QString level, QString hp, QString mp, QString hpMax, QString mpMax,
                      QString strength, QString vitality, QString magic, QString spirit,
-                     QString dexterity, QString luck, QString attack, QString attackPercent,
+                     QString dexterity, QString luck, QString limitBreak, QString attack, QString attackPercent,
                      QString magAttack, QString magAttackPercent, QString critHitPercent,
                      QString defense, QString defensePercent, QString magDefense, QString magDefPercent,
                      QString weapon, QString armor, QString accessory, bool poison, bool sadness, bool fury,
                      bool silence, bool darkness, bool frog) :
     m_type(type), m_name(name), m_level(level), m_hp(hp), m_mp(mp), m_hpMax(hpMax), m_mpMax(mpMax),
-    m_strength(strength), m_vitality(vitality), m_magic(magic), m_spirit(spirit),
-    m_dexterity(dexterity), m_luck(luck), m_attack(attack), m_attackPercent(attackPercent),
+    m_strength(strength), m_vitality(vitality), m_magic(magic), m_spirit(spirit), m_dexterity(dexterity),
+    m_luck(luck), m_limitBreak(limitBreak), m_attack(attack), m_attackPercent(attackPercent),
     m_magAttack(magAttack), m_magAttackPercent(magAttackPercent), m_critHitPercent(critHitPercent),
     m_defense(defense), m_defensePercent(defensePercent), m_magDefense(magDefense), m_magDefPercent(magDefPercent),
     m_currentWeapon(weapon), m_currentArmor(armor), m_currentAccessory(accessory), m_sleep(false), m_poison(poison),
@@ -38,6 +38,7 @@ Character::Character(QString type, QString name, QString level, QString hp, QStr
     m_statBundle->insert("Spirit", m_spirit);
     m_statBundle->insert("Dexterity", m_dexterity);
     m_statBundle->insert("Luck", m_luck);
+    m_statBundle->insert("LimitBreak", m_limitBreak);
     m_statBundle->insert("AttackPercent", m_attackPercent);
     m_statBundle->insert("MagAttackPercent", m_magAttackPercent);
     m_statBundle->insert("CritHitPercent", m_critHitPercent);
@@ -99,3 +100,4 @@ void Character::setItems(QString weapon, QString armor, QString accessory)
 
 void Character::setStat(QString key, QString value){m_statBundle->insert(key, value);}
 void Character::setAilment(QString key, bool value){m_ailmentBundle->insert(key, value);}
+void Character::setLimitBreak(QString limitBreak){m_statBundle->insert("LimitBreak", limitBreak);}

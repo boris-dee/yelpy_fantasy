@@ -1707,7 +1707,7 @@
             </spacer>
            </item>
            <item row="8" column="2" rowspan="3">
-            <widget class="QPushButton" name="summonButton">
+            <widget class="QPushButton" name="charSummonButton">
              <property name="toolTip">
               <string>Summon!</string>
              </property>
@@ -1746,7 +1746,7 @@
             </widget>
            </item>
            <item row="12" column="2" rowspan="2">
-            <widget class="QPushButton" name="itemButton">
+            <widget class="QPushButton" name="charItemButton">
              <property name="toolTip">
               <string>Item!</string>
              </property>
@@ -1894,7 +1894,7 @@
             </widget>
            </item>
            <item row="4" column="2" rowspan="4">
-            <widget class="QPushButton" name="magicButton">
+            <widget class="QPushButton" name="charMagicButton">
              <property name="toolTip">
               <string>Magic!</string>
              </property>
