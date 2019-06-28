@@ -45,6 +45,7 @@ public:
     void computeDamage(QString charType, QString type, QString name);
     void updateInfo(QString charType, QModelIndex index);
     void updateAilments(QString charType, QModelIndex index);
+    void loadPlayers(int nChar);
 
 private slots:
     void on_addCharButton_clicked();
@@ -68,7 +69,6 @@ private slots:
     void on_charItemButton_clicked();
     void on_enemyAttackButton_clicked();
     void on_enemyMagicButton_clicked();
-    //void on_enemyItemButton_clicked();
     void on_charAttackComboBox_currentIndexChanged(QString attackName);
     void on_charMagicComboBox_currentIndexChanged(QString attackName);
     void on_charSummonComboBox_currentIndexChanged(QString attackName);

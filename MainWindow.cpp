@@ -7,6 +7,8 @@
 #include <QStringList>
 #include <QTextStream>
 #include <QTime>
+
+#include <QtGlobal>
 #include <QtMath>
 
 #include <thread>
@@ -22,7 +24,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // Initialize some useful stuff (models and storage vectors)
     initialization();
 
-    // Display characters and enemies stat boxes
+    // Display charactersand enemies stat boxes
     displayStatBoxes();
 
     // Set model for all combo boxes
@@ -204,7 +206,6 @@ void MainWindow::initialization()
 
     // Create the storage for levels data
     m_levelVector = new QVector<QStringList>;
-
 }
 
 void MainWindow::displayStatBoxes()
@@ -849,18 +850,62 @@ void MainWindow::newDialog(QString newType)
 
     if (dialogReturn == QDialog::Accepted && !name.isEmpty())
     {
-        // Gather all character's stats
-        QString level             = m_addCharDialog->getStatBox()->getStats()->value("Level")->displayText();
-        QString hp                = m_addCharDialog->getStatBox()->getStats()->value("HPMax")->displayText();
-        QString mp                = m_addCharDialog->getStatBox()->getStats()->value("MPMax")->displayText();
-        QString hpMax             = m_addCharDialog->getStatBox()->getStats()->value("HPMax")->displayText();
-        QString mpMax             = m_addCharDialog->getStatBox()->getStats()->value("MPMax")->displayText();
-        QString strength          = m_addCharDialog->getStatBox()->getStats()->value("Strength")->displayText();
-        QString vitality          = m_addCharDialog->getStatBox()->getStats()->value("Vitality")->displayText();
-        QString magic             = m_addCharDialog->getStatBox()->getStats()->value("Magic")->displayText();
-        QString spirit            = m_addCharDialog->getStatBox()->getStats()->value("Spirit")->displayText();
-        QString dexterity         = m_addCharDialog->getStatBox()->getStats()->value("Dexterity")->displayText();
-        QString luck              = m_addCharDialog->getStatBox()->getStats()->value("Luck")->displayText();
+        // Initialise some stats
+        QString level, expPoints, hp, hpMax, mp, mpMax, strength, vitality, magic, spirit, dexterity, luck;
+
+        // Case of Character's creation
+        if (newType == "Character" || newType == "Enemy")
+        {
+            // Get Character's level from QDialog
+            level = m_addCharDialog->getStatBox()->getStats()->value("Level")->displayText();
+
+            // Look up in the level table in order to get expPoints and the main stats
+            expPoints = m_levelVector->at(level.toInt()-1)[1];
+
+            for (int iLevel(level.toInt()-1); iLevel < m_levelVector->size(); iLevel++)
+            {
+                if (m_levelVector->at(iLevel)[0].toInt() == level.toInt())
+                {
+                    for (int iStat(2); iStat < m_levelVector->at(iLevel).size(); iStat+=2)
+                    {
+                        // Get stats from this levels
+                        int lowBound = m_levelVector->at(iLevel)[iStat].toInt();
+                        int highBound = m_levelVector->at(iLevel)[iStat+1].toInt();
+                        int randomValue = (qrand()%(highBound-lowBound+1))+lowBound;
+
+                        if (iStat == 2)
+                        {
+                            hp = QString::number(randomValue);
+                            hpMax = QString::number(randomValue);
+                        }
+                        if (iStat == 4)
+                        {
+                            mp = QString::number(randomValue);
+                            mpMax = QString::number(randomValue);
+                        }
+                        if (iStat == 6){strength = QString::number(randomValue);}
+                        if (iStat == 8){vitality = QString::number(randomValue);}
+                        if (iStat == 10){magic = QString::number(randomValue);}
+                        if (iStat == 12){spirit = QString::number(randomValue);}
+                        if (iStat == 14){dexterity = QString::number(randomValue);}
+                        if (iStat == 16){luck = QString::number(randomValue);}
+                    }
+                }
+            }
+        }
+
+        // Case of weapons/armors that also need some stats that are not based on level
+        if (newType == "Weapon" || newType == "Armor" || newType == "Accessory")
+        {
+            magic     = m_addCharDialog->getStatBox()->getStats()->value("Magic")->displayText();
+            strength  = m_addCharDialog->getStatBox()->getStats()->value("Strength")->displayText();
+            vitality  = m_addCharDialog->getStatBox()->getStats()->value("Vitality")->displayText();
+            spirit    = m_addCharDialog->getStatBox()->getStats()->value("Spirit")->displayText();
+            dexterity = m_addCharDialog->getStatBox()->getStats()->value("Dexterity")->displayText();
+            luck      = m_addCharDialog->getStatBox()->getStats()->value("Luck")->displayText();
+        }
+
+        // In case of anything else from Character's creation, get other stats from the QDialog.
         QString attack            = m_addCharDialog->getStatBox()->getStats()->value("Attack")->displayText();
         QString attackPercent     = m_addCharDialog->getStatBox()->getStats()->value("AttackPercent")->displayText();
         QString magAttack         = m_addCharDialog->getStatBox()->getStats()->value("MagAttack")->displayText();
@@ -870,13 +915,13 @@ void MainWindow::newDialog(QString newType)
         QString magDefense        = m_addCharDialog->getStatBox()->getStats()->value("MagDefense")->displayText();
         QString defensePercent    = m_addCharDialog->getStatBox()->getStats()->value("DefensePercent")->displayText();
         QString magDefPercent     = m_addCharDialog->getStatBox()->getStats()->value("MagDefPercent")->displayText();
+
+        // Some final assignments
         QString weapon            = "None";
         QString armor             = "None";
         QString accessory         = "None";
         QString limitBreak        = "0";
-
-        // Get experience points depending on level
-        QString expPoints         = m_levelVector->at(level.toInt()-1)[1];
+        if (newType != "Character"){expPoints = "0";}
 
         // For attacks, magic, summons and items
         QString factor            = m_addCharDialog->getStatBox()->getStats()->value("Factor")->displayText();
@@ -1152,7 +1197,7 @@ void MainWindow::fillStatBox(int i, QString charType, QString charName)
             QString accessory       = m_allCharVector->at(itype)->at(it)->getStats()->value("Accessory");
 
             // If character does not have any items (e.g. it is an enemy or a character who has just been created)
-            if (weapon == "None" && armor == "None" && accessory == "None")
+            if ((weapon == "None" && armor == "None" && accessory == "None") || (weapon == "" || armor == "" || accessory == ""))
             {
                 m_allStatBoxVector->at(itype)->at(i)->getStats()->value("Level")->setText(level);
                 m_allStatBoxVector->at(itype)->at(i)->getStats()->value("HPMax")->setText(hpMax);
@@ -1175,6 +1220,9 @@ void MainWindow::fillStatBox(int i, QString charType, QString charName)
                 m_allStatBoxVector->at(itype)->at(i)->getStats()->value("DefensePercent")->setText(defensePercent);
                 m_allStatBoxVector->at(itype)->at(i)->getStats()->value("MagDefense")->setText(magDefense);
                 m_allStatBoxVector->at(itype)->at(i)->getStats()->value("MagDefPercent")->setText(magDefPercent);
+                m_allStatBoxVector->at(itype)->at(i)->getAccessoryComboBox()->setCurrentText(accessory);
+                m_allStatBoxVector->at(itype)->at(i)->getWeaponComboBox()->setCurrentText(weapon);
+                m_allStatBoxVector->at(itype)->at(i)->getArmorComboBox()->setCurrentText(armor);
             }
             else
             {
@@ -1567,6 +1615,7 @@ void MainWindow::readFromFile()
                       poison, sadness, fury, silence, darkness, frog);
         }
     }
+    loadPlayers(qMin(m_nChar.toInt(), m_nPlayerStatBox));
 }
 
 void MainWindow::toggleCharAilment()
@@ -1672,7 +1721,7 @@ void MainWindow::computeDamage(QString charType, QString attackType, QString att
     // Initialisations
     double attackFactor(0), magicFactor(0), level(0), targetLevel(0), attack(0), magAttack(0), attackDamage(0), magicDamage(0), chance(0), critHitPercent(0);
     double defense(0), magicDefense(0), dexterity(0), attackPercent(0), defensePercent(0), targetDefPercent(0), precision(0), magAttPercent(0);
-    QString attackerLevel, attackerAttack, attackerMagAttack;
+    QString attackerLevel, attackerAttack, attackerMagAttack, attackerMP;
     QString targetDefense, targetMagDefense;
     QString magAttackPercent;
 
@@ -1680,7 +1729,7 @@ void MainWindow::computeDamage(QString charType, QString attackType, QString att
      * =========== BASE DAMAGE ===========
      * ===================================*/
 
-    // Initialise a few things
+    // Other initialisations
     QListView *attackerListView = new QListView;
     QListView *targetListView = new QListView;
 
@@ -1713,13 +1762,14 @@ void MainWindow::computeDamage(QString charType, QString attackType, QString att
         targetAilmentMap = m_charAilmentMap;
     }
 
-    // Get attacker level, attack, and magic
+    // Get attacker level, attack, magic attack, and MP
     QModelIndex index = attackerListView->currentIndex();
     int attackerIndex = index.row();
     if (attackerIndex != -1){
         attackerLevel = attackerVector->at(attackerIndex)->getStats()->value("Level")->displayText();
         attackerAttack = attackerVector->at(attackerIndex)->getStats()->value("Attack")->displayText();
         attackerMagAttack = attackerVector->at(attackerIndex)->getStats()->value("MagAttack")->displayText();
+        attackerMP = attackerVector->at(attackerIndex)->getStats()->value("MP")->displayText();
     }
     level = attackerLevel.toDouble();
     attack = attackerAttack.toDouble();
@@ -1899,3 +1949,10 @@ void MainWindow::computeDamage(QString charType, QString attackType, QString att
     else if (attackType == "Summon") {summonEdit->setText(QString::number(qFloor(magicDamage)));}
 }
 
+void MainWindow::loadPlayers(int nChar)
+{
+    for (int iPlayer(0); iPlayer < nChar; iPlayer++)
+    {
+       m_charStatBoxVector->at(iPlayer)->getNameComboBox()->setCurrentText(m_charVector->at(iPlayer+1)->getStats()->value("Name"));
+    }
+}

@@ -115,7 +115,7 @@ StatBox::StatBox(QString charType, bool dialog, QWidget *parent) : QWidget(paren
     m_magDefPercentEdit = new QLineEdit;
     m_statBundle->insert("MagDefPercent", m_magDefPercentEdit);
 
-    QLabel *precisionLabel = new QLabel(tr("Precision"));
+    //QLabel *precisionLabel = new QLabel(tr("Precision"));
     m_precisionEdit = new QLineEdit;
     m_statBundle->insert("Precision", m_precisionEdit);
 
@@ -249,22 +249,6 @@ StatBox::StatBox(QString charType, bool dialog, QWidget *parent) : QWidget(paren
             lowerGrid->addWidget(m_nameEdit, 0, 1);
             lowerGrid->addWidget(levelLabel, 1, 0);
             lowerGrid->addWidget(m_levelEdit, 1, 1);
-            lowerGrid->addWidget(hpLabel, 2, 0);
-            lowerGrid->addWidget(m_hpMaxEdit, 2, 1);
-            lowerGrid->addWidget(mpLabel, 3, 0);
-            lowerGrid->addWidget(m_mpMaxEdit, 3, 1);
-            lowerGrid->addWidget(strengthLabel, 4, 0);
-            lowerGrid->addWidget(m_strengthEdit, 4, 1);
-            lowerGrid->addWidget(vitalityLabel, 5, 0);
-            lowerGrid->addWidget(m_vitalityEdit, 5, 1);
-            lowerGrid->addWidget(magicLabel, 6, 0);
-            lowerGrid->addWidget(m_magicEdit, 6, 1);
-            lowerGrid->addWidget(spiritLabel, 7, 0);
-            lowerGrid->addWidget(m_spiritEdit, 7, 1);
-            lowerGrid->addWidget(dextLabel, 8, 0);
-            lowerGrid->addWidget(m_dextEdit, 8, 1);
-            lowerGrid->addWidget(luckLabel, 9, 0);
-            lowerGrid->addWidget(m_luckEdit, 9, 1);
         }
         else if (charType == "Weapon")
         {
@@ -343,20 +327,12 @@ StatBox::StatBox(QString charType, bool dialog, QWidget *parent) : QWidget(paren
             lowerGrid->addWidget(nameLabel, 0, 0);
             lowerGrid->addWidget(m_nameEdit, 0, 1);
         }
-        else
+        else if (charType == "Enemy")
         {
             lowerGrid->addWidget(nameLabel, 0, 0);
             lowerGrid->addWidget(m_nameEdit, 0, 1);
             lowerGrid->addWidget(levelLabel, 1, 0);
             lowerGrid->addWidget(m_levelEdit, 1, 1);
-            lowerGrid->addWidget(hpLabel, 2, 0);
-            lowerGrid->addWidget(m_hpMaxEdit, 2, 1);
-            lowerGrid->addWidget(mpLabel, 3, 0);
-            lowerGrid->addWidget(m_mpMaxEdit, 3, 1);
-            lowerGrid->addWidget(dextLabel, 4, 0);
-            lowerGrid->addWidget(m_dextEdit, 4, 1);
-            lowerGrid->addWidget(luckLabel, 5, 0);
-            lowerGrid->addWidget(m_luckEdit, 5, 1);
             lowerGrid->addWidget(attackLabel, 6, 0);
             lowerGrid->addWidget(m_attackEdit, 6, 1);
             lowerGrid->addWidget(attackPercentLabel, 7, 0);
